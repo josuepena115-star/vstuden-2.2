@@ -1,0 +1,39 @@
+4222-    "nombre": "1. Introducción: El Sistema de Contención Biológica",
+4223:    "servicio": "Cirugía",
+4224-    "isLogistica": true,
+--
+4280-    "nombre": "2. Zonificación Estándar (Arquitectura)",
+4281:    "servicio": "Cirugía",
+4282-    "isLogistica": true,
+--
+4335-    "nombre": "3. Equipamiento y Mobiliario Clínico",
+4336:    "servicio": "Cirugía",
+4337-    "isLogistica": true,
+--
+4395-    "nombre": "4. Instrumental Quirúrgico por Tiempos",
+4396:    "servicio": "Cirugía",
+4397-    "isLogistica": true,
+--
+4451-    "nombre": "5. El Equipo y el Baile de Roles",
+4452:    "servicio": "Cirugía",
+4453-    "isLogistica": true,
+--
+4508-    "nombre": "6. Acto Quirúrgico: Trauma Controlado",
+4509:    "servicio": "Cirugía",
+4510-    "isLogistica": true,
+--
+4639-    "nombre": "Apendicitis Aguda",
+4640:    "servicio": "Cirugía",
+4641-    "color": "#FFF3E0",
+--
+4668-    "nombre": "Colecistitis Aguda",
+4669:    "servicio": "Cirugía",
+4670-    "color": "#FFF3E0",
+--
+4697-    "nombre": "Obstrucción Intestinal",
+4698:    "servicio": "Cirugía",
+4699-    "color": "#FFF3E0",
+--
+4725-    "nombre": "Hernia Inguinal Incarcerada",
+4726:    "servicio": "Cirugía",
+4727-    "color": "#FFF3E0",

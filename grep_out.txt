@@ -1,0 +1,291 @@
+609-  const [gasoFiO2, setGasoFiO2] = useState<string>('21');
+610-  const [gasoIdealGap, setGasoIdealGap] = useState<string>('12');
+611:  const [selectedDisease, setSelectedDisease] = useState<Disease | null>(null);
+612-  const [diseaseActiveTab, setDiseaseActiveTab] = useState<'clinica' | 'fisiopatologia' | 'manejo' | 'enfermeria'>('clinica');
+613-
+--
+1846-                </div>
+1847-              </div>
+1848:            ) : selectedService === 'Cirugía' && !selectedDisease ? (
+1849-              <div className="space-y-6">
+1850-                <button 
+--
+1873-                          // For now, let's keep it simple and just filter list downstream
+1874-                           setSelectedDisease(null); 
+1875:                           // This else block handles selectedService === 'Cirugía' && !selectedDisease
+1876-                           // If we want to show a sub-list, we might need a subTab.
+1877-                           // But I'll just select a special ID or similar.
+--
+1967-                              key={disease.id}
+1968-                              onClick={() => setSelectedDisease(disease)}
+1969:                              className={`w-full text-left p-3 rounded-lg border transition-all text-sm ${selectedDisease?.id === disease.id ? 'bg-primary text-primary-foreground border-primary shadow-md' : 'bg-card border-border hover:bg-accent'}`}
+1970-                            >
+1971-                              <p className="font-bold truncate">{disease.nombre}</p>
+--
+1983-                              key={disease.id}
+1984-                              onClick={() => setSelectedDisease(disease)}
+1985:                              className={`w-full text-left p-3 rounded-lg border transition-all text-sm ${selectedDisease?.id === disease.id ? 'bg-primary text-primary-foreground border-primary shadow-md' : 'bg-card border-border hover:bg-accent'}`}
+1986-                            >
+1987-                              <p className="font-bold truncate">{disease.nombre}</p>
+--
+2036-                                key={disease.id}
+2037-                                onClick={() => { setSelectedDisease(disease); setSelectedPartoTopic(null); }}
+2038:                                className={`w-full text-left p-3 mb-2 rounded-lg border transition-all text-sm ${selectedDisease?.id === disease.id ? 'bg-primary text-primary-foreground border-primary shadow-md' : 'bg-card border-border hover:bg-accent'}`}
+2039-                              >
+2040-                                <p className="font-bold truncate">{disease.nombre}</p>
+--
+2125-                                    key={disease.id}
+2126-                                    onClick={() => setSelectedDisease(disease)}
+2127:                                    className={`w-full text-left p-2.5 rounded-xl border transition-all text-xs ${selectedDisease?.id === disease.id ? 'bg-primary text-primary-foreground border-primary shadow-lg scale-[1.02]' : 'bg-card border-border hover:bg-accent ring-offset-background hover:ring-2 hover:ring-primary/20'}`}
+2128-                                  >
+2129-                                    <p className="font-bold truncate">{disease.nombre}</p>
+--
+2147-                                      key={disease.id}
+2148-                                      onClick={() => setSelectedDisease(disease)}
+2149:                                      className={`w-full text-left p-2.5 rounded-xl border transition-all text-xs ${selectedDisease?.id === disease.id ? 'bg-red-500 text-white border-red-500 shadow-lg scale-[1.02]' : 'bg-card border-border hover:bg-accent ring-offset-background hover:ring-2 hover:ring-red-500/20'}`}
+2150-                                    >
+2151-                                      <p className="font-bold truncate">{disease.nombre}</p>
+--
+2193-                            key={disease.id}
+2194-                            onClick={() => setSelectedDisease(disease)}
+2195:                            className={`w-full text-left p-3 rounded-lg border transition-all text-sm ${selectedDisease?.id === disease.id ? 'bg-primary text-primary-foreground border-primary shadow-md' : 'bg-card border-border hover:bg-accent'}`}
+2196-                          >
+2197-                            <p className="font-bold truncate">{disease.nombre}</p>
+--
+2203-                            key={disease.id}
+2204-                            onClick={() => setSelectedDisease(disease)}
+2205:                            className={`w-full text-left p-3 rounded-lg border transition-all text-sm ${selectedDisease?.id === disease.id ? 'bg-primary text-primary-foreground border-primary shadow-md' : 'bg-card border-border hover:bg-accent'}`}
+2206-                          >
+2207-                            <p className="font-bold truncate">{disease.nombre}</p>
+--
+2214-                  <div className="lg:col-span-3">
+2215-                    {/* Render specific content for non-disease subtabs or the disease detail */}
+2216:                    {selectedService === 'Salud Comunitaria' && communitySubTab === 'inmunizaciones' && !selectedDisease && (
+2217-                      <Card className="space-y-6">
+2218-                        <div className="flex items-center space-x-3 text-primary">
+--
+2287-                    )}
+2288-
+2289:                    {selectedService === 'Salud Comunitaria' && communitySubTab === 'territorio' && !selectedDisease && (
+2290-                      <Card className="space-y-6">
+2291-                        <div className="flex items-center space-x-3 text-primary">
+--
+2407-                    )}
+2408-
+2409:                    {selectedService === 'Salud Comunitaria' && communitySubTab === 'ciclo_vida' && !selectedDisease && (
+2410-                      <Card className="space-y-6">
+2411-                        <div className="flex items-center space-x-3 text-primary">
+--
+2465-                    )}
+2466-
+2467:                    {selectedService === 'Gineco-Obstetricia' && ginecoSubTab === 'control_prenatal' && !selectedDisease && (
+2468-                      <Card className="space-y-6">
+2469-                        <div className="flex items-center space-x-3 text-primary">
+--
+2759-                    )}
+2760-
+2761:                    {selectedService === 'Gineco-Obstetricia' && ginecoSubTab === 'emergencias' && !selectedDisease && (
+2762-                      <div className="flex items-center justify-center p-12 text-muted-foreground flex-col bg-accent/5 rounded-xl border border-border border-dashed h-96">
+2763-                        <AlertTriangle size={64} className="mb-4 opacity-20" />
+--
+3172-                    )}
+3173-
+3174:                    {selectedService === 'Gineco-Obstetricia' && ginecoSubTab === 'parto' && !selectedDisease && !selectedPartoTopic && (
+3175-                      <div className="flex items-center justify-center p-12 text-muted-foreground flex-col bg-accent/5 rounded-xl border border-border border-dashed h-96">
+3176-                        <Baby size={64} className="mb-4 opacity-20" />
+--
+3180-                    )}
+3181-
+3182:                    {selectedService === 'Gineco-Obstetricia' && ginecoSubTab === 'parto' && selectedPartoTopic === 'parto' && !selectedDisease && (
+3183-                      <Card className="space-y-6">
+3184-                        <div className="flex items-center space-x-3 text-primary">
+--
+3303-                    )}
+3304-
+3305:                    {selectedService === 'Gineco-Obstetricia' && ginecoSubTab === 'parto' && selectedPartoTopic === 'puerperio' && !selectedDisease && (
+3306-                      <Card className="space-y-6">
+3307-                        <div className="flex items-center space-x-3 text-primary">
+--
+3431-                    )}
+3432-
+3433:                    {selectedService === 'Gineco-Obstetricia' && ginecoSubTab === 'parto' && !selectedDisease && (selectedPartoTopic === 'lactancia' || selectedPartoTopic === 'escalas') && (
+3434-                      <Card className="space-y-6">
+3435-                        {selectedPartoTopic === 'lactancia' ? (
+--
+3688-                    )}
+3689-
+3690:                    {selectedService === 'Gineco-Obstetricia' && ginecoSubTab === 'salud_sexual' && !selectedDisease && (
+3691-                      <Card className="space-y-6">
+3692-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+--
+3944-
+3945-                    {/* MEDICINA INTERNA SUBTABS */}
+3946:                    {selectedService === 'Medicina Interna' && internaSubTab === 'escalas' && !selectedDisease && (
+3947-                      <div className="space-y-6">
+3948-                        <Card className="p-6">
+--
+4009-                    )}
+4010-
+4011:                    {selectedService === 'Medicina Interna' && internaSubTab === 'protocolos' && !selectedDisease && (
+4012-                      <Card className="space-y-6">
+4013-                        <div className="flex items-center space-x-3 text-primary">
+--
+4233-                    )}
+4234-
+4235:                        {selectedService === 'Medicina Interna' && internaSubTab === 'visita' && !selectedDisease && (
+4236-                          <div className="space-y-6">
+4237-                            <Card className="p-6">
+--
+4456-                        )}
+4457-
+4458:                        {selectedService === 'Medicina Interna' && internaSubTab === 'diagnostico' && !selectedDisease && (
+4459-                        <Card className="space-y-6">
+4460-                          <div className="flex items-center space-x-3 text-primary">
+--
+4960-                    )}
+4961-
+4962:                    {selectedService === 'Emergencias' && emergencySubTab === 'patologias' && !selectedDisease && (
+4963-                      <div className="space-y-6">
+4964-                        <div className="flex items-center space-x-3 text-red-500 bg-card p-4 rounded-xl border border-border shadow-sm">
+--
+5138-                    )}
+5139-
+5140:                    {selectedService === 'Emergencias' && emergencySubTab === 'escalas' && !selectedDisease && (
+5141-                      <div className="space-y-6">
+5142-                        <Card className="p-6">
+--
+5195-
+5196-                    <AnimatePresence mode="wait">
+5197:                      {selectedDisease ? (
+5198-                        <motion.div
+5199:                          key={selectedDisease.id}
+5200-                          initial={{ opacity: 0, y: 10 }}
+5201-                          animate={{ opacity: 1, y: 0 }}
+--
+5203-                          className="space-y-4"
+5204-                        >
+5205:                          <Card className="border-t-4 p-5 sm:p-6 shadow-sm" style={{ borderTopColor: selectedDisease.color || 'var(--primary)' }}>
+5206-                            <div className="flex justify-between items-start mb-4">
+5207-                              <div>
+5208:                                <h4 className="text-xl sm:text-2xl font-black leading-tight">{selectedDisease.nombre}</h4>
+5209:                                <p className="text-primary font-bold text-sm mt-1">{selectedDisease.servicio}</p>
+5210-                              </div>
+5211-                              <div className="p-2 bg-primary/10 rounded-full text-primary shrink-0">
+--
+5244-                                      <h5 className="text-[10px] sm:text-xs font-black text-muted-foreground uppercase tracking-widest">Signos y Síntomas</h5>
+5245-                                      <ul className="space-y-1.5">
+5246:                                        {selectedDisease.clinica?.signosSintomas.map((s, i) => (
+5247-                                          <li key={i} className="flex items-start space-x-2 text-xs sm:text-sm">
+5248-                                            <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
+--
+5255-                                      <h5 className="text-[10px] sm:text-xs font-black text-muted-foreground uppercase tracking-widest">Maniobra de Exploración</h5>
+5256-                                      <p className="text-xs sm:text-sm bg-accent/20 p-3 rounded-lg border border-border italic">
+5257:                                        {selectedDisease.clinica?.maniobraExploracion || 'Información no disponible.'}
+5258-                                      </p>
+5259-                                    </div>
+--
+5264-                                    </h5>
+5265-                                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+5266:                                      {selectedDisease.clinica?.banderasRojas.map((b, i) => (
+5267-                                        <li key={i} className="flex items-center space-x-2 text-xs font-bold text-destructive/80">
+5268-                                          <X size={12} />
+--
+5280-                                    <h5 className="text-[10px] sm:text-xs font-black text-muted-foreground uppercase tracking-widest leading-none mb-4">Texto Técnico</h5>
+5281-                                    <div className="text-xs sm:text-sm leading-relaxed text-justify space-y-3">
+5282:                                      {(selectedDisease.fisiopatologia?.textoTecnico || 'Información no disponible.').replace(/\\n/g, '\n').split('\n').filter(p => p.trim() !== '').map((paragraph, idx) => {
+5283-                                        if (paragraph.startsWith('### ')) {
+5284-                                          return <h6 key={idx} className="font-bold text-primary text-sm mt-4 mb-1">{paragraph.replace('### ', '')}</h6>;
+--
+5299-                                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
+5300-                                    {[
+5301:                                      { label: 'Inicio', content: selectedDisease.fisiopatologia?.esquemaMental.inicio, color: 'bg-blue-500' },
+5302:                                      { label: 'Daño', content: selectedDisease.fisiopatologia?.esquemaMental.dano, color: 'bg-destructive' },
+5303:                                      { label: 'Consecuencia', content: selectedDisease.fisiopatologia?.esquemaMental.consecuencia, color: 'bg-orange-500' },
+5304-                                    ].map((item, i) => (
+5305-                                      <div key={i} className="p-3 rounded-xl bg-accent/10 border border-border">
+--
+5319-                                    <div className="p-4 bg-primary/5 rounded-xl border-l-4 border-primary">
+5320-                                      <h5 className="text-[10px] sm:text-xs font-black text-primary uppercase tracking-widest mb-1.5">Diagnóstico</h5>
+5321:                                      <p className="text-xs sm:text-sm font-medium">{selectedDisease.manejo?.diagnostico || 'Información no disponible.'}</p>
+5322-                                    </div>
+5323-                                    
+5324:                                    {selectedDisease.manejo?.tratamientoDetallado ? (
+5325-                                      <div className="space-y-4">
+5326-                                        <div className="p-4 bg-green-500/5 rounded-xl border-l-4 border-green-500">
+5327-                                          <h5 className="text-[10px] sm:text-xs font-black text-green-600 uppercase tracking-widest mb-3">Terapia Farmacológica Avanzada</h5>
+5328-                                          <div className="space-y-2">
+5329:                                            {selectedDisease.manejo.tratamientoDetallado.farmacos.map((f, i) => (
+5330-                                              <div key={i} className="bg-background/80 border border-border p-3 rounded-lg shadow-sm">
+5331-                                                <p className="font-bold text-sm text-foreground flex items-center"><Pill size={14} className="mr-1.5 text-green-600"/> {f.nombre}</p>
+--
+5344-                                            ))}
+5345-                                          </div>
+5346:                                          {selectedDisease.manejo.tratamientoDetallado.medidasGenerales && selectedDisease.manejo.tratamientoDetallado.medidasGenerales.length > 0 && (
+5347-                                            <div className="mt-4 pt-3 border-t border-green-500/20">
+5348-                                              <h6 className="text-xs font-bold text-green-700 mb-2 flex items-center"><Clipboard size={14} className="mr-1.5"/> Medidas de Soporte Generales:</h6>
+5349-                                              <ul className="list-disc pl-5 text-xs text-muted-foreground space-y-1">
+5350:                                                {selectedDisease.manejo.tratamientoDetallado.medidasGenerales.map((m, i) => <li key={i}>{m}</li>)}
+5351-                                              </ul>
+5352-                                            </div>
+--
+5354-                                        </div>
+5355-
+5356:                                        {selectedDisease.manejo.monitoreo && (
+5357-                                          <div className="p-4 bg-blue-500/5 rounded-xl border-l-4 border-blue-500">
+5358-                                            <h5 className="text-[10px] sm:text-xs font-black text-blue-600 uppercase tracking-widest mb-3 flex items-center"><Activity size={16} className="mr-1.5"/> Monitoreo y Señales de Alerta</h5>
+--
+5361-                                                <p className="text-xs font-bold text-foreground mb-2 flex items-center"><Activity size={14} className="mr-1.5 text-blue-500"/> Parámetros a vigilar estrictamente:</p>
+5362-                                                <ul className="list-disc pl-5 text-xs text-muted-foreground space-y-1">
+5363:                                                  {selectedDisease.manejo.monitoreo.parametros.map((p, i) => <li key={i}>{p}</li>)}
+5364-                                                </ul>
+5365-                                              </div>
+--
+5367-                                                <p className="text-xs font-bold text-red-600 mb-2 flex items-center"><AlertTriangle size={14} className="mr-1.5"/> Signos de Alerta Roja (Suspender o Intervenir):</p>
+5368-                                                <ul className="list-disc pl-5 text-xs text-red-600/90 space-y-1">
+5369:                                                  {selectedDisease.manejo.monitoreo.signosAlerta.map((s, i) => <li key={i} className="font-medium">{s}</li>)}
+5370-                                                </ul>
+5371-                                              </div>
+--
+5374-                                        )}
+5375-
+5376:                                        {selectedDisease.manejo.evaluacion && (
+5377-                                          <div className="p-4 bg-purple-500/5 rounded-xl border-l-4 border-purple-500">
+5378-                                            <h5 className="text-[10px] sm:text-xs font-black text-purple-600 uppercase tracking-widest mb-3 flex items-center"><ShieldCheck size={16} className="mr-1.5"/> Evaluación de la Terapia</h5>
+--
+5381-                                                <p className="text-[11px] font-bold text-green-600 mb-2">✅ Criterios de Éxito Funcional:</p>
+5382-                                                <ul className="list-disc pl-4 text-xs text-muted-foreground space-y-1">
+5383:                                                  {selectedDisease.manejo.evaluacion.criteriosExito.map((c, i) => <li key={i}>{c}</li>)}
+5384-                                                </ul>
+5385-                                              </div>
+--
+5387-                                                <p className="text-[11px] font-bold text-orange-600 mb-2">❌ Criterios de Fracaso / Refractariedad:</p>
+5388-                                                <ul className="list-disc pl-4 text-xs text-muted-foreground space-y-1">
+5389:                                                  {selectedDisease.manejo.evaluacion.criteriosFracaso.map((c, i) => <li key={i}>{c}</li>)}
+5390-                                                </ul>
+5391-                                              </div>
+--
+5400-                                          <span className="text-[8px] sm:text-[9px] bg-green-500/10 px-2 py-0.5 rounded text-green-600 lowercase font-medium tracking-normal">Formato Simplificado</span>
+5401-                                        </h5>
+5402:                                        <p className="text-xs sm:text-sm font-medium">{selectedDisease.manejo?.tratamiento || 'Información no disponible.'}</p>
+5403-                                      </div>
+5404-                                    )}
+--
+5411-                                  <div className="p-3 bg-accent/20 rounded-lg border border-border">
+5412-                                    <h5 className="text-[10px] sm:text-xs font-black text-muted-foreground uppercase tracking-widest mb-1">NANDA</h5>
+5413:                                    <p className="text-xs sm:text-sm font-bold text-primary">{selectedDisease.enfermeria?.nanda || 'Información no disponible.'}</p>
+5414-                                  </div>
+5415-                                  <div className="space-y-2">
+5416-                                    <h5 className="text-[10px] sm:text-xs font-black text-muted-foreground uppercase tracking-widest">Intervenciones Clave</h5>
+5417-                                    <div className="grid grid-cols-1 gap-2">
+5418:                                      {selectedDisease.enfermeria?.intervenciones.map((int, i) => (
+5419-                                        <div key={i} className="p-3 bg-card border border-border rounded-xl hover:border-primary/50 transition-colors">
+5420-                                          <p className="text-xs sm:text-sm font-bold text-foreground mb-1">{int.accion}</p>
+--
+5433-                              <p className="text-[10px] text-muted-foreground italic">
+5434-                                Fuente: {
+5435:                                  diseaseActiveTab === 'clinica' ? selectedDisease.clinica?.cita :
+5436:                                  diseaseActiveTab === 'fisiopatologia' ? selectedDisease.fisiopatologia?.cita :
+5437:                                  diseaseActiveTab === 'manejo' ? selectedDisease.manejo?.cita :
+5438:                                  selectedDisease.enfermeria?.cita
+5439-                                }
+5440-                              </p>

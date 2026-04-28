@@ -1,0 +1,119 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "User account information and current rotation status",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "nombre": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "telefono": { "type": "string" },
+        "direccion": { "type": "string" },
+        "rol": { "type": "string" },
+        "universidad": { "type": "string" },
+        "hospital": { "type": "string" },
+        "servicioActual": { "type": "string" },
+        "horario": { "type": "string" }
+      },
+      "required": ["uid", "email"]
+    },
+    "BitacoraEntry": {
+      "title": "Bitacora Entry",
+      "description": "Daily activity log for the student",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "actividad": { "type": "string" },
+        "procedimientos": { "type": "string" },
+        "observaciones": { "type": "string" },
+        "tipo": { "type": "string" },
+        "fecha": { "type": "string" },
+        "completado": { "type": "boolean" },
+        "linkedTaskId": { "type": "string" }
+      },
+      "required": ["uid", "actividad", "fecha"]
+    },
+    "Shift": {
+      "title": "Calendar Shift",
+      "description": "Individual shift event in the calendar",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "title": { "type": "string" },
+        "date": { "type": "string" },
+        "startTime": { "type": "string" },
+        "endTime": { "type": "string" },
+        "type": { "type": "string" },
+        "color": { "type": "string" }
+      },
+      "required": ["uid", "title", "date"]
+    },
+    "ShiftLog": {
+      "title": "Shift Configuration Log",
+      "description": "The configuration used to generate specific shifts",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "servicioActual": { "type": "string" },
+        "tipoTurno": { "type": "string" },
+        "fechaInicio": { "type": "string" },
+        "fechaFin": { "type": "string" },
+        "horaEntrada": { "type": "string" },
+        "horaSalida": { "type": "string" },
+        "diasSemana": { "type": "array", "items": { "type": "string" } },
+        "horariosPorDia": { "type": "object" },
+        "diaAcademico": { "type": "array", "items": { "type": "string" } },
+        "ubicacionPiso": { "type": "string" },
+        "personalCargo": { "type": "string" },
+        "syncCalendar": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Note": {
+      "title": "Note",
+      "description": "Personal note or reminder",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "reminderAt": { "type": "string" },
+        "notified": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Task": {
+      "title": "Task",
+      "description": "To-do list item",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "text": { "type": "string" },
+        "completed": { "type": "boolean" },
+        "source": { "type": "string" }
+      }
+    },
+    "MonthlyService": {
+      "title": "Monthly Service Configuration",
+      "description": "Default rotation service for a specific month",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "monthKey": { "type": "string" },
+        "service": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "monthKey", "service"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": { "schema": "User", "description": "User profiles" },
+    "/bitacora/{entryId}": { "schema": "BitacoraEntry", "description": "Daily logs" },
+    "/shifts/{shiftId}": { "schema": "Shift", "description": "Calendar events" },
+    "/shift_logs/{logId}": { "schema": "ShiftLog", "description": "Shift creation history" },
+    "/notes/{noteId}": { "schema": "Note", "description": "Personal notes" },
+    "/tasks/{taskId}": { "schema": "Task", "description": "User tasks" },
+    "/monthly_services/{docId}": { "schema": "MonthlyService", "description": "Default monthly rotation services" }
+  }
+}

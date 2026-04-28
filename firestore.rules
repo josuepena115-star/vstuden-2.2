@@ -1,0 +1,58 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    match /users/{userId} {
+      allow get, create, update: if isOwner(userId);
+    }
+
+    match /bitacora/{entryId} {
+      allow list: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow get, delete: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow create, update: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+    }
+
+    match /tasks/{taskId} {
+      allow list: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow get, delete: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow create, update: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+    }
+
+    match /shifts/{shiftId} {
+      allow list: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow get, delete: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow create, update: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+    }
+
+    match /shift_logs/{logId} {
+      allow list: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow get, delete: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow create, update: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+    }
+
+    match /monthly_services/{docId} {
+      allow list: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow get, delete: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow create, update: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+    }
+
+    match /notes/{noteId} {
+      allow list: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow get, delete: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow create, update: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+    }
+  }
+}
