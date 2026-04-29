@@ -87,18 +87,32 @@ export default function HandoverNoteAction() {
         }
       }
 
+      const taskRef = await addDoc(collection(getDb(), 'tasks'), {
+        uid: auth.currentUser.uid,
+        text: noteContent,
+        completed: false,
+        source: 'Relevo',
+        isAcademico: false,
+        isUrgent: true, // Relevo is usually important
+        dueDate: reminderAt, // Using the 30min before end as the logical due date
+        notified: false,
+        createdAt: serverTimestamp()
+      });
+
+      // Also save to notes for historical record if preferred, or just rely on tasks
       await addDoc(collection(getDb(), 'notes'), {
         uid: auth.currentUser.uid,
         title: 'Nota de Relevo',
         content: noteContent,
         reminderAt: reminderAt,
+        taskId: taskRef.id,
         notified: false,
         createdAt: serverTimestamp(),
         type: 'relevo'
       });
 
-      toast.success('Nota de relevo guardada', {
-        description: reminderAt ? 'Se ha programado un recordatorio para 30 min antes de terminar tu turno.' : 'Guardada sin recordatorio (turno no encontrado o ya pasado).'
+      toast.success('Nota de relevo vinculada a Tareas', {
+        description: reminderAt ? 'Recordatorio programado para el relevo.' : 'Añadida a tu lista de pendientes.'
       });
       setNoteContent('');
       setIsOpen(false);

@@ -1473,10 +1473,16 @@ function App() {
                               <p className={`text-sm font-bold truncate transition-all ${task.completed ? 'text-muted-foreground line-through decoration-2' : 'text-foreground'}`}>{task.text}</p>
                               {task.isUrgent && !task.completed && <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" title="Urgente" />}
                             </div>
-                            <div className="flex items-center gap-2 mt-1">
-                              {task.source && <span className="text-[8px] font-black text-primary/60 uppercase">{task.source}</span>}
-                              {task.isAcademico && <span className="text-[8px] font-black text-purple-500 uppercase flex items-center gap-1"><BookOpen size={8} /> Académico</span>}
-                              {task.dueDate && <span className="text-[8px] font-black text-orange-500 uppercase flex items-center gap-1"><Clock size={8} /> {new Date(task.dueDate).toLocaleDateString()}</span>}
+                            <div className="flex flex-wrap items-center gap-2 mt-1">
+                              {task.source === 'Relevo' ? (
+                                <span className="text-[8px] font-black text-sky-500 bg-sky-500/10 px-1.5 py-0.5 rounded uppercase flex items-center gap-1 border border-sky-500/20">
+                                  <ClipboardList size={8} /> Relevo
+                                </span>
+                              ) : (
+                                task.source && <span className="text-[8px] font-black text-primary/60 uppercase">{task.source}</span>
+                              )}
+                              {task.isAcademico && <span className="text-[8px] font-black text-purple-500 bg-purple-500/10 px-1.5 py-0.5 rounded uppercase flex items-center gap-1 border border-purple-500/20"><BookOpen size={8} /> Académico</span>}
+                              {task.dueDate && <span className="text-[8px] font-black text-orange-500 bg-orange-500/10 px-1.5 py-0.5 rounded uppercase flex items-center gap-1 border border-orange-500/20"><Clock size={8} /> {new Date(task.dueDate).toLocaleDateString()}</span>}
                             </div>
                           </div>
                           <button onClick={() => deleteTask(task.id)} className="p-1 px-2 text-destructive/40 hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all opacity-0 group-hover:opacity-100">
@@ -2272,9 +2278,8 @@ function App() {
                   {[
                     { id: 'patologias', title: '1. Patologías Frecuentes', subtitle: 'Neumología, Cardiología, Neurología, Nefro, Gastro', icon: Activity },
                     { id: 'escalas', title: '2. Escalas y Scores', subtitle: 'CURB-65, Child-Pugh, Cockcroft-Gault, TIMI', icon: Calculator },
-                    { id: 'protocolos', title: '3. Protocolos y Esquemas', subtitle: 'Insulina, Electrolitos, Anticoagulación, Vía Aérea', icon: Clipboard },
-                    { id: 'visita', title: '4. Pase de Visita y Notas', subtitle: 'Estructura SOAP, Herramienta SAER (SBAR)', icon: FileText },
-                    { id: 'diagnostico', title: '5. Diagnóstico Avanzado', subtitle: 'Algoritmo Ácido-Base, Perfiles Hepáticos/Anemias', icon: Search }
+                    { id: 'visita', title: '3. Pase de Visita y Notas', subtitle: 'Estructura SOAP, Herramienta SAER (SBAR)', icon: FileText },
+                    { id: 'diagnostico', title: '4. Diagnóstico Avanzado', subtitle: 'Algoritmo Ácido-Base, Perfiles Hepáticos/Anemias', icon: Search }
                   ].map((block) => (
                     <Card 
                       key={block.id} 
@@ -2514,7 +2519,6 @@ function App() {
                   ) : internaSubTab ? (
                     internaSubTab === 'patologias' ? 'Patologías Frecuentes' :
                     internaSubTab === 'escalas' ? 'Escalas y Scores' :
-                    internaSubTab === 'protocolos' ? 'Protocolos y Esquemas' :
                     internaSubTab === 'visita' ? 'Pase de Visita y Notas' :
                     'Diagnóstico Avanzado'
                   ) : cirugiaSubTab ? (
@@ -2526,7 +2530,7 @@ function App() {
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                   <div className="lg:col-span-1 space-y-2">
                     <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">
-                        {communitySubTab === 'vigilancia' ? 'Enfermedades de Notificación' : ginecoSubTab === 'emergencias' ? 'Patologías de Emergencia' : ginecoSubTab === 'claves' ? 'Protocolo Activo' : emergencySubTab === 'patologias' ? 'Enfoque por Sistemas' : internaSubTab === 'patologias' ? 'Sistemas' : internaSubTab === 'escalas' ? 'Lista de Escalas' : internaSubTab === 'visita' ? 'Modelos de Notas' : internaSubTab === 'protocolos' ? 'Lista de Protocolos' : cirugiaSubTab === 'patologias' ? 'Lista de Cirugía' : cirugiaSubTab ? 'Apartados' : 'Contenidos'}
+                        {communitySubTab === 'vigilancia' ? 'Enfermedades de Notificación' : ginecoSubTab === 'emergencias' ? 'Patologías de Emergencia' : ginecoSubTab === 'claves' ? 'Protocolo Activo' : emergencySubTab === 'patologias' ? 'Enfoque por Sistemas' : internaSubTab === 'patologias' ? 'Sistemas' : internaSubTab === 'escalas' ? 'Lista de Escalas' : internaSubTab === 'visita' ? 'Modelos de Notas' : cirugiaSubTab === 'patologias' ? 'Lista de Cirugía' : cirugiaSubTab ? 'Apartados' : 'Contenidos'}
                     </p>
                     <div className="flex flex-col gap-2 max-h-[30vh] lg:max-h-[60vh] overflow-y-auto pr-2 scrollbar-hide">
                       {selectedService === 'Salud Comunitaria' ? (
@@ -2649,20 +2653,7 @@ function App() {
                             <p className="text-[10px] opacity-70 truncate ml-6">{tool.desc}</p>
                           </button>
                         ))
-                      ) : selectedService === 'Medicina Interna' && internaSubTab === 'protocolos' ? (
-                        CLINICAL_PROTOCOLS.map(protocol => (
-                          <button
-                            key={protocol.id}
-                            onClick={() => setSelectedProtocolId(protocol.id)}
-                            className={`w-full text-left p-3 rounded-lg border transition-all text-sm ${selectedProtocolId === protocol.id ? 'bg-primary text-primary-foreground border-primary shadow-md' : 'bg-card border-border hover:bg-accent'}`}
-                          >
-                            <div className="flex items-center gap-2">
-                              <Clipboard size={16} className={selectedProtocolId === protocol.id ? 'text-white' : 'text-primary'} />
-                              <p className="font-bold truncate">{protocol.title}</p>
-                            </div>
-                            <p className="text-[10px] opacity-70 truncate ml-6">{protocol.category}</p>
-                          </button>
-                        ))
+
                       ) : selectedService === 'Medicina Interna' && internaSubTab === 'diagnostico' ? (
                         [
                           { id: 'acido-base', name: 'Algoritmo Ácido-Base', icon: Wind, desc: 'Gasometría rápida' },
@@ -5295,230 +5286,6 @@ function App() {
                           )}
                         </Card>
                       </div>
-                    )}
-
-                    {selectedService === 'Medicina Interna' && internaSubTab === 'protocolos' && !selectedDisease && (
-                      <Card className="space-y-6">
-                        <div className="flex items-center space-x-3 text-primary">
-                          <Clipboard size={24} />
-                          <h4 className="text-xl font-bold">
-                            {selectedProtocolId ? CLINICAL_PROTOCOLS.find(p => p.id === selectedProtocolId)?.title : 'Protocolos y Esquemas de Manejo'}
-                          </h4>
-                        </div>
-                        
-                        {!selectedProtocolId ? (
-                          <div className="space-y-8 animate-in fade-in duration-500">
-                             {/* Quick Reference Schemes */}
-                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                <div className="border border-primary/20 p-4 rounded-2xl bg-primary/5 hover:bg-primary/10 transition-colors cursor-pointer group" onClick={() => setSelectedProtocolId('quick_insulin')}>
-                                   <div className="flex items-center justify-between mb-3">
-                                      <Activity size={20} className="text-primary" />
-                                      <ChevronRight size={16} className="text-primary opacity-0 group-hover:opacity-100 transition-all" />
-                                   </div>
-                                   <h5 className="font-bold text-sm mb-1 text-primary">Esquemas de Insulina</h5>
-                                   <p className="text-[10px] text-muted-foreground">Corrección rápida y transición a esquema basal-bolo.</p>
-                                </div>
-                                <div className="border border-orange-500/20 p-4 rounded-2xl bg-orange-500/5 hover:bg-orange-500/10 transition-colors cursor-pointer group" onClick={() => setSelectedProtocolId('quick_electrolytes')}>
-                                   <div className="flex items-center justify-between mb-3">
-                                      <Droplet size={20} className="text-orange-500" />
-                                      <ChevronRight size={16} className="text-orange-500 opacity-0 group-hover:opacity-100 transition-all" />
-                                   </div>
-                                   <h5 className="font-bold text-sm mb-1 text-orange-600">Reposición de Electrolitos</h5>
-                                   <p className="text-[10px] text-muted-foreground">Déficit de Sodio (Na) y reglas de oro del Potasio (K).</p>
-                                </div>
-                                <div className="border border-red-500/20 p-4 rounded-2xl bg-red-500/5 hover:bg-red-500/10 transition-colors cursor-pointer group" onClick={() => setSelectedProtocolId('quick_anticoagulation')}>
-                                   <div className="flex items-center justify-between mb-3">
-                                      <Shield size={20} className="text-red-500" />
-                                      <ChevronRight size={16} className="text-red-500 opacity-0 group-hover:opacity-100 transition-all" />
-                                   </div>
-                                   <h5 className="font-bold text-sm mb-1 text-red-600">Anticoagulación</h5>
-                                   <p className="text-[10px] text-muted-foreground">Profilaxis y terapia con Enoxaparina / Ajuste renal.</p>
-                                </div>
-                             </div>
-
-                             <div className="pt-6 border-t border-border">
-                               <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-4">Protocolos Avanzados de Medicina Interna</h4>
-                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                  {CLINICAL_PROTOCOLS.map(protocol => (
-                                    <div 
-                                      key={protocol.id} 
-                                      onClick={() => setSelectedProtocolId(protocol.id)}
-                                      className="p-4 bg-card border border-border rounded-2xl hover:border-primary/50 transition-all cursor-pointer group shadow-sm"
-                                    >
-                                      <div className="flex justify-between items-start mb-2">
-                                        <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold uppercase">{protocol.category}</span>
-                                        <ArrowUpDown size={14} className="text-muted-foreground group-hover:text-primary transition-colors" />
-                                      </div>
-                                      <h5 className="font-bold text-sm group-hover:text-primary transition-colors">{protocol.title}</h5>
-                                      <p className="text-[11px] text-muted-foreground mt-1 line-clamp-2">{protocol.description}</p>
-                                    </div>
-                                  ))}
-                               </div>
-                             </div>
-                          </div>
-                        ) : selectedProtocolId === 'quick_insulin' ? (
-                          <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
-                             <div className="bg-primary/5 p-6 rounded-3xl border border-primary/20">
-                                <h5 className="font-bold text-primary mb-4 flex items-center"><Activity size={20} className="mr-2"/> Esquema Móvil (Insulina Rápida/Regular)</h5>
-                                <div className="overflow-hidden rounded-xl border border-primary/10 bg-white">
-                                   <table className="w-full text-sm text-left border-collapse">
-                                     <thead><tr className="bg-primary text-white">
-                                       <th className="p-3">Glucemia (mg/dL)</th>
-                                       <th className="p-3 text-center">Unidades a administrar (UI)</th>
-                                     </tr></thead>
-                                     <tbody className="divide-y divide-primary/10">
-                                       <tr className="hover:bg-primary/5 transition-colors"><td className="p-3 font-medium">150 - 200</td><td className="p-3 text-center">2 UI SC</td></tr>
-                                       <tr className="hover:bg-primary/5 transition-colors"><td className="p-3 font-medium">201 - 250</td><td className="p-3 text-center">4 UI SC</td></tr>
-                                       <tr className="hover:bg-primary/5 transition-colors"><td className="p-3 font-medium">251 - 300</td><td className="p-3 text-center">6 UI SC</td></tr>
-                                       <tr className="bg-red-50 hover:bg-red-100 transition-colors"><td className="p-3 font-bold text-red-600">{'>'} 300</td><td className="p-3 text-center font-bold text-red-600">8 UI + Notificar Médico</td></tr>
-                                     </tbody>
-                                   </table>
-                                </div>
-                                <div className="mt-8 pt-6 border-t border-primary/10">
-                                   <h5 className="font-bold text-primary mb-3">Transición a Basal-Bolo (Mantenimiento)</h5>
-                                   <div className="bg-white p-4 rounded-2xl border border-primary/10 text-sm space-y-3">
-                                      <p className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-primary"></span> <strong>Dosis Total Diaria (DTD):</strong> 0.3 - 0.5 UI/kg/día según fragilidad del paciente.</p>
-                                      <p className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-primary"></span> <strong>Distribución 50/50:</strong> 50% Basal (NPH o Glargina) y 50% Corriente (Bolo preprandial).</p>
-                                      <p className="text-[11px] text-muted-foreground italic pl-4">Nota: En pacientes ancianos o con TFG {'<'}30 ml/min, iniciar con 0.2 - 0.3 UI/kg/día para evitar hipoglucemia.</p>
-                                   </div>
-                                </div>
-                             </div>
-                             <button onClick={() => setSelectedProtocolId(null)} className="text-xs text-primary font-bold hover:underline flex items-center gap-1"><ChevronLeft size={14}/> Volver a Protocolos</button>
-                          </div>
-                        ) : selectedProtocolId === 'quick_electrolytes' ? (
-                          <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
-                             <div className="bg-orange-500/5 p-6 rounded-3xl border border-orange-500/20">
-                                <h5 className="font-bold text-orange-600 mb-6 flex items-center"><Droplet size={20} className="mr-2"/> Corrección de Hiponatremia e Hipopotasemia</h5>
-                                <div className="space-y-6">
-                                   <div className="bg-white p-4 rounded-2xl border border-orange-200">
-                                      <h6 className="font-bold text-xs uppercase tracking-widest text-orange-700 mb-3">Déficit de Sodio (Na+)</h6>
-                                      <div className="bg-orange-50 p-4 rounded-xl border border-orange-100 mb-3">
-                                         <p className="text-sm font-mono text-center font-bold">mEq Na = 0.6* x Peso(kg) x (Na deseado - Na actual)</p>
-                                         <p className="text-[10px] text-center text-muted-foreground mt-1">* 0.5 en mujeres / 0.6 en hombres</p>
-                                      </div>
-                                      <p className="text-xs text-muted-foreground leading-relaxed">
-                                         <strong>Regla de Oro:</strong> No corregir más de <strong>8-10 mEq/L en 24 horas</strong>. Una corrección rápida puede causar el <strong>Síndrome de Desmielinización Osmótica</strong> (Mielinólisis Pontina).
-                                      </p>
-                                   </div>
-
-                                   <div className="bg-white p-4 rounded-2xl border border-orange-200">
-                                      <h6 className="font-bold text-xs uppercase tracking-widest text-orange-700 mb-3">Reposición de Potasio (K+)</h6>
-                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                         <div className="bg-orange-50/50 p-3 rounded-xl border border-orange-100">
-                                            <p className="font-bold text-xs text-orange-800 mb-1">Vía Periférica</p>
-                                            <p className="text-[11px] text-muted-foreground">Concentración máx: 40 mEq/L.<br/>Velocidad máx: 10 mEq/hora.</p>
-                                         </div>
-                                         <div className="bg-red-50 p-3 rounded-xl border border-red-100">
-                                            <p className="font-bold text-xs text-red-800 mb-1">Vía Central</p>
-                                            <p className="text-[11px] text-muted-foreground">Velocidad máx: 20 mEq/hora.<br/>Requiere MONITOREO EKG continuo.</p>
-                                         </div>
-                                      </div>
-                                      <p className="text-[11px] text-red-600 font-bold mt-4 flex items-center gap-1"><AlertTriangle size={12}/> PROHIBIDO: Nunca administrar K+ en bolo directo o sin diluir.</p>
-                                   </div>
-                                </div>
-                             </div>
-                             <button onClick={() => setSelectedProtocolId(null)} className="text-xs text-primary font-bold hover:underline flex items-center gap-1"><ChevronLeft size={14}/> Volver a Protocolos</button>
-                          </div>
-                        ) : selectedProtocolId === 'quick_anticoagulation' ? (
-                          <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
-                             <div className="bg-red-500/5 p-6 rounded-3xl border border-red-500/20">
-                                <h5 className="font-bold text-red-600 mb-6 flex items-center"><Shield size={20} className="mr-2"/> Guía de Anticoagulación con Enoxaparina</h5>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                   <div className="bg-white p-5 rounded-2xl border border-red-100 shadow-sm relative overflow-hidden">
-                                      <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 -mr-8 -mt-8 rounded-full"></div>
-                                      <h6 className="font-black text-[10px] text-blue-600 uppercase mb-4 tracking-tighter">Profilaxis (Prevención TVP)</h6>
-                                      <div className="space-y-4">
-                                         <div>
-                                            <p className="text-sm font-bold">40 mg SC cada 24 horas</p>
-                                            <p className="text-xs text-muted-foreground uppercase tracking-widest mt-1">Dosis Estándar Adulto</p>
-                                         </div>
-                                         <div className="pt-4 border-t border-dashed border-border">
-                                            <p className="text-xs font-bold text-orange-600">Ajuste Renal (ClCr {'<'} 30 ml/min):</p>
-                                            <p className="text-sm font-black text-orange-700">20 mg SC cada 24 horas</p>
-                                         </div>
-                                      </div>
-                                   </div>
-
-                                   <div className="bg-white p-5 rounded-2xl border border-red-100 shadow-sm relative overflow-hidden">
-                                      <div className="absolute top-0 right-0 w-24 h-24 bg-red-600/5 -mr-8 -mt-8 rounded-full"></div>
-                                      <h6 className="font-black text-[10px] text-red-600 uppercase mb-4 tracking-tighter">Terapéutica (TEP / SCA)</h6>
-                                      <div className="space-y-4">
-                                         <div>
-                                            <p className="text-sm font-bold">1 mg/kg SC cada 12 horas</p>
-                                            <p className="text-xs text-muted-foreground uppercase tracking-widest mt-1">Dosis de Plena de Anticoagulación</p>
-                                         </div>
-                                         <div className="pt-4 border-t border-dashed border-border">
-                                            <p className="text-xs font-bold text-orange-600">Ajuste Renal (ClCr {'<'} 30 ml/min):</p>
-                                            <p className="text-sm font-black text-orange-700">1 mg/kg SC cada 24 horas</p>
-                                         </div>
-                                      </div>
-                                   </div>
-                                </div>
-                                <div className="mt-6 bg-red-600/10 p-4 rounded-xl text-xs text-red-800">
-                                   <strong>Cuidado:</strong> En mayores de 75 años con SCACEST y fibrinólisis, no administrar el bolo inicial IV de 30 mg y reducir la dosis subcutánea (0.75 mg/kg c/12h).
-                                </div>
-                             </div>
-                             <button onClick={() => setSelectedProtocolId(null)} className="text-xs text-primary font-bold hover:underline flex items-center gap-1"><ChevronLeft size={14}/> Volver a Protocolos</button>
-                          </div>
-                        ) : (
-                          <div className="animate-in fade-in zoom-in-95 duration-500">
-                             {CLINICAL_PROTOCOLS.filter(p => p.id === selectedProtocolId).map(protocol => (
-                               <div key={protocol.id} className="space-y-6">
-                                  <div className="bg-primary/5 p-4 rounded-2xl border border-primary/10 flex justify-between items-center">
-                                     <div className="text-xs font-bold text-primary uppercase tracking-widest">{protocol.category}</div>
-                                     <button onClick={() => setSelectedProtocolId(null)} className="text-[10px] bg-white border border-border px-3 py-1 rounded-full hover:bg-accent transition-colors">Cerrar Protocolo</button>
-                                  </div>
-
-                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                     <div className="space-y-6">
-                                        <div className="bg-orange-500/5 border border-orange-500/20 p-6 rounded-3xl">
-                                           <h6 className="font-bold text-sm mb-4 flex items-center text-orange-600"><AlertTriangle size={18} className="mr-2"/> Criterios de Activación</h6>
-                                           <ul className="space-y-3">
-                                             {protocol.activationCriteria.map((crit, idx) => (
-                                               <li key={idx} className="flex items-start gap-3 text-sm text-foreground">
-                                                  <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 shrink-0"></span>
-                                                  <span className="leading-snug">{crit}</span>
-                                               </li>
-                                             ))}
-                                           </ul>
-                                        </div>
-
-                                        <div className="bg-green-500/5 border border-green-500/20 p-6 rounded-3xl">
-                                           <h6 className="font-bold text-sm mb-4 flex items-center text-green-700"><Activity size={18} className="mr-2"/> Metas de Resucitación</h6>
-                                           <ul className="space-y-3">
-                                             {protocol.resuscitationGoals.map((goal, idx) => (
-                                               <li key={idx} className="flex items-start gap-3 text-sm text-green-800">
-                                                  <CheckCircle2 size={16} className="mt-0.5 shrink-0" />
-                                                  <span className="leading-snug font-medium">{goal}</span>
-                                               </li>
-                                             ))}
-                                           </ul>
-                                        </div>
-                                     </div>
-
-                                     <div className="bg-blue-500/5 border border-blue-500/20 p-6 rounded-3xl">
-                                        <h6 className="font-bold text-sm mb-6 flex items-center text-blue-600"><Clipboard size={18} className="mr-2"/> Algoritmo Paso a Paso</h6>
-                                        <div className="space-y-6 relative ml-2">
-                                          <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-blue-200"></div>
-                                          {protocol.algorithm.map((step, idx) => (
-                                            <div key={idx} className="relative pl-10">
-                                              <div className="absolute left-0 top-1 w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-black z-10">{idx + 1}</div>
-                                              <div className="bg-white p-4 rounded-2xl border border-blue-100 shadow-sm mb-2">
-                                                 <p className="font-bold text-xs text-blue-800 uppercase mb-1">{step.step}</p>
-                                                 <p className="font-bold text-sm text-foreground mb-2">{step.action}</p>
-                                                 <p className="text-xs text-muted-foreground leading-relaxed">{step.details}</p>
-                                              </div>
-                                            </div>
-                                          ))}
-                                        </div>
-                                     </div>
-                                  </div>
-                                  <button onClick={() => setSelectedProtocolId(null)} className="text-xs text-primary font-bold hover:underline flex items-center gap-1 mt-4"><ChevronLeft size={14}/> Volver al listado principal</button>
-                               </div>
-                             ))}
-                          </div>
-                        )}
-                      </Card>
                     )}
 
                         {selectedService === 'Medicina Interna' && internaSubTab === 'visita' && !selectedDisease && (

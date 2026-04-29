@@ -84,6 +84,13 @@ export default function NotificationSystem() {
             }
         }
 
+        // Relevo Logic: Notify at dueDate (which is set to 30 min before end of shift)
+        if (data.source === 'Relevo' && !data.notified) {
+            if (diffHours <= 0) {
+                sendNotification('🏥 Pendiente Relevo', `No olvides: ${data.text}`, document.id, 'tasks');
+            }
+        }
+
         // Urgent Repeating logic (if urgent and not completed, every 2h simulated here by checking if last notified was > 2h ago)
         if (data.isUrgent && !data.completed) {
             const lastNotified = data.lastNotifiedUrgent?.toDate?.() || new Date(0);

@@ -1,8 +1,0 @@
-2432:  { name: "Emergencias", icon: "Ambulance" }
-3268:      "tratamiento": "Manejo conservador si < 34 semanas sin signos de gravedad. Antihipertensivos: Nifedipina (10-40 mg/día), Labetalol o Alfa Metildopa. Emergencia hipertensiva: Nifedipina 10 mg VO cada 20-30 min. Prevención de eclampsia: Sulfato de Magnesio (Impregnación 4g IV en 20 min, mantenimiento 1g/h). Terminación del embarazo a las 37 semanas o antes si hay inestabilidad.",
-3708:      "tratamiento": "VIH (Adultos): Tenofovir/Lamivudina/Dolutegravir (TDF/3TC/DTG) 1 tableta diaria por 28 días.\nOtras ITS: Ceftriaxona 250mg IM + Azitromicina 1g VO (dosis única) + Metronidazol 2g VO (dosis única).\nAnticoncepción de Emergencia: Levonorgestrel 1.5mg VO (dosis única).",
-4270:    "servicio": "Emergencias",
-4334:    "servicio": "Emergencias",
-4340:    "servicio": "Emergencias",
-4405:    "servicio": "Emergencias",
-4411:    "servicio": "Emergencias",
