@@ -60,6 +60,7 @@ export interface Disease {
   riesgosNoTratado?: string[];
   sintomasClave?: string[];
   banderasRojas?: string[];
+  procedimientos?: string[];
 
   // Pestaña 4: Rol de Enfermería (Seguridad)
   enfermeria?: {
@@ -2338,166 +2339,10 @@ export const DRUGS: Drug[] = [
     },
     "contraindicaciones": "• Hipersensibilidad a benzodiazepinas o flumazenil\n• Pacientes con epilepsia en tratamiento prolongado con benzos\n• Intoxicación mixta con antidepresivos tricíclicos (riesgo convulsivo)\n• Hipertensión intracraneal severa\n• Antecedente de crisis convulsivas recurrentes\n• Uso de benzos para control de presión intracraneal\n• Dependencia física a benzodiazepinas\n• Traumatismo craneoencefálico severo",
     "efectosAdversos": "• Convulsiones (en dependientes)\n• Agitación e irritabilidad\n• Náuseas y vómitos\n• Arritmias cardíacas\n• Mareo y fatiga",
-    "usosEnfermeria": "Intervención: EMERGENCIA: Administrar en dosis tituladas (0.2mg cada minuto). Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Vigilar aparición de convulsiones tras la administración. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Monitorizar resedación (vida media corta, puede requerir infusión). Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Asegurar medidas de seguridad por posible agitación al despertar. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Monitorizar frecuencia cardíaca y presión arterial. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Evaluar nivel de conciencia continuamente. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Instruir sobre administración en bolos lentos y titulados. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Vigilar signos de abstinencia aguda a benzos. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.",
-    "presentaciones": "Amp 0.5mg/5ml.",
-    "color": "#E3F2FD",
-    "icon": "Car"
-  },
-  {
-    "id": "d96",
-    "nombreGenerico": "Lidocaína (Sin Epinefrina)",
-    "familia": "Anestésico local tipo Amida / Antiarrítmico Clase Ib",
-    "claseTerapeutica": "Antiarrítmico, Anestésico",
-    "mecanismoAccion": {
-      "dianaTerapeutica": "Canales de sodio dependientes de voltaje.",
-      "fisiopatologiaAccion": "Bloquea los canales de sodio en estado inactivado, acortando el potencial de acción y disminuyendo el automatismo.",
-      "efectoSistemico": "Supresión de arritmias ventriculares y anestesia local por bloqueo de conducción nerviosa."
-    },
-    "farmacocinetica": {
-      "inicioAccion": "IV: 1-2 min / Local: 2-5 min.",
-      "vidaMedia": "1.5 - 2 horas.",
-      "metabolismoExcrecion": "Metabolismo hepático extenso (CYP1A2/3A4), excreción renal."
-    },
-    "administracionEnfermeria": {
-      "dilucionEstandar": "IV: Bolo inicial 1-1.5 mg/kg. Infusión: 1-4 mg/min.",
-      "compatibilidadY": "Compatible con Solución Salina y Suero Glucosado."
-    },
-    "contraindicaciones": "• Bloqueo cardíaco severo\n• Síndrome de Stokes-Adams\n• Hipersensibilidad a amidas\n• Insuficiencia hepática grave\n• Choque cardiogénico\n• Hipovolemia severa\n• Porfiria\n• Síndrome de Wolff-Parkinson-White",
-    "efectosAdversos": "• Toxicidad del SNC (mareo, parestesias)\n• Convulsiones (toxicidad grave)\n• Hipotensión arterial\n• Bradicardia y arritmias\n• Desorientación y habla arrastrada",
-    "usosEnfermeria": "Intervención: COCHE DE PARO: Monitorización continua de EKG y signos vitales. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Vigilar signos de neurotoxicidad (habla arrastrada, confusión, sabor metálico). Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Monitorización continua de EKG. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Evaluar signos de neurotoxicidad. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Instruir sobre reporte de sabor metálico. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Vigilar integridad de la vía venosa. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Monitorizar niveles séricos si es posible. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Evaluar presencia de bradicardia. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.",
-    "presentaciones": "Frasco/Amp 1%, 2% (10mg/ml, 20mg/ml).",
-    "color": "#FFEBEE",
-    "icon": "Car"
-  },
-  {
-    "id": "d97",
-    "nombreGenerico": "Amiodarona",
-    "familia": "Antiarrítmico Clase III",
-    "claseTerapeutica": "Antiarrítmico de amplio espectro",
-    "mecanismoAccion": {
-      "dianaTerapeutica": "Canales de potasio (principalmente), sodio y calcio.",
-      "fisiopatologiaAccion": "Prolonga la duración del potencial de acción y el periodo refractario. Tiene efectos bloqueantes alfa y beta no competitivos.",
-      "efectoSistemico": "Control de arritmias ventriculares y supraventriculares graves. Estabilización del ritmo."
-    },
-    "farmacocinetica": {
-      "inicioAccion": "IV: Minutos / VO: Días a semanas.",
-      "vidaMedia": "20 - 100 días (muy prolongada).",
-      "metabolismoExcrecion": "Metabolismo hepático (CYP3A4), excreción biliar/fecal."
-    },
-    "administracionEnfermeria": {
-      "dilucionEstandar": "IV: DILUIR SOLO EN SUERO GLUCOSADO. Incompatible con Solución Salina (precipita). Usar vía central si es posible.",
-      "compatibilidadY": "Incompatible con la mayoría de fármacos en la misma vía."
-    },
-    "contraindicaciones": "• Bradicardia sinusal severa\n• Bloqueo AV de 2do o 3er grado (sin marcapasos)\n• Shock cardiogénico\n• Hipersensibilidad al yodo\n• Disfunción tiroidea severa\n• Embarazo y lactancia\n• Enfermedad pulmonar intersticial\n• Hipotensión severa",
-    "efectosAdversos": "• Hipotensión arterial\n• Bradicardia y bloqueos AV\n• Flebitis e irritación venosa\n• Toxicidad pulmonar (uso crónico)\n• Toxicidad tiroidea y depósitos corneales",
-    "usosEnfermeria": "Intervención: COCHE DE PARO: Administrar lento en pacientes estables. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Monitorizar función respiratoria y presión arterial continuamente. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Diluir exclusivamente en Suero Glucosado (precipita en Solución Salina). Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Monitorizar función tiroidea y hepática. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Evaluar presencia de flebitis en sitio de punción. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Instruir sobre protección solar (fotosensibilidad). Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Vigilar signos de toxicidad pulmonar (tos, disnea). Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Monitorizar EKG (intervalo QT). Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.",
-    "presentaciones": "Amp 150mg/3ml.",
-    "color": "#FFEBEE",
-    "icon": "Car"
-  },
-  {
-    "id": "d98",
-    "nombreGenerico": "Sulfato de Magnesio",
-    "familia": "Sal de magnesio / Anticonvulsivante",
-    "claseTerapeutica": "Electrolito, Antiarrítmico, Tocolítico",
-    "mecanismoAccion": {
-      "dianaTerapeutica": "Canales de calcio y receptores NMDA.",
-      "fisiopatologiaAccion": "Actúa como antagonista del calcio y bloqueador de la transmisión neuromuscular.",
-      "efectoSistemico": "Cese de convulsiones (Eclampsia), broncodilatación y estabilización del ritmo cardíaco (Torsades de Pointes)."
-    },
-    "farmacocinetica": {
-      "inicioAccion": "IV: Inmediato / IM: 60 min.",
-      "vidaMedia": "4 horas.",
-      "metabolismoExcrecion": "Excreción renal (100%)."
-    },
-    "administracionEnfermeria": {
-      "dilucionEstandar": "IV: Diluir en 100ml Solución Salina o Suero Glucosado. Administrar lento.",
-      "compatibilidadY": "Incompatible con soluciones alcalinas y Calcio."
-    },
-    "contraindicaciones": "• Bloqueo cardíaco avanzado\n• Insuficiencia renal grave\n• Miastenia gravis\n• Daño miocárdico severo\n• Hipermagnesemia preexistente\n• Coma diabético\n• Hipocalcemia severa\n• Obstrucción intestinal",
-    "efectosAdversos": "• Hiporreflexia (signo de toxicidad)\n• Depresión respiratoria\n• Hipotensión arterial\n• Sensación de calor y rubor\n• Bradicardia",
-    "usosEnfermeria": "Intervención: COCHE DE PARO / CLAVE AZUL: Vigilar reflejos osteotendinosos (rotuliano). Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Monitorizar diuresis horaria y frecuencia respiratoria. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Tener disponible Gluconato de Calcio como antídoto. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Vigilar niveles de magnesio sérico. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Monitorizar presión arterial. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Evaluar estado de conciencia. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Instruir sobre sensación de calor durante administración. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Vigilar ruidos intestinales. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.",
+    "usosEnfermeria": "Administrar en dosis tituladas (0.2mg cada minuto).",
     "presentaciones": "Amp 20% (2g/10ml).",
     "color": "#FFEBEE",
     "icon": "Car"
-  },
-  {
-    "id": "d99",
-    "nombreGenerico": "Manitol",
-    "familia": "Diurético Osmótico",
-    "claseTerapeutica": "Diurético, Agente para Edema Cerebral",
-    "mecanismoAccion": {
-      "dianaTerapeutica": "Túbulos renales y barrera hematoencefálica.",
-      "fisiopatologiaAccion": "Eleva la osmolaridad del plasma, extrayendo agua de los tejidos (como el cerebro) hacia el espacio vascular. En el riñón, inhibe la reabsorción de agua.",
-      "efectoSistemico": "Reducción de la presión intracraneal (PIC) y de la presión intraocular. Inducción de diuresis."
-    },
-    "farmacocinetica": {
-      "inicioAccion": "IV: 15-30 min (para PIC).",
-      "vidaMedia": "1.5 horas.",
-      "metabolismoExcrecion": "Mínimo metabolismo hepático, excreción renal (80% inalterado)."
-    },
-    "administracionEnfermeria": {
-      "dilucionEstandar": "IV: Administrar mediante filtro en línea (puede cristalizar). Infundir en 30-60 min.",
-      "compatibilidadY": "No mezclar con sangre ni otros fármacos."
-    },
-    "contraindicaciones": "• Anuria por enfermedad renal grave\n• Edema pulmonar severo\n• Deshidratación severa\n• Hemorragia intracraneal activa (salvo durante craneotomía)\n• Insuficiencia cardíaca congestiva progresiva\n• Hipopotasemia o hiponatremia severas\n• Hipersensibilidad al manitol\n• Barrera hematoencefálica dañada",
-    "efectosAdversos": "• Desequilibrio electrolítico\n• Deshidratación severa\n• Edema pulmonar (en falla cardíaca)\n• Cefalea y náuseas\n• Escalofríos y fiebre",
-    "usosEnfermeria": "Intervención: EMERGENCIA / NEUROCIRUGÍA: Inspeccionar frasco buscando cristales (calentar si es necesario). Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Administrar mediante filtro en línea obligatoriamente. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Monitorizar diuresis horaria y estado neurológico (PIC). Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Controlar niveles de electrolitos plasmáticos. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Monitorizar presión arterial y frecuencia cardíaca. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Evaluar turgencia de la piel y mucosas. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Instruir sobre reporte de dolor de cabeza o sed intensa. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.\nIntervención: Vigilar signos de sobrecarga circulatoria. Razón: Asegura la correcta absorción, distribución y eficacia farmacológica, al mismo tiempo que limita la toxicidad sistémica.",
-    "presentaciones": "Frasco 20% (250ml, 500ml).",
-    "color": "#E3F2FD",
-    "icon": "Droplet"
-  },
-  {
-    "id": "dg_oxit",
-    "nombreGenerico": "Oxitocina",
-    "familia": "Hormona Peptídica Uterotónica",
-    "claseTerapeutica": "Emergencia / Uterotónico",
-    "mecanismoAccion": {
-      "dianaTerapeutica": "Receptores de oxitocina acoplados a proteína G en el miometrio.",
-      "fisiopatologiaAccion": "Aumenta la concentración de calcio intracelular, estimulando la fase contráctil (actina-miosina) del músculo liso uterino.",
-      "efectoSistemico": "Genera contracciones uterinas rítmicas e intensas controlando la hemorragia. Está en Primera Posición por asemejarse al estímulo endógeno (fisiológico), muy rápida acción y menos efectos adversos drásticos comparados con alcaloides."
-    },
-    "farmacocinetica": {
-      "inicioAccion": "IM: 3 a 5 min. / IV: Inmediato.",
-      "vidaMedia": "3 a 5 minutos.",
-      "metabolismoExcrecion": "Degradación por oxitocinasas tisulares hepáticas y excreción renal."
-    },
-    "administracionEnfermeria": {
-      "dilucionEstandar": "Tratamiento HPP: 10-40 UI diluidas en 1000 cc de SS 0.9% o Lactato Ringer.",
-      "compatibilidadY": "Incompatible con fibrinolíticos. Proteger de la congelación (mantener a 2°C - 8°C)."
-    },
-    "contraindicaciones": "• Hipersensibilidad documentada.\n• Riesgo severo de Ruptura Uterina.\n• Sufrimiento Fetal Agudo (aplicable antes del nacimiento).\n• Prolapso de cordón y placenta previa.",
-    "efectosAdversos": "• Hipotensión arterial fulminante (si se inyecta en bolo IV rápido directo).\n• Taquicardia compensatoria.\n• Intoxicación acuosa / Antidiuresis hídrica en altas dosis prolongadas.\n• Náuseas y vómitos.",
-    "usosEnfermeria": "Intervención: NUNCA administrar en bolo IV directo crudo no diluido en reanimación. Razón: Provoca colapso cardiovascular e hipotensión severa súbita.\nIntervención: Monitorizar diuresis horaria (por sonda Foley). Razón: La oxitocina posee efecto antidiurético que aumenta edema si hay mucha carga hídrica.\nIntervención: Administrar por goteo continuo titulado. Razón: Mantiene la tetania uterina ante su muy corta vida media.\nIntervención: Respetar cadena de frío (< 8°C hasta su uso regular). Razón: Promueve la pérdida de potencia térmica farmacéutica.",
-    "presentaciones": "Ampollas de 5 UI/ml y 10 UI/ml (generalmente en 1 ml).",
-    "color": "#E8EAF6",
-    "icon": "Droplet"
-  },
-  {
-    "id": "dg_miso",
-    "nombreGenerico": "Misoprostol",
-    "familia": "Análogo sintético de Prostaglandina E1",
-    "claseTerapeutica": "Emergencia / Uterotónico",
-    "mecanismoAccion": {
-      "dianaTerapeutica": "Receptores específicos de prostaglandinas en el músculo liso miometrial y cérvix.",
-      "fisiopatologiaAccion": "Promueve entrada de calcio masivo provocando fuerte contracción uterina; simultáneamente tiene poder madurador y dilatador sobre el colágeno del moco cervical.",
-      "efectoSistemico": "Potente cierre de vasos uterinos sangrantes. Está en Segunda Posición porque se tolera por mucosas (SL, Rectal), salva la vida si la oxitocina falla o falla el acceso venoso, y su efecto de termo-estimulación genera mucha pirexia transitoria."
-    },
-    "farmacocinetica": {
-      "inicioAccion": "Sublingual/Rectal: 10 a 15 min.",
-      "vidaMedia": "20 a 40 minutos.",
-      "metabolismoExcrecion": "Hepático extenso, excreción predominantemente renal."
-    },
-    "administracionEnfermeria": {
-      "dilucionEstandar": "Administración sólida pura en mucosa. No requiere dilución.",
-      "compatibilidadY": "Estable a temperatura ambiente en su blíster sellado."
-    },
-    "contraindicaciones": "• Hipersensibilidad al producto o a otras prostaglandinas.\n• Embarazo en curso que se desea mantener (riesgo inminente de Muerte Fetal/Aborto).\n• Trastornos cardiovasculares activos (relativo vs beneficio salvavidas).",
-    "efectosAdversos": "• Picos Febriles muy elevados (generalmente transitorios por 2-3h).\n• Escalofríos / Tiritona muy intensa (temblor).\n• Diarrea de leve a profusa (alta motilidad GI).\n• Dolor y calambres abdominales fuertes.",
-    "usosEnfermeria": "Intervención: Aplicar Sublingual o Intrarrectal ante falla de vía venosa y shock. Razón: La enorme red capilar de las mucosas puentea el metabolismo rápido y ejerce acción sistémica y pélvica potente.\nIntervención: Informar/Educar pacientemente a familia sobre el Tiritón Fuerte y la Fiebre de >39°C. Razón: Es una reacción normal del Misoprostol sobre el eje hipotalámico humano (termorregulación de prostaglandinas).\nIntervención: Extraer del empaque solo justo al usarlo. Razón: Absorbe humedad ambiental rápido degradándose.",
-    "presentaciones": "Tabletas hexagonales ranuradas de 200 mcg.",
-    "color": "#F3E5F5",
-    "icon": "Zap"
   },
   {
     "id": "dg_atx",
@@ -2550,6 +2395,318 @@ export const DRUGS: Drug[] = [
     "presentaciones": "Ampollas de 0.20 mg (200 mcg) / 1 ml inyectable IM (Raramente IV). Grageas orales limitadas.",
     "color": "#FBE9E7",
     "icon": "AlertTriangle"
+  },
+  {
+    "id": "cloruro_potasio",
+    "nombreGenerico": "Cloruro de Potasio (KCl)",
+    "familia": "Electrolito",
+    "claseTerapeutica": "Electrolito",
+    "mecanismoAccion": {
+      "dianaTerapeutica": "Equilibrio iónico intracelular.",
+      "fisiopatologiaAccion": "El potasio es el catión intracelular principal; esencial para la transmisión de impulsos nerviosos, contracción muscular (incluyendo el miocardio) y el mantenimiento del potencial de membrana.",
+      "efectoSistemico": "Restaura los niveles de potasio, previniendo arritmias letales y debilidad muscular."
+    },
+    "farmacocinetica": {
+      "inicioAccion": "IV: Inmediato. VO: 30 minutos.",
+      "vidaMedia": "Depende de la función renal.",
+      "metabolismoExcrecion": "Principalmente renal (90%). No se metaboliza."
+    },
+    "contraindicaciones": "• Hiperpotasemia\n• Insuficiencia renal aguda o crónica grave\n• Oliguria/Anuria\n• Enfermedad de Addison no tratada\n• Deshidratación aguda severa",
+    "efectosAdversos": "• Flebitis y dolor en sitio de inyección (muy común)\n• Hiperpotasemia (arritmias, paro cardíaco)\n• Flebitis, irritación venosa\n• Náuseas y vómitos",
+    "administracionEnfermeria": {
+      "dilucionEstandar": "IV: NUNCA en bolo. Diluir en Solución Salina o Dextrosa (max 40 mEq/L por periférica).",
+      "compatibilidadY": "Incompatible con Amikacina, Anfotericina B, Diazepam libres."
+    },
+    "usosEnfermeria": "Intervención: NUNCA administrar en push IV (bolo) directo. Causa paro cardíaco. Razón: El potasio en bolo altera el potencial de reposo miocárdico instantáneamente.\nIntervención: Administrar con bomba de infusión. Razón: Permite un control estricto de la velocidad (max 10-20 mEq/h).\nIntervención: Monitorizar electrocardiograma continuo. Razón: Detectar signos tempranos de hiperpotasemia (ondas T picudas) o arritmias.\nIntervención: Evaluar sitio de punción por posible flebitis vesicante. Razón: El potasio es sumamente irritante para la capa endotelial venosa.\nIntervención: Monitoreo estricto del gasto urinario horario (diuresis). Razón: Si hay oliguria, el potasio se acumula rápidamente hasta niveles tóxicos.",
+    "presentaciones": "Ampollas al 10% y 20% (Natrol)",
+    "color": "#FEF3C7",
+    "icon": "Activity"
+  },
+  {
+    "id": "cloruro_sodio",
+    "nombreGenerico": "Cloruro de Sodio 20% (Ampujett)",
+    "familia": "Electrolito",
+    "claseTerapeutica": "Electrolito",
+    "mecanismoAccion": {
+      "dianaTerapeutica": "Espacio extracelular vascular.",
+      "fisiopatologiaAccion": "Aporta sodio y cloruro altamente concentrados (solución hipertónica) jalando agua al espacio intravascular y subiendo la osmolaridad de la sangre.",
+      "efectoSistemico": "Aumento del sodio sérico, retención de agua mediada o osmolar."
+    },
+    "farmacocinetica": {
+      "inicioAccion": "IV: Inmediato.",
+      "vidaMedia": "Desconocida (se integra al pool hídrico corporal).",
+      "metabolismoExcrecion": "Renal, sudor y heces."
+    },
+    "contraindicaciones": "• Hipernatremia preexistente\n• Falla cardíaca descompensada / Edema agudo de pulmón\n• Estados de sobrecarga de fluidos",
+    "efectosAdversos": "• Sobrecarga de fluidos y Edema Pulmonar\n• Hipernatremia\n• Síndrome de desmielinización osmótica (si la corrección es brusca)\n• Flebitis en el sitio venoso de infusión",
+    "administracionEnfermeria": {
+      "dilucionEstandar": "IV: Normalmente se diluye junto a otras soluciones (ej: Dextrosa). NO administrar directo sin diluir (salvo reanimación bajo extrema cautela).",
+      "compatibilidadY": "Generalmente compatible con la mayoría de medicaciones hidrofílicas."
+    },
+    "usosEnfermeria": "Intervención: Administrar SÓLO usando bomba de infusión y muy lentamente. Razón: Corregir sodio muy rápido produce Mielinólisis Pontina Central (daño cerebral irreversible).\nIntervención: Medir niveles de Sodio en sangre periódicamente (cada 4 a 6 horas). Razón: Evalúa la corrección sin pasarse del límite.\nIntervención: Observar el sitio periférico de venopunción de cerca. Razón: Solución fuertemente hiperosmolar (vesicante si se extravasa).\nIntervención: Controlar rigurosamente el ingreso y egreso de volumen. Razón: Las soluciones hipertónicas generan una rápida expansión del plasma y obligan al riñón a trabajar más.\nIntervención: Escuchar por crépitos pulmonares. Razón: Peligro de edema agudo de pulmón por sobrecarga de volemia.",
+    "presentaciones": "Ampollas de 10 ml y 20 ml al 20%.",
+    "color": "#FEF3C7",
+    "icon": "Activity"
+  },
+  {
+    "id": "insulina_rapida",
+    "nombreGenerico": "Insulina Acción Rápida (Lispro/Aspart/Glulisina)",
+    "familia": "Insulina",
+    "claseTerapeutica": "Insulina de acción rápida",
+    "mecanismoAccion": {
+      "dianaTerapeutica": "Receptor de Insulina",
+      "fisiopatologiaAccion": "Se absorbe rápidamente en el torrente sanguíneo, facilitando la captación de glucosa por las células musculares y adiposas.",
+      "efectoSistemico": "Control glucémico postprandial inmediato."
+    },
+    "farmacocinetica": {
+      "inicioAccion": "~15 minutos",
+      "vidaMedia": "Pico: 1-2 horas",
+      "metabolismoExcrecion": "Hígado y riñones."
+    },
+    "administracionEnfermeria": {
+      "dilucionEstandar": "Aplicación SC. Se puede usar IV en casos específicos por protocolo.",
+      "compatibilidadY": "Generalmente compatible con soluciones cristaloides."
+    },
+    "contraindicaciones": "• Hipoglucemia (debe ajustarse dosis)\n• Hipersensibilidad al fármaco",
+    "efectosAdversos": "• Hipoglucemia\n• Lipodistrofia en sitio de inyección\n• Edema, prurito o rash",
+    "usosEnfermeria": "Intervención: Administrar justo antes de las comidas. Razón: Inicio rápido de acción.",
+    "presentaciones": "Plumas precargadas, viales.",
+    "color": "#FEE2E2",
+    "icon": "Activity"
+  },
+  {
+    "id": "insulina_corta",
+    "nombreGenerico": "Insulina Regular (Acción Corta)",
+    "familia": "Insulina",
+    "claseTerapeutica": "Insulina de acción corta",
+    "mecanismoAccion": {
+      "dianaTerapeutica": "Receptor de Insulina",
+      "fisiopatologiaAccion": "Facilita la absorción de glucosa en tejidos periféricos y su almacenamiento en forma de glucógeno en el hígado.",
+      "efectoSistemico": "Control glucémico preprandial."
+    },
+    "farmacocinetica": {
+      "inicioAccion": "30-60 minutos",
+      "vidaMedia": "Pico: 2-3 horas",
+      "metabolismoExcrecion": "Hígado y riñones."
+    },
+    "administracionEnfermeria": {
+      "dilucionEstandar": "Aplicación SC (30-60 min antes de comidas). IV o IM según protocolo.",
+      "compatibilidadY": "Generalmente compatible con soluciones cristaloides."
+    },
+    "contraindicaciones": "• Hipoglucemia (debe ajustarse dosis)\n• Hipersensibilidad al fármaco",
+    "efectosAdversos": "• Hipoglucemia\n• Lipodistrofia en sitio de inyección",
+    "usosEnfermeria": "Intervención: Administrar 30-60 min antes de la comida. Razón: Tiempo de inicio más lento.",
+    "presentaciones": "Viales.",
+    "color": "#FEE2E2",
+    "icon": "Activity"
+  },
+  {
+    "id": "insulina_intermedia",
+    "nombreGenerico": "Insulina NPH (Acción Intermedia)",
+    "familia": "Insulina",
+    "claseTerapeutica": "Insulina de acción intermedia",
+    "mecanismoAccion": {
+      "dianaTerapeutica": "Receptor de Insulina",
+      "fisiopatologiaAccion": "Proporciona niveles sostenidos de insulina para controlar la glucosa entre las comidas y durante la noche.",
+      "efectoSistemico": "Control glucémico basal."
+    },
+    "farmacocinetica": {
+      "inicioAccion": "2-4 horas",
+      "vidaMedia": "Pico: 4-12 horas",
+      "metabolismoExcrecion": "Hígado y riñones."
+    },
+    "administracionEnfermeria": {
+      "dilucionEstandar": "Aplicación SC (2 veces al día). Agitar suavemente antes de usar.",
+      "compatibilidadY": "Generalmente compatible con soluciones cristaloides."
+    },
+    "contraindicaciones": "• Hipoglucemia (debe ajustarse dosis)\n• Hipersensibilidad al fármaco",
+    "efectosAdversos": "• Hipoglucemia\n• Lipodistrofia en sitio de inyección",
+    "usosEnfermeria": "Intervención: Agitar suavemente antes de administrar. Razón: Suspensión de aspecto lechoso.",
+    "presentaciones": "Viales, plumas.",
+    "color": "#FEE2E2",
+    "icon": "Activity"
+  },
+  {
+    "id": "insulina_prolongada",
+    "nombreGenerico": "Insulina Glargina/Detemir (Prolongada)",
+    "familia": "Insulina",
+    "claseTerapeutica": "Insulina de acción prolongada",
+    "mecanismoAccion": {
+      "dianaTerapeutica": "Receptor de Insulina",
+      "fisiopatologiaAccion": "Mantiene niveles constantes de insulina, reduciendo la producción hepática de glucosa.",
+      "efectoSistemico": "Control glucémico basal estable."
+    },
+    "farmacocinetica": {
+      "inicioAccion": "1-4 horas",
+      "vidaMedia": "Sin pico definido, hasta 24 horas",
+      "metabolismoExcrecion": "Hígado y riñones."
+    },
+    "administracionEnfermeria": {
+      "dilucionEstandar": "Aplicación SC (1 vez al día). No mezclar con otras insulinas.",
+      "compatibilidadY": "Generalmente no mezclar en la misma jeringa."
+    },
+    "contraindicaciones": "• Hipoglucemia\n• Hipersensibilidad al fármaco",
+    "efectosAdversos": "• Hipoglucemia\n• Reacciones locales en sitio de inyección",
+    "usosEnfermeria": "Intervención: Administrar a la misma hora diariamente. Razón: Mantener niveles basales constantes.",
+    "presentaciones": "Plumas precargadas.",
+    "color": "#FEE2E2",
+    "icon": "Activity"
+  },
+  {
+    "id": "cloruro_potasio_dup",
+    "nombreGenerico": "Cloruro de Potasio (KCl)",
+    "familia": "Electrolito",
+    "claseTerapeutica": "Electrolito",
+    "mecanismoAccion": {
+      "dianaTerapeutica": "Equilibrio iónico intracelular.",
+      "fisiopatologiaAccion": "El potasio es el catión intracelular principal; esencial para la transmisión de impulsos nerviosos, contracción muscular (incluyendo el miocardio) y el mantenimiento del potencial de membrana.",
+      "efectoSistemico": "Restaura los niveles de potasio, previniendo arritmias letales y debilidad muscular."
+    },
+    "farmacocinetica": {
+      "inicioAccion": "IV: Inmediato. VO: 30 minutos.",
+      "vidaMedia": "Depende de la función renal.",
+      "metabolismoExcrecion": "Principalmente renal (90%). No se metaboliza."
+    },
+    "contraindicaciones": "• Hiperpotasemia\n• Insuficiencia renal aguda o crónica grave\n• Oliguria/Anuria\n• Enfermedad de Addison no tratada\n• Deshidratación aguda severa",
+    "efectosAdversos": "• Flebitis y dolor en sitio de inyección (muy común)\n• Hiperpotasemia (arritmias, paro cardíaco)\n• Flebitis, irritación venosa\n• Náuseas y vómitos",
+    "administracionEnfermeria": {
+      "dilucionEstandar": "IV: NUNCA en bolo. Diluir en Solución Salina o Dextrosa (max 40 mEq/L por periférica).",
+      "compatibilidadY": "Incompatible con Amikacina, Anfotericina B, Diazepam libres."
+    },
+    "usosEnfermeria": "Intervención: NUNCA administrar en push IV (bolo) directo. Causa paro cardíaco. Razón: El potasio en bolo altera el potencial de reposo miocárdico instantáneamente.\nIntervención: Administrar con bomba de infusión. Razón: Permite un control estricto de la velocidad (max 10-20 mEq/h).\nIntervención: Monitorizar electrocardiograma continuo. Razón: Detectar signos tempranos de hiperpotasemia (ondas T picudas) o arritmias.\nIntervención: Evaluar sitio de punción por posible flebitis vesicante. Razón: El potasio es sumamente irritante para la capa endotelial venosa.\nIntervención: Monitoreo estricto del gasto urinario horario (diuresis). Razón: Si hay oliguria, el potasio se acumula rápidamente hasta niveles tóxicos.",
+    "presentaciones": "Ampollas al 10% y 20% (Natrol)",
+    "color": "#FEF3C7",
+    "icon": "Activity"
+  },
+  {
+    "id": "cloruro_sodio_dup",
+    "nombreGenerico": "Cloruro de Sodio 20% (Ampujett)",
+    "familia": "Electrolito",
+    "claseTerapeutica": "Electrolito",
+    "mecanismoAccion": {
+      "dianaTerapeutica": "Espacio extracelular vascular.",
+      "fisiopatologiaAccion": "Aporta sodio y cloruro altamente concentrados (solución hipertónica) jalando agua al espacio intravascular y subiendo la osmolaridad de la sangre.",
+      "efectoSistemico": "Aumento del sodio sérico, retención de agua mediada o osmolar."
+    },
+    "farmacocinetica": {
+      "inicioAccion": "IV: Inmediato.",
+      "vidaMedia": "Desconocida (se integra al pool hídrico corporal).",
+      "metabolismoExcrecion": "Renal, sudor y heces."
+    },
+    "contraindicaciones": "• Hipernatremia preexistente\n• Falla cardíaca descompensada / Edema agudo de pulmón\n• Estados de sobrecarga de fluidos",
+    "efectosAdversos": "• Sobrecarga de fluidos y Edema Pulmonar\n• Hipernatremia\n• Síndrome de desmielinización osmótica (si la corrección es brusca)\n• Flebitis en el sitio venoso de infusión",
+    "administracionEnfermeria": {
+      "dilucionEstandar": "IV: Normalmente se diluye junto a otras soluciones (ej: Dextrosa). NO administrar directo sin diluir (salvo reanimación bajo extrema cautela).",
+      "compatibilidadY": "Generalmente compatible con la mayoría de medicaciones hidrofílicas."
+    },
+    "usosEnfermeria": "Intervención: Administrar SÓLO usando bomba de infusión y muy lentamente. Razón: Corregir sodio muy rápido produce Mielinólisis Pontina Central (daño cerebral irreversible).\nIntervención: Medir niveles de Sodio en sangre periódicamente (cada 4 a 6 horas). Razón: Evalúa la corrección sin pasarse del límite.\nIntervención: Observar el sitio periférico de venopunción de cerca. Razón: Solución fuertemente hiperosmolar (vesicante si se extravasa).\nIntervención: Controlar rigurosamente el ingreso y egreso de volumen. Razón: Las soluciones hipertónicas generan una rápida expansión del plasma y obligan al riñón a trabajar más.\nIntervención: Escuchar por crépitos pulmonares. Razón: Peligro de edema agudo de pulmón por sobrecarga de volemia.",
+    "presentaciones": "Ampollas de 10 ml y 20 ml al 20%.",
+    "color": "#FEF3C7",
+    "icon": "Activity"
+  },
+  {
+    "id": "insulina_rapida_dup",
+    "nombreGenerico": "Insulina Acción Rápida (Lispro/Aspart/Glulisina)",
+    "familia": "Insulina",
+    "claseTerapeutica": "Insulina de acción rápida",
+    "mecanismoAccion": {
+      "dianaTerapeutica": "Receptor de Insulina",
+      "fisiopatologiaAccion": "Se absorbe rápidamente en el torrente sanguíneo, facilitando la captación de glucosa por las células musculares y adiposas.",
+      "efectoSistemico": "Control glucémico postprandial inmediato."
+    },
+    "farmacocinetica": {
+      "inicioAccion": "~15 minutos",
+      "vidaMedia": "Pico: 1-2 horas",
+      "metabolismoExcrecion": "Hígado y riñones."
+    },
+    "administracionEnfermeria": {
+      "dilucionEstandar": "Aplicación SC. Se puede usar IV en casos específicos por protocolo.",
+      "compatibilidadY": "Generalmente compatible con soluciones cristaloides."
+    },
+    "contraindicaciones": "• Hipoglucemia (debe ajustarse dosis)\n• Hipersensibilidad al fármaco",
+    "efectosAdversos": "• Hipoglucemia\n• Lipodistrofia en sitio de inyección\n• Edema, prurito o rash",
+    "usosEnfermeria": "Intervención: Administrar justo antes de las comidas. Razón: Inicio rápido de acción.",
+    "presentaciones": "Plumas precargadas, viales.",
+    "color": "#FEE2E2",
+    "icon": "Activity"
+  },
+  {
+    "id": "insulina_corta_dup",
+    "nombreGenerico": "Insulina Regular (Acción Corta)",
+    "familia": "Insulina",
+    "claseTerapeutica": "Insulina de acción corta",
+    "mecanismoAccion": {
+      "dianaTerapeutica": "Receptor de Insulina",
+      "fisiopatologiaAccion": "Facilita la absorción de glucosa en tejidos periféricos y su almacenamiento en forma de glucógeno en el hígado.",
+      "efectoSistemico": "Control glucémico preprandial."
+    },
+    "farmacocinetica": {
+      "inicioAccion": "30-60 minutos",
+      "vidaMedia": "Pico: 2-3 horas",
+      "metabolismoExcrecion": "Hígado y riñones."
+    },
+    "administracionEnfermeria": {
+      "dilucionEstandar": "Aplicación SC (30-60 min antes de comidas). IV o IM según protocolo.",
+      "compatibilidadY": "Generalmente compatible con soluciones cristaloides."
+    },
+    "contraindicaciones": "• Hipoglucemia (debe ajustarse dosis)\n• Hipersensibilidad al fármaco",
+    "efectosAdversos": "• Hipoglucemia\n• Lipodistrofia en sitio de inyección",
+    "usosEnfermeria": "Intervención: Administrar 30-60 min antes de la comida. Razón: Tiempo de inicio más lento.",
+    "presentaciones": "Viales.",
+    "color": "#FEE2E2",
+    "icon": "Activity"
+  },
+  {
+    "id": "insulina_intermedia_dup",
+    "nombreGenerico": "Insulina NPH (Acción Intermedia)",
+    "familia": "Insulina",
+    "claseTerapeutica": "Insulina de acción intermedia",
+    "mecanismoAccion": {
+      "dianaTerapeutica": "Receptor de Insulina",
+      "fisiopatologiaAccion": "Proporciona niveles sostenidos de insulina para controlar la glucosa entre las comidas y durante la noche.",
+      "efectoSistemico": "Control glucémico basal."
+    },
+    "farmacocinetica": {
+      "inicioAccion": "2-4 horas",
+      "vidaMedia": "Pico: 4-12 horas",
+      "metabolismoExcrecion": "Hígado y riñones."
+    },
+    "administracionEnfermeria": {
+      "dilucionEstandar": "Aplicación SC (2 veces al día). Agitar suavemente antes de usar.",
+      "compatibilidadY": "Generalmente compatible con soluciones cristaloides."
+    },
+    "contraindicaciones": "• Hipoglucemia (debe ajustarse dosis)\n• Hipersensibilidad al fármaco",
+    "efectosAdversos": "• Hipoglucemia\n• Lipodistrofia en sitio de inyección",
+    "usosEnfermeria": "Intervención: Agitar suavemente antes de administrar. Razón: Suspensión de aspecto lechoso.",
+    "presentaciones": "Viales, plumas.",
+    "color": "#FEE2E2",
+    "icon": "Activity"
+  },
+  {
+    "id": "insulina_prolongada_dup",
+    "nombreGenerico": "Insulina Glargina/Detemir (Prolongada)",
+    "familia": "Insulina",
+    "claseTerapeutica": "Insulina de acción prolongada",
+    "mecanismoAccion": {
+      "dianaTerapeutica": "Receptor de Insulina",
+      "fisiopatologiaAccion": "Mantiene niveles constantes de insulina, reduciendo la producción hepática de glucosa.",
+      "efectoSistemico": "Control glucémico basal estable."
+    },
+    "farmacocinetica": {
+      "inicioAccion": "1-4 horas",
+      "vidaMedia": "Sin pico definido, hasta 24 horas",
+      "metabolismoExcrecion": "Hígado y riñones."
+    },
+    "administracionEnfermeria": {
+      "dilucionEstandar": "Aplicación SC (1 vez al día). No mezclar con otras insulinas.",
+      "compatibilidadY": "Generalmente no mezclar en la misma jeringa."
+    },
+    "contraindicaciones": "• Hipoglucemia\n• Hipersensibilidad al fármaco",
+    "efectosAdversos": "• Hipoglucemia\n• Reacciones locales en sitio de inyección",
+    "usosEnfermeria": "Intervención: Administrar a la misma hora diariamente. Razón: Mantener niveles basales constantes.",
+    "presentaciones": "Plumas precargadas.",
+    "color": "#FEE2E2",
+    "icon": "Activity"
   }
 ];
 
@@ -5483,7 +5640,15 @@ export const DISEASES: Disease[] = [
     "servicio": "Emergencias",
     "definicionCaso": "El Infarto Agudo de Miocardio es la necrosis coagulativa irreversible del músculo cardíaco secundaria a un desequilibrio crítico entre el aporte y la demanda de oxígeno, casi invariablemente debido a la oclusión coronaria brusca. El evento iniciador es frecuentemente la ruptura o erosión de una placa ateroesclerótica vulnerable, que expone al subendotelio al torrente sanguíneo, desencadenando una cascada de agregación plaquetaria y formación de un trombo oclusivo (parcial en IAMNEST, total en IAMEST). Este proceso impone un cambio metabólico severo del miocito hacia la glucólisis anaerobia, llevando a la acumulación de metabolitos ácidos, pérdida del potencial de membrana y, finalmente, a la muerte celular que progresa desde el endocardio hacia el epicardio (fenómeno de 'frente de onda').",
     "etiologia": "Primariamente aterosclerosis coronaria, agravada por factores predisponentes (hipertensión, dislipidemia, diabetes, tabaquismo). Factores precipitantes agudos incluyen esfuerzo físico extenuante, estrés emocional severo, arritmias rápidas o crisis hipertensivas que aumentan la demanda miocárdica de oxígeno.",
-    "fisiopatologiaBasica": "La oclusión coronaria abrupta detiene el flujo sanguíneo anterógrado, privando de oxígeno y sustratos al tejido miocárdico. Esto desencadena una serie de eventos: aturdimiento miocárdico (fase reversible), seguido de daño estructural irreversible (necrosis). La falta de ATP detiene las bombas iónicas, lo que causa edema celular y arritmias, y reduce la contractilidad segmentaria, manifestándose clínicamente como dolor opresivo y fallo de bomba.",
+    "fisiopatologia": {
+      "textoTecnico": "La oclusión coronaria abrupta detiene el flujo sanguíneo anterógrado, privando de oxígeno y sustratos al tejido miocárdico. Esto desencadena una serie de eventos: aturdimiento miocárdico (fase reversible), seguido de daño estructural irreversible (necrosis). La falta de ATP detiene las bombas iónicas, lo que causa edema celular y arritmias, y reduce la contractilidad segmentaria, manifestándose clínicamente como dolor opresivo y fallo de bomba.",
+      "esquemaMental": {
+        "inicio": "Oclusión coronaria abrupta por placa vulnerable.",
+        "dano": "Necrosis miocárdica (isquemia irreversible) y pérdida de ATP.",
+        "consecuencia": "Arritmias, fallo cardíaco y posible choque cardiogénico."
+      },
+      "cita": "Harrison, pág. 1450"
+    },
     "complicaciones": [
       "Choque Cardiogénico",
       "Arritmias ventriculares letales (FV/TV)",
@@ -5503,7 +5668,10 @@ export const DISEASES: Disease[] = [
       "Hipotensión y signos de mala perfusión",
       "Congestión pulmonar (estertores)",
       "Nuevos soplos cardíacos",
-      "Alteraciones dinámicas en el ECG (Supradesnivel ST)"
+      "Alteraciones dinámicas en el ECG (Supradesnivel ST)",
+      "Elevación segmento ST (ECG)",
+      "Arritmias ventriculares",
+      "Fallo de bomba"
     ],
     "system": "Cardiovascular",
     "color": "#FFEBEE",
@@ -5511,27 +5679,33 @@ export const DISEASES: Disease[] = [
     "clinica": {
       "signosSintomas": [
         "Dolor retroesternal opresivo irradiado a mandíbula/brazo izquierdo",
-        "Diaforesis",
-        "Disnea",
-        "Náuseas/Gusto metálico"
+        "Diaforesis abundate",
+        "Disnea de esfuerzo",
+        "Náuseas y vómitos",
+        "Gusto metálico o ansiedad severa"
       ],
       "maniobraExploracion": "Evaluación de repercusión hemodinámica (auscultación en busca de estertores S3/S4 para descartar fallo de bomba).",
       "banderasRojas": [
         "Hipotensión sostenida",
         "Arritmias ventriculares de inicio reciente",
-        "Signos de shock cardiogénico"
+        "Signos de shock cardiogénico",
+        "Dolor sin respuesta a nitroglicerina"
       ],
       "cita": "AHA/ACC Guías de IAM"
     },
-    "fisiopatologia": {
-      "textoTecnico": "Obstrucción aguda de una arteria coronaria, secundaria a la ruptura de una placa aterosclerótica, con posterior trombosis y disminución aguda del flujo miocárdico.",
-      "esquemaMental": {
-        "inicio": "Ruptura de placa coronaria vascular.",
-        "dano": "Formación de trombo oclusivo.",
-        "consecuencia": "Necrosis isquémica miocárdica de espesor parcial o total."
-      },
-      "cita": "Harrison, pág. 1450"
-    },
+    "sintomasClave": [
+        "Dolor retroesternal opresivo",
+        "Irradiación a mandíbula o brazo",
+        "Diaforesis",
+        "Disnea",
+        "Sensación de muerte inminente"
+    ],
+    "procedimientos": [
+        "Realizar ECG de 12 derivaciones",
+        "Acceso vascular periférico",
+        "Administración de antiagregantes",
+        "Monitorización hemodinámica continua"
+    ],
     "manejo": {
       "diagnostico": "Electrocardiograma de 12 derivaciones en <10 minutos. Troponinas I/T ultra sensibles seriadas.",
       "tratamiento": "MONA (Morfina, Oxígeno, Nitroglicerina, Aspirina) - ajustado a guías actuales. Terapia de reperfusión (ICP primaria <90 min o Fibrinólisis <30 min si IAMEST).",
@@ -5592,7 +5766,15 @@ export const DISEASES: Disease[] = [
     "servicio": "Emergencias",
     "definicionCaso": "La disección aórtica es una emergencia cardiovascular devastadora caracterizada por la ruptura de la túnica íntima, permitiendo el paso de sangre a alta presión hacia la túnica media arterial. Fisiopatológicamente, esto crea una 'falsa luz' dentro de la pared aórtica que propaga la disección longitudinalmente a lo largo del vaso. La falsa luz puede comprometer mecánicamente la luz verdadera (obstrucción de flujo) o invadir ramas arteriales críticas (coronarias, cerebrales, renales), generando isquemia de órgano blanco. Paralelamente, la presión transmural sobre la pared adelgazada puede llevar a una ruptura externa catastrófica, comúnmente hacia el saco pericárdico (causando taponamiento) o al espacio pleural (exanguinación), comprometiendo fatalmente la perfusión sistémica.",
     "etiologia": "Causada por hipertensión arterial crónica no controlada (factor principal), trastornos genéticos del tejido conectivo (ej. Síndrome de Marfan, Ehlers-Danlos), válvula aórtica bicúspide o trauma torácico de alta energía.",
-    "fisiopatologiaBasica": "La disfunción preexistente de la túnica media (degeneración quística o fibrosis) reduce la resistencia de la pared. Ante una oleada hipertensiva, el estrés de cizallamiento (shear stress) desgarra la íntima dañada. La sangre a alta presión diseca la capa media, propagando el desgarro. Esto puede ocluir la luz verdadera de las arterias ramificadas, causando infartos específicos de órgano (cerebral, cardíaco, renal), o debilitar la pared externa al punto de ruptura total.",
+    "fisiopatologia": {
+      "textoTecnico": "La disfunción preexistente de la túnica media (degeneración quística o fibrosis) reduce la resistencia de la pared. Ante una oleada hipertensiva, el estrés de cizallamiento (shear stress) desgarra la íntima dañada. La sangre a alta presión diseca la capa media, propagando el desgarro. Esto puede ocluir la luz verdadera de las arterias ramificadas, causando infartos específicos de órgano (cerebral, cardíaco, renal), o debilitar la pared externa al punto de ruptura total.",
+      "esquemaMental": {
+        "inicio": "Estrés de cizallamiento hipertensivo sobre íntima debilitada.",
+        "dano": "Formación de una falsa luz en la capa media con obstrucción o ruptura.",
+        "consecuencia": "Isquemia multiorgánica y riesgo de ruptura catastrófica."
+      },
+      "cita": "Harrison, pág. 1822"
+    },
     "complicaciones": [
       "Taponamiento cardíaco (por ruptura retrógrada)",
       "Accidente Cerebrovascular (oclusión de carótida)",
@@ -5630,15 +5812,6 @@ export const DISEASES: Disease[] = [
         "Isquemia aguda de extremidades o mesentérica"
       ],
       "cita": "Guía ESC de Síndromes Aórticos Agudos"
-    },
-    "fisiopatologia": {
-      "textoTecnico": "Desgarro de la íntima aórtica que permite la entrada de sangre a presión hacia la capa media, creando una falsa luz que se diseca longitudinalmente a través de la arteria.",
-      "esquemaMental": {
-        "inicio": "Estrés parietal en aorta (ej. HTA mal controlada).",
-        "dano": "Ruptura de la capa íntima sanguínea.",
-        "consecuencia": "Formación del lumen falso y propagación de isquemia sistémica."
-      },
-      "cita": "Harrison, pág. 1822"
     },
     "manejo": {
       "diagnostico": "Angio-TC de aorta con contraste (Gold Standard). ETE en inestables. Radiografía (ensanchamiento mediastínico).",
@@ -6702,44 +6875,31 @@ La Enfermedad Pulmonar Obstructiva Crónica (EPOC) es una limitación crónica, 
         "Tórax silente (Obstrucción crítica).",
         "Uso de músculos accesorios marcado.",
         "Disminución de conciencia (Narcosis por CO2).",
-        "Pulsus paradoxus > 20 mmHg."
+        "Pulsus paradoxus > 20 mmHg.",
+        "Hipotensión o bradicardia paradójica terminal."
       ],
       cita: "GINA 2023 Guidelines"
     },
     fisiopatologia: {
-      textoTecnico: `### Introducción: El Evento Disparador
-El Asma Bronquial es una enfermedad inflamatoria crónica de las vías respiratorias caracterizada por una hiperreactividad bronquial extrema ante diversos estímulos. El evento disparador es típicamente una reacción inmunológica (frecuentemente tipo I mediada por IgE en el asma atópica), que convierte a los bronquios en estructuras lábiles que se cierran "defensivamente" ante el entorno.
-
-### Desenlace: La Cascada de Disfunción
-**Mecanismo de Progresión (El Mapa):**
-- **Broncoespasmo Agudo:** Contracción súbita del músculo liso bronquial mediada por histamina y leucotrienos.
-- **Inflamación y Edema:** Engrosamiento de la mucosa y formación de tapones de moco denso que ocluyen la luz bronquial.
-- **Remodelado de la Vía Aérea:** Con el tiempo, los episodios recurrentes pueden llevar a una fibrosis subepitelial e hipertrofia muscular irreversible si no se controla adecuadamente.
-
-### Afectación de Órganos y Sistemas Relacionados:
-- **Sistema Respiratorio:** Desequilibrio en la ventilación/perfusión (V/Q), lo que genera hipoxemia. El atrapamiento aéreo inicial causa una alcalosis respiratoria compensatoria que progresa a acidosis si el paciente se agota.
-- **Sistema Cardiovascular:** El aumento masivo de la presión intratorácica durante la espiración forzada reduce el retorno venoso, pudiendo causar el signo clínico de "pulso paradójico".
-- **Estado Psicoemocional:** La sensación subjetiva de asfixia genera una ansiedad masiva que retroalimenta la taquipnea y el broncoespasmo psicógeno.
-
-### Alteraciones Hormonales y Bioquímicas (Eje Químico):
-- **Cascada de Leucotrienos:** Potentes mediadores de la inflamación que son hasta 1000 veces más bronconstrictores que la histamina.
-- **Inmunoglobulina E (IgE):** Orquesta la degranulación de mastocitos ante alérgenos, disparando la fase temprana de la crisis asmática.
-
-### Correlación con Comorbilidades:
-- **Rinitis Alérgica:** Existe la teoría de la "Vía Única", donde la inflamación de la vía aérea superior (rinitis) exacerba directamente el control del asma inferior.
-- **Reflujo Gastroesofágico (ERGE):** El ácido del estómago puede irritar los receptores vagales del esófago, disparando broncoespasmo por vía refleja o por microaspiraciones.`,
+      textoTecnico: "Enfermedad inflamatoria crónica caracterizada por hiperreactividad de las vías aéreas y obstrucción reversible al flujo aéreo, mediada frecuentemente por una respuesta tipo I (IgE) que provoca remodelado crónico.",
       esquemaMental: {
         inicio: "Gatillo (Alergeno, frío, ejercicio).",
-        dano: "Broncoconstricción e inflamación de la mucosa.",
-        consecuencia: "Obstrucción variable y reversible al flujo aéreo."
+        dano: "Broncoconstricción e inflamación de la mucosa (mediada por Leucotrienos/histamina).",
+        consecuencia: "Obstrucción variable y reversible al flujo aéreo y posible remodelado crónico."
       },
-      cita: "Harrison's principles of medicine"
+      cita: "GINA 2023 Guidelines"
     },
     manejo: {
       diagnostico: "Clínico + Espirometría (Reversibilidad >12% y 200ml post-BD). Peak Flow en crisis.",
       tratamiento: "SABA (Salbutamol) de rescate. Corticoides inhalados (mantenimiento). Corticoides sistémicos en crisis severas.",
       cita: "Guías GINA 2023"
     },
+    complicaciones: [
+      "Insuficiencia respiratoria aguda.",
+      "Atelectasias pulmonares.",
+      "Neumotórax secundario a barotrauma.",
+      "Asma de difícil control (remodelado)."
+    ],
     enfermeria: {
       nanda: '00031 Limpieza ineficaz de vías aéreas',
       intervenciones: [
@@ -6769,43 +6929,31 @@ El Asma Bronquial es una enfermedad inflamatoria crónica de las vías respirato
         "Hemoptisis masiva (>500ml en 24h).",
         "Disnea súbita (posible Neumotórax o Derrame asociado).",
         "Signos de diseminación (Rigidez nuca, dolor lumbar).",
-        "Insuficiencia respiratoria aguda."
+        "Insuficiencia respiratoria aguda.",
+        "Confusión mental o estupor (hipoxia severa)."
       ],
       cita: "WHO TB consolidated guidelines 2024"
     },
     fisiopatologia: {
-      textoTecnico: `### Introducción: El Evento Disparador
-La Tuberculosis (TB) es una infección granulomatosa crónica causada por *Mycobacterium tuberculosis*. El evento disparador es la inhalación de gotas de Flügge que transportan los bacilos hacia las zonas más oxigenadas del pulmón (lóbulos superiores), donde evaden la destrucción inicial por parte de los macrófagos alveolares.
-
-### Desenlace: La Cascada de Disfunción
-**Mecanismo de Progresión (El Mapa):**
-- **Fase de Latencia:** El sistema inmune rodea a los bacilos con linfocitos y macrófagos, formando granulomas que confinan la infección pero no eliminan al bacilo.
-- **Reactivación:** Ante una caída en la inmunidad celular, el centro del granuloma se reblandece (necrosis caseosa) y se vierte hacia el árbol bronquial, permitiendo la diseminación y la formación de cavernas.
-
-### Afectación de Órganos y Sistemas Relacionados:
-- **Sistema Respiratorio:** La formación de cavernas destruye los vasos sanguíneos pulmonares (Riesgo de Aneurisma de Rasmussen y hemoptisis masiva).
-- **Sistema Metabólico:** El consumo masivo de recursos energéticos por la respuesta inmune causa el típico estado de "consunción" o pérdida de peso extrema.
-- **Sistema Hematológico:** Anemia de procesos crónicos mediada por la hepcidina en respuesta a la inflamación persistente.
-
-### Alteraciones Hormonales y Bioquímicas (Eje Químico):
-- **Citoquinas (TNF-alfa e INF-gamma):** Son las orquestadoras del granuloma; el exceso de TNF-alfa es el responsable de la fiebre, la anorexia y la caquexia característica.
-- **Vitamina D:** Su deficiencia afecta la capacidad de los macrófagos para producir catelicidina.
-
-### Correlación con Comorbilidades:
-- **Diabetes Mellitus:** Los niveles elevados de glucosa triplican el riesgo de TB activa.
-- **VIH/SIDA:** Rompe el sello del granuloma, permitiendo la diseminación rápida.`,
+      textoTecnico: `La Tuberculosis (TB) es una infección granulomatosa crónica causada por *Mycobacterium tuberculosis*. El evento disparador es la inhalación de gotas de Flügge que transportan los bacilos hacia las zonas más oxigenadas del pulmón (lóbulos superiores), donde evaden la destrucción inicial por parte de los macrófagos alveolares, formando granulomas crónicos que posteriormente pueden cavitarse.`,
       esquemaMental: {
         inicio: "Inhalación de bacilos.",
-        dano: "Inflamación granulomatosa y necrosis caseosa.",
-        consecuencia: "Cavitación pulmonar."
+        dano: "Inflamación granulomatosa crónica, necrosis caseosa y evasión inmunitaria.",
+        consecuencia: "Cavitación pulmonar, destrucción tisular y diseminación."
       },
-      cita: "Harrison's"
+      cita: "Harrison's principles of medicine"
     },
     manejo: {
       diagnostico: "BK esputo, GeneXpert, RX Tórax.",
       tratamiento: "Esquema DOTS.",
       cita: "OMS"
     },
+    complicaciones: [
+      "Hemoptisis masiva.",
+      "Insuficiencia respiratoria crónica.",
+      "Bronquiectasias post-TB.",
+      "Diseminación extrapulmonar."
+    ],
     enfermeria: {
       nanda: '00104 Deterioro de la resiliencia',
       intervenciones: [
@@ -6839,20 +6987,24 @@ La Tuberculosis (TB) es una infección granulomatosa crónica causada por *Mycob
       cita: "NCCN Guidelines"
     },
     fisiopatologia: {
-      textoTecnico: `### Introducción: El Evento Disparador
-El Cáncer de Pulmón es una neoplasia maligna derivada de las células del epitelio respiratorio.`,
+      textoTecnico: "Neoplasia maligna derivada del epitelio bronquial, resultado de acumulación de mutaciones genéticas (oncogenes/supresores tumorales) que inducen proliferación incontrolada, invasión local y metástasis a distancia mediante vías linfáticas o hematógenas.",
       esquemaMental: {
-        inicio: "Daño genético acumulado (Mutaciones).",
+        inicio: "Daño genético acumulado (tabaco, carcinógenos).",
         dano: "Proliferación celular descontrolada e invasión tisular.",
-        consecuencia: "Fallo respiratorio y metástasis sistémica."
+        consecuencia: "Fallo respiratorio, obstrucción de vía aérea y metástasis sistémica."
       },
-      cita: "Harrison's Principles of Internal Medicine"
+      cita: "NCCN Guidelines"
     },
     manejo: {
-      diagnostico: "RX Tórax y TAC con contraste. Biopsia dirigida.",
-      tratamiento: "Cirugía (Lobectomía) en estadios tempranos. Quimioterapia, Radioterapia e Inmunoterapia.",
-      cita: "Guías ESMO"
+      diagnostico: "TC tórax/abdomen + PET/CT, Broncoscopia/Biopsia.",
+      tratamiento: "Cirugía, Quimioterapia, Radioterapia, Inmunoterapia según estadio.",
+      cita: "NCCN Guidelines"
     },
+    complicaciones: [
+      "Síndrome de Vena Cava Superior.",
+      "Metástasis óseas y cerebrales.",
+      "Derrame pleural maligno/obstrucción bronquial."
+    ],
     enfermeria: {
       nanda: '00032 Patrón respiratorio ineficaz',
       intervenciones: [
@@ -11447,8 +11599,34 @@ La Úlcera Péptica es una llaga abierta ("cráter") en el revestimiento del est
     servicio: 'Medicina Interna',
     system: 'Sistema Gastrointestinal / Hepático',
     color: 'orange',
-    definicionCaso: 'Detención del tránsito intestinal.',
+    definicionCaso: 'Interrupción física del flujo intestinal.',
+    etiologia: 'Adherencias (bridas), hernias, tumores, vólvulos.',
+    fisiopatologiaBasica: 'El mecanismo central es la detención del tránsito, que produce distensión masiva, isquemia, translocación bacteriana y shock.',
+    complicaciones: [
+        'Necrosis intestinal',
+        'Peritonitis',
+        'Septicemia',
+        'Choque hipovolémico'
+    ],
+    riesgosNoTratado: [
+        'Muerte por sepsis',
+        'Muerte por choque',
+        'Perforación intestinal'
+    ],
+    procedimientos: [
+        'Descompresión nasogástrica (Sonda Levin)',
+        'Hidratación agresiva IV',
+        'Monitorización continua',
+        'Estudio imagenológico'
+    ],
     sintomasClave: ['Ausencia de canalización de gases y heces', 'Vómitos (biliosos o fecaloides)', 'Distensión abdominal'],
+    banderasRojas: [
+        'Dolor intenso y desproporcionado suggestivo de isquemia/estrangulación',
+        'Fiebre y taquicardia',
+        'Signos de irritación peritoneal (Rebote positivo)',
+        'Hipotensión y deshidratación severa',
+        'Leucocitosis marcada con acidosis láctica'
+    ],
     clinica: {
       signosSintomas: [
         'Dolor abdominal tipo cólico paroxístico.',

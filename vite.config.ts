@@ -11,6 +11,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
   return {
     plugins: [react(), tailwindcss()],
+    base: './',
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
@@ -18,8 +19,18 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       outDir: 'dist',
+      assetsDir: 'assets',
       emptyOutDir: true,
-      sourcemap: false
+      sourcemap: false,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'vendor-react': ['react', 'react-dom'],
+            'vendor-firebase': ['firebase/app', 'firebase/auth', 'firebase/firestore'],
+            'vendor-utils': ['lucide-react', 'motion', 'clsx', 'tailwind-merge']
+          }
+        }
+      }
     },
     server: {
       // HMR is disabled in AI Studio via DISABLE_HMR env var.

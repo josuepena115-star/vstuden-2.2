@@ -40,7 +40,20 @@ const Flashcard: React.FC<FlashcardProps> = ({ disease, isFlipped, onFlip }) => 
                 <p className="text-muted-foreground">{disease.etiologia}</p>
               </div>
             )}
-            {disease.fisiopatologiaBasica && (
+            {disease.fisiopatologia && (
+              <div className="bg-primary/5 p-4 rounded-xl border border-primary/10">
+                <h5 className="font-bold text-primary mb-2">Fisiopatología</h5>
+                <p className="text-sm text-foreground">{disease.fisiopatologia.textoTecnico}</p>
+                {disease.fisiopatologia.esquemaMental && (
+                  <div className="mt-3 grid grid-cols-1 gap-2 text-xs">
+                    <p><strong>Inicio:</strong> {disease.fisiopatologia.esquemaMental.inicio}</p>
+                    <p><strong>Daño:</strong> {disease.fisiopatologia.esquemaMental.dano}</p>
+                    <p><strong>Consecuencia:</strong> {disease.fisiopatologia.esquemaMental.consecuencia}</p>
+                  </div>
+                )}
+              </div>
+            )}
+            {!disease.fisiopatologia && disease.fisiopatologiaBasica && (
               <div>
                 <h5 className="font-bold text-primary">Fisiopatología</h5>
                 <p className="text-muted-foreground">{disease.fisiopatologiaBasica}</p>

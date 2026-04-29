@@ -1149,5 +1149,249 @@ export const PROCEDURES: Procedure[] = [
       "Guantes limpios",
       "Formulario de solicitud de baciloscopía"
     ]
+  },
+  {
+    "id": "nutri1",
+    "nombre": "Alimentación y Soporte Nutricional",
+    "categoria": "Nutrición y Soporte Metabólico",
+    "uso": "Ejecución de la nutrición según la vía de acceso y la condición del paciente.",
+    "indicaciones": [
+      "Pacientes con requerimientos nutricionales específicos",
+      "Pacientes con ostomías",
+      "Recién nacidos (Lactancia Materna)",
+      "Pacientes que requieren hidratación intravenosa"
+    ],
+    "contraindicaciones": [],
+    "maneraRealizarlo": [
+      "Alimentación del paciente: Incluye tanto la asistencia por vía oral como el manejo de la nutrición enteral.",
+      "Manejo de Ostomías: Cuidado específico para pacientes con gastrostomías o ileostomías destinadas a la alimentación.",
+      "Lactancia Materna: Educación, promoción y apoyo técnico para asegurar el apego precoz y el soporte nutricional del recién nacido.",
+      "Hidratación: Control estricto de la administración de líquidos intravenosos y balance hídrico."
+    ],
+    "tipoTecnica": "Soporte Nutricional",
+    "cuidadosEnfermeria": [
+      "Monitorizar signos de intolerancia alimentaria",
+      "Curación y mantenimiento de ostomías de alimentación",
+      "Evaluación del balance hídrico estricto",
+      "Fomentar técnica adecuada de lactancia materna"
+    ],
+    "materialNecesario": ["Fórmulas enterales", "Sondas o equipo de ostomía", "Soluciones intravenosas", "Equipo de venoclisis"]
+  },
+  {
+    "id": "nutri2",
+    "nombre": "Control Metabólico y Glucemia",
+    "categoria": "Nutrición y Soporte Metabólico",
+    "uso": "Monitorear el estado metabólico inmediato del paciente.",
+    "indicaciones": [
+      "Pacientes diabéticos",
+      "Pacientes con alteraciones metabólicas crónicas o agudas",
+      "Pacientes recibiendo nutrición parenteral"
+    ],
+    "contraindicaciones": [],
+    "maneraRealizarlo": [
+      "Glicemias Capilares: Realización de la prueba y registro de valores según la prescripción.",
+      "Administración de Insulina: Manejo farmacológico de acuerdo a los resultados de la glicemia."
+    ],
+    "tipoTecnica": "Control Metabólico",
+    "cuidadosEnfermeria": [
+      "Rotación de sitios de punción capilar",
+      "Registro exacto de valores de glucemia",
+      "Doble verificación en la administración de insulina",
+      "Vigilancia de signos de hipoglucemia o hiperglucemia"
+    ],
+    "materialNecesario": ["Glucómetro", "Tiras reactivas", "Lancetas", "Insulina prescrita", "Jeringas de insulina"]
+  },
+  {
+    "id": "nutri3",
+    "nombre": "Suplementación y Prevención",
+    "categoria": "Nutrición y Soporte Metabólico",
+    "uso": "Acciones preventivas de salud nutricional, especialmente en áreas comunitarias y maternas.",
+    "indicaciones": [
+      "Embarazadas",
+      "Población infantil en riesgo de desnutrición",
+      "Campañas comunitarias de prevención"
+    ],
+    "contraindicaciones": [],
+    "maneraRealizarlo": [
+      "Administración de Vitaminas y Minerales: Suplementación con vitamina A, hierro, ácido fólico y otros micronutrientes."
+    ],
+    "tipoTecnica": "Prevención Nutricional",
+    "cuidadosEnfermeria": [
+      "Verificar dosis adecuada según edad y peso",
+      "Educación sobre efectos secundarios comunes (ej. hierro)",
+      "Llevar registro en tarjeta de control o sistema"
+    ],
+    "materialNecesario": ["Suplementos vitamínicos", "Hierro/Ácido Fólico", "Insumos para administración oral o intramuscular"]
+  },
+  {
+    "id": "nutri4",
+    "nombre": "Valoración Antropométrica y Diagnóstica",
+    "categoria": "Nutrición y Soporte Metabólico",
+    "uso": "Evaluar el estado nutricional y la respuesta al tratamiento del paciente.",
+    "indicaciones": [
+      "Control de niño sano",
+      "Gestantes en control prenatal",
+      "Pacientes hospitalizados críticos",
+      "Evaluación nutricional de rutina"
+    ],
+    "contraindicaciones": [],
+    "maneraRealizarlo": [
+      "Medidas Antropométricas: Toma de peso, talla y perímetros en adultos, gestantes, niños y recién nacidos.",
+      "Interpretación de Laboratorio: Análisis de resultados relevantes como glucosa, electrolitos (sodio, potasio), hemoglobina y tamizaje neonatal.",
+      "Control de Ingesta y Excreta: Registro detallado para evaluar el balance metabólico y la función renal."
+    ],
+    "tipoTecnica": "Valoración Nutricional",
+    "cuidadosEnfermeria": [
+      "Calibrar balanzas y equipos antropométricos diariamente",
+      "Asegurar privacidad del paciente durante la medición",
+      "Conocer valores de referencia normales de laboratorio",
+      "Precisar y registrar exactamente volúmenes en el control de líquidos"
+    ],
+    "materialNecesario": ["Báscula", "Tallímetro", "Cinta métrica", "Recipientes graduados para excreta", "Formularios de registro"]
+  },
+  {
+    "id": "nutri5",
+    "nombre": "Educación para la Salud",
+    "categoria": "Nutrición y Soporte Metabólico",
+    "uso": "Fomentar estilos de vida saludables y nutrición adecuada.",
+    "indicaciones": [
+      "Embarazadas",
+      "Adultos mayores",
+      "Pacientes con enfermedades crónicas no transmisibles",
+      "Comunidad en general"
+    ],
+    "contraindicaciones": [],
+    "maneraRealizarlo": [
+      "Charlas educativas: Enfoque en estilos de vida saludables y nutrición adecuada para grupos específicos como embarazadas o adultos mayores."
+    ],
+    "tipoTecnica": "Educación Sanitaria",
+    "cuidadosEnfermeria": [
+      "Adaptar el lenguaje al nivel de comprensión de la comunidad o paciente",
+      "Promover la participación activa y resolución de dudas",
+      "Uso de material didáctico apropiado"
+    ],
+    "materialNecesario": ["Material didáctico impreso o digital", "Trípticos", "Guías alimentarias"]
+  },
+  {
+    "id": "heridas1",
+    "nombre": "Cuidado y Tratamiento de Heridas",
+    "categoria": "Integridad Cutánea y Heridas",
+    "uso": "Intervención directa sobre lesiones en la piel.",
+    "indicaciones": [
+      "Heridas clínicas o quirúrgicas",
+      "Puntos de sutura",
+      "Drenajes colocados"
+    ],
+    "contraindicaciones": [],
+    "maneraRealizarlo": [
+      "Realización de curaciones: Procedimientos técnicos para limpiar y proteger heridas clínicas o quirúrgicas.",
+      "Retiro de puntos: Técnica para la remoción de suturas una vez cumplido el tiempo de cicatrización.",
+      "Suturas: Participación o ejecución de cierres de heridas simples (común en el área comunitaria).",
+      "Control de drenajes: Monitoreo de la cantidad y características del exudado para prevenir maceración de la piel circundante."
+    ],
+    "tipoTecnica": "Cuidado de Heridas",
+    "cuidadosEnfermeria": [
+      "Evaluar signos de infección",
+      "Control de bordes de herida",
+      "Registro de características del exudado"
+    ],
+    "materialNecesario": [
+      "Set de curación",
+      "Suero fisiológico",
+      "Gasas estériles",
+      "Antiséptico (Clorhexidina, Povidona, etc.)",
+      "Material de sutura o retiro de puntos"
+    ]
+  },
+  {
+    "id": "heridas2",
+    "nombre": "Prevención de Lesiones por Presión (LPP)",
+    "categoria": "Integridad Cutánea y Heridas",
+    "uso": "Acciones proactivas para mantener la piel intacta en pacientes con movilidad limitada.",
+    "indicaciones": [
+      "Pacientes postrados o encamados",
+      "Movilidad reducida",
+      "Pacientes geriátricos o en UCI"
+    ],
+    "contraindicaciones": [],
+    "maneraRealizarlo": [
+      "Cambios de posición: Movilización protocolizada del paciente encamado para liberar puntos de presión.",
+      "Valoración de Escala de Norton o Braden: Herramienta para medir el riesgo de que un paciente desarrolle escaras o úlceras.",
+      "Higiene y confort: Baño del paciente y cuidado de la higiene personal como base para la salud dérmica.",
+      "Mecánica corporal: Aplicación de técnicas de movimiento seguro para evitar lesiones por fricción o cizallamiento al movilizar al paciente."
+    ],
+    "tipoTecnica": "Prevención",
+    "cuidadosEnfermeria": [
+      "Uso de cojines y protectores",
+      "Inspección diaria de prominencias óseas",
+      "Lubricación e hidratación de piel intacta evitando masajear zonas enrojecidas"
+    ],
+    "materialNecesario": [
+      "Almohadas/cojines",
+      "Sábanas limpias y sin arrugas",
+      "Ácidos grasos hiperoxigenados",
+      "Cremas hidratantes"
+    ]
+  },
+  {
+    "id": "heridas3",
+    "nombre": "Área Quirúrgica y Asepsia Avanzada",
+    "categoria": "Integridad Cutánea y Heridas",
+    "uso": "Procedimientos de alta especificidad para evitar infecciones de sitio quirúrgico.",
+    "indicaciones": [
+      "Previo a intervenciones quirúrgicas",
+      "Manejo de material estéril",
+      "Personal en quirófano"
+    ],
+    "contraindicaciones": [],
+    "maneraRealizarlo": [
+      "Higiene de manos quirúrgica: Técnica de lavado exhaustivo antes de cualquier intervención.",
+      "Colocación de ropa estéril: Uso correcto de bata y calzado de guantes estériles para mantener el campo quirúrgico.",
+      "Preparación del material estéril: Organización de textiles y equipos que entrarán en contacto con la piel del paciente durante la cirugía.",
+      "Manejo de muestras de tejido: Protección y etiquetado de muestras derivadas del acto quirúrgico (biopsias)."
+    ],
+    "tipoTecnica": "Asepsia y Antisepsia",
+    "cuidadosEnfermeria": [
+      "Mantener rigurosamente la técnica aséptica",
+      "Verificar caducidad de esterilización",
+      "Manejo seguro de instrumental cortopunzante",
+      "Manejo adecuado del recipiente para muestras"
+    ],
+    "materialNecesario": [
+      "Jabón quirúrgico (ej. Clorhexidina)",
+      "Bata estéril",
+      "Guantes estériles",
+      "Recipiente para biopsia con formol",
+      "Campos quirúrgicos"
+    ]
+  },
+  {
+    "id": "heridas4",
+    "nombre": "Cuidado Cutáneo Especializado",
+    "categoria": "Integridad Cutánea y Heridas",
+    "uso": "Enfoque en áreas específicas según la rotación (neonatología, gineco-obstetricia, ostomías).",
+    "indicaciones": [
+      "Recién nacidos (cordón umbilical)",
+      "Madres lactantes",
+      "Pacientes con ostomías"
+    ],
+    "contraindicaciones": [],
+    "maneraRealizarlo": [
+      "Cuidado del cordón umbilical: Limpieza y vigilancia del muñón umbilical en el recién nacido para evitar onfalitis.",
+      "Valoración de las mamas: Evaluación de la integridad del pezón y la piel mamaria en la madre lactante.",
+      "Manejo de ostomías: Cuidado de la piel periestomal en pacientes con traqueotomía, gastrostomía o ileostomía para evitar dermatitis química."
+    ],
+    "tipoTecnica": "Cuidado Especializado",
+    "cuidadosEnfermeria": [
+      "Observación de signos de infección umbilical (eritema, mal olor)",
+      "Capacitación a la madre sobre cuidados del pezón durante la lactancia",
+      "Cambio oportuno de dispositivos de ostomía y limpieza de piel periestomal"
+    ],
+    "materialNecesario": [
+      "Alcohol al 70% o clorhexidina",
+      "Gasas estériles",
+      "Guantes de manejo",
+      "Barreras cutáneas y dispositivos de ostomía"
+    ]
   }
 ];

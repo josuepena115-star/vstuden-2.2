@@ -13,6 +13,8 @@ import {
   X, 
   ChevronRight, 
   Activity, 
+  Accessibility,
+  Hand,
   Clipboard, 
   Clock,
   Info,
@@ -60,12 +62,21 @@ import {
   Box,
   MapPin,
   Edit3,
+  LayoutDashboard,
+  Columns
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Toaster, toast } from 'sonner';
 import { ThemeProvider, useTheme } from 'next-themes';
 import { WasteManagementBlock } from './components/WasteManagementBlock';
+import PatientMobilizationBlock from './components/PatientMobilizationBlock';
+import { SkinAndWoundsBlock } from './components/SkinAndWoundsBlock';
+import PatientSafetyBlock from './components/PatientSafetyBlock';
+import HandHygieneBlock from './components/HandHygieneBlock';
+import VitalSignsByAgeBlock from './components/VitalSignsByAgeBlock';
 import NotificationSystem from './components/NotificationSystem';
+import HandoverNoteAction from './components/HandoverNoteAction';
+import NotificationsModal from './components/NotificationsModal';
 import SearchModal from './components/SearchModal';
 import MyNotes from './components/MyNotes';
 import { DISEASES, SERVICIOS, Disease, DRUGS, Drug } from './medicalData.ts';
@@ -139,12 +150,6 @@ const INITIAL_PROFILE: UserProfile = {
   horario: '07:00 - 19:00 (Turno A)',
 };
 
-const PROTOCOLS: Protocol[] = [
-  { id: 'p1', title: 'Lavado de Manos Clínico', category: 'procedimientos', content: 'Técnica de 11 pasos para la desinfección de manos en el entorno hospitalario...' },
-  { id: 'p2', title: 'Triage de Manchester', category: 'msp', content: 'Protocolo de clasificación de pacientes por colores: Rojo (Inmediato), Naranja (Muy Urgente), Amarillo (Urgente)...' },
-  { id: 'p3', title: 'Nota de Evolución SOAP', category: 'notas', content: 'S: Subjetivo, O: Objetivo, A: Apreciación, P: Plan...' },
-  { id: 'p4', title: 'Catálogo de Suturas', category: 'insumos', content: 'Tipos de hilos: Absorbibles (Vicryl, PDS) y No Absorbibles (Seda, Nylon)...' },
-];
 
 const ICON_MAP: Record<string, any> = {
   Pill,
@@ -164,6 +169,35 @@ const ICON_MAP: Record<string, any> = {
 };
 
 // --- Components ---
+
+const MobileHamburgerButton = ({ onClick }: { onClick: () => void }) => (
+  <button onClick={onClick} className="p-2 sm:hidden text-foreground bg-card border rounded-lg shadow-sm">
+    <Menu size={20} />
+  </button>
+);
+
+const MobileMenuDrawer = ({ isOpen, items, onClose, onSelect }: { isOpen: boolean, items: any[], onClose: () => void, onSelect: (id: string) => void }) => (
+  <AnimatePresence>
+    {isOpen && (
+      <>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/90 backdrop-blur-md z-[100]" onClick={onClose} />
+        <motion.div initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }} className="fixed top-0 left-0 w-3/4 max-w-[300px] h-full bg-background z-[101] p-4 flex flex-col gap-2 border-r border-border shadow-2xl">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="font-black text-lg text-primary">Menu</h2>
+            <button onClick={onClose} className="p-2 bg-accent rounded-lg"><X size={20} /></button>
+          </div>
+          <div className="flex-grow overflow-y-auto w-full">
+            {items.map(item => (
+              <button key={item.id} onClick={() => { onSelect(item.id); onClose(); }} className="w-full text-left p-3 font-semibold text-sm border-b border-border/50 hover:bg-accent rounded-lg">
+                {item.label}
+              </button>
+            ))}
+          </div>
+        </motion.div>
+      </>
+    )}
+  </AnimatePresence>
+);
 
 const SidebarItem = ({ icon: Icon, label, active, onClick, collapsed = false }: { icon: any, label: string, active: boolean, onClick: () => void, collapsed?: boolean }) => (
   <button
@@ -205,7 +239,7 @@ const SectionHeader = ({ title, subtitle, icon: Icon }: { title: string, subtitl
 const Card = ({ children, className = "", ...props }: { children: React.ReactNode, className?: string, [key: string]: any }) => (
   <div 
     {...props}
-    className={`bg-card text-card-foreground rounded-2xl border border-border p-6 shadow-sm hover:shadow-md transition-all duration-300 ${className}`}
+    className={`bg-card text-card-foreground rounded-lg border border-border p-2 sm:p-3 shadow-sm hover:shadow-sm transition-all duration-300 ${className}`}
   >
     {children}
   </div>
@@ -214,7 +248,7 @@ const Card = ({ children, className = "", ...props }: { children: React.ReactNod
 const GlassCard = ({ children, className = "", ...props }: { children: React.ReactNode, className?: string, [key: string]: any }) => (
   <div 
     {...props}
-    className={`bg-card/40 backdrop-blur-xl text-card-foreground rounded-3xl border border-white/10 p-6 shadow-xl ${className}`}
+    className={`bg-card/40 backdrop-blur-xl text-card-foreground rounded-xl border border-white/10 p-2 sm:p-3 shadow-md ${className}`}
   >
     {children}
   </div>
@@ -225,6 +259,7 @@ const GlassCard = ({ children, className = "", ...props }: { children: React.Rea
 const ThemeProviderAny = ThemeProvider as any;
 
 function App() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [user, setUser] = useState<any>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -232,6 +267,8 @@ function App() {
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [isLoginLoading, setIsLoginLoading] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [notificationCount, setNotificationCount] = useState(0);
   const { theme, setTheme } = useTheme();
   
   // Auth & Profile Sync
@@ -529,7 +566,7 @@ function App() {
     const storedDiseases = localStorage.getItem('dailyDiseases');
     const dataVersion = localStorage.getItem('dailyDataVersion');
 
-    if (storedDate === today && storedDiseases && dataVersion === '3') {
+    if (storedDate === today && storedDiseases && dataVersion === '4') {
       setDailyDiseases(JSON.parse(storedDiseases));
     } else {
       // Pick 3 random diseases
@@ -538,17 +575,21 @@ function App() {
       setDailyDiseases(selected);
       localStorage.setItem('dailyDiseasesDate', today);
       localStorage.setItem('dailyDiseases', JSON.stringify(selected));
-      localStorage.setItem('dailyDataVersion', '3');
+      localStorage.setItem('dailyDataVersion', '4');
     }
   }, []);
 
-  const handleAddTask = async (text: string, source?: string) => {
+  const handleAddTask = async (text: string, options?: { source?: string, isAcademico?: boolean, isUrgent?: boolean, dueDate?: string }) => {
     if (!user) return;
     const newTask = { 
       uid: user.uid,
       text, 
       completed: false, 
-      source,
+      source: options?.source || 'Directo',
+      isAcademico: options?.isAcademico || false,
+      isUrgent: options?.isUrgent || false,
+      dueDate: options?.dueDate || null,
+      notified: false,
       createdAt: serverTimestamp()
     };
     try {
@@ -744,7 +785,7 @@ function App() {
         const evColor = isAcademico ? '#a855f7' : shiftColor;
 
         if (isAcademico) {
-          handleAddTask(`Revisar material de clase: ${finalService}`, 'Estudio Académico');
+          handleAddTask(`Revisar material de clase: ${finalService}`, { source: 'Estudio Académico' });
         }
 
         try {
@@ -785,8 +826,6 @@ function App() {
   };
 
   // Protocols State
-  const [protocolCategory, setProtocolCategory] = useState('Todos');
-  const [protocolSearch, setProtocolSearch] = useState('');
 
   // Services State
   const [selectedService, setSelectedService] = useState<string | null>(null);
@@ -1203,7 +1242,7 @@ function App() {
                                         setIsCalendarDayModalOpen(true);
                                       }
                                     }}
-                                    className={`aspect-square flex flex-col p-2 rounded-2xl text-sm relative transition-all border ${
+                                    className={`aspect-square flex flex-col p-1 sm:p-2 rounded-2xl text-[10px] sm:text-xs relative transition-all border ${
                                       isBatchSelected ? 'bg-orange-500/20 border-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.2)]' :
                                       isToday ? 'bg-primary/10 border-primary shadow-[0_0_15px_rgba(59,130,246,0.2)]' : 
                                       hadNightShiftPrev ? 'bg-blue-500/5 border-blue-200/50' : 
@@ -1211,7 +1250,7 @@ function App() {
                                     } hover:border-primary/50 cursor-pointer overflow-hidden`}
                                   >
                                     <div className="flex justify-between items-start">
-                                      <span className={`font-black ${isToday ? 'text-primary' : 'text-foreground'}`}>{day}</span>
+                                      <span className={`font-bold ${isToday ? 'text-primary' : 'text-foreground'}`}>{day}</span>
                                       {hadNightShiftPrev && (
                                         <div className="px-1.5 py-0.5 bg-blue-500 text-white text-[7px] font-black uppercase rounded leading-none">Saliente</div>
                                       )}
@@ -1420,35 +1459,65 @@ function App() {
                         key={task.id} 
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="flex items-center space-x-3 group"
+                        className="flex flex-col space-y-1 group border-b border-border/30 pb-3 last:border-0"
                       >
-                        <button 
-                          onClick={() => toggleTask(task.id, task.completed)}
-                          className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${task.completed ? 'bg-green-500 border-green-500 text-white' : 'border-border group-hover:border-primary'}`}
-                        >
-                          {task.completed && <CheckCircle2 size={14} />}
-                        </button>
-                        <div className="flex-grow min-w-0">
-                          <p className={`text-sm font-bold truncate transition-all ${task.completed ? 'text-muted-foreground line-through decoration-2' : 'text-foreground'}`}>{task.text}</p>
-                          {task.source && <p className="text-[9px] font-black text-primary/60 uppercase">{task.source}</p>}
+                        <div className="flex items-center space-x-3">
+                          <button 
+                            onClick={() => toggleTask(task.id, task.completed)}
+                            className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${task.completed ? 'bg-green-500 border-green-500 text-white' : 'border-border group-hover:border-primary'}`}
+                          >
+                            {task.completed && <CheckCircle2 size={14} />}
+                          </button>
+                          <div className="flex-grow min-w-0">
+                            <div className="flex items-center gap-2">
+                              <p className={`text-sm font-bold truncate transition-all ${task.completed ? 'text-muted-foreground line-through decoration-2' : 'text-foreground'}`}>{task.text}</p>
+                              {task.isUrgent && !task.completed && <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" title="Urgente" />}
+                            </div>
+                            <div className="flex items-center gap-2 mt-1">
+                              {task.source && <span className="text-[8px] font-black text-primary/60 uppercase">{task.source}</span>}
+                              {task.isAcademico && <span className="text-[8px] font-black text-purple-500 uppercase flex items-center gap-1"><BookOpen size={8} /> Académico</span>}
+                              {task.dueDate && <span className="text-[8px] font-black text-orange-500 uppercase flex items-center gap-1"><Clock size={8} /> {new Date(task.dueDate).toLocaleDateString()}</span>}
+                            </div>
+                          </div>
+                          <button onClick={() => deleteTask(task.id)} className="p-1 px-2 text-destructive/40 hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all opacity-0 group-hover:opacity-100">
+                            <Trash2 size={14} />
+                          </button>
                         </div>
-                        <button onClick={() => deleteTask(task.id)} className="p-1 px-2 text-destructive/40 hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all">
-                          <Trash2 size={14} />
-                        </button>
                       </motion.div>
                     ))}
-                    <div className="pt-2">
+                    <div className="pt-2 space-y-3">
                        <input 
                          type="text" 
-                         placeholder="+ Añadir tarea pendiente..." 
+                         placeholder="+ Añadir tarea..." 
                          className="w-full bg-accent/20 border-border border rounded-xl px-4 py-3 text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                          onKeyDown={(e) => {
                            if (e.key === 'Enter' && e.currentTarget.value) {
-                             handleAddTask(e.currentTarget.value, 'Directo');
+                             handleAddTask(e.currentTarget.value);
                              e.currentTarget.value = '';
                            }
                          }}
                        />
+                       <div className="flex gap-2">
+                          <button 
+                            onClick={() => {
+                              const title = prompt("Título de la tarea académica:");
+                              const date = prompt("Fecha de entrega (YYYY-MM-DD):", new Date().toISOString().split('T')[0]);
+                              if (title) handleAddTask(title, { source: 'Academia', isAcademico: true, dueDate: date || undefined });
+                            }}
+                            className="bg-purple-500/10 text-purple-700 text-[9px] font-black uppercase px-3 py-1.5 rounded-lg border border-purple-500/20 hover:bg-purple-500 hover:text-white transition-all flex items-center gap-1"
+                          >
+                             <Plus size={10} /> Académica
+                          </button>
+                          <button 
+                            onClick={() => {
+                              const title = prompt("Título de la tarea urgente:");
+                              if (title) handleAddTask(title, { isUrgent: true });
+                            }}
+                            className="bg-red-500/10 text-red-600 text-[9px] font-black uppercase px-3 py-1.5 rounded-lg border border-red-500/20 hover:bg-red-500 hover:text-white transition-all flex items-center gap-1"
+                          >
+                             <Plus size={10} /> Urgente
+                          </button>
+                       </div>
                     </div>
                   </div>
                 </GlassCard>
@@ -1471,33 +1540,33 @@ function App() {
             {/* Flashcard Modal */}
             <AnimatePresence>
               {isFlashcardOpen && activeFlashcard && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-2 bg-background/80 backdrop-blur-sm">
                   <motion.div 
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
-                    className="relative w-full max-w-md aspect-[3/4] perspective-1000"
+                    className="relative w-full max-w-sm sm:max-w-md aspect-[3/4] perspective-1000"
                   >
                     <div 
                       className={`relative w-full h-full transition-all duration-500 preserve-3d cursor-pointer ${isFlipped ? 'rotate-y-180' : ''}`}
                       onClick={() => setIsFlipped(!isFlipped)}
                     >
                       {/* Front */}
-                      <Card className="absolute inset-0 backface-hidden flex flex-col p-6 border-2 border-primary/20 shadow-2xl overflow-hidden">
-                        <div className="flex flex-col items-center justify-center text-center mb-4 shrink-0">
-                          <div className="p-3 bg-primary/10 rounded-full text-primary mb-2">
-                            {ICON_MAP[activeFlashcard.icon || 'Activity'] && React.createElement(ICON_MAP[activeFlashcard.icon || 'Activity'], { size: 40 })}
+                      <Card className="absolute inset-0 backface-hidden flex flex-col p-4 sm:p-6 border-2 border-primary/20 shadow-2xl overflow-hidden">
+                        <div className="flex flex-col items-center justify-center text-center mb-2 sm:mb-4 shrink-0">
+                          <div className="p-2 sm:p-3 bg-primary/10 rounded-full text-primary mb-1 sm:mb-2">
+                            {ICON_MAP[activeFlashcard.icon || 'Activity'] && React.createElement(ICON_MAP[activeFlashcard.icon || 'Activity'], { size: 32 })}
                           </div>
                           <div>
-                            <h2 className="text-2xl font-black text-primary leading-tight">{activeFlashcard.nombre}</h2>
-                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{activeFlashcard.servicio}</p>
+                            <h2 className="text-xl sm:text-2xl font-black text-primary leading-tight">{activeFlashcard.nombre}</h2>
+                            <p className="text-[9px] sm:text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{activeFlashcard.servicio}</p>
                           </div>
                         </div>
 
-                        <div className="flex-grow overflow-y-auto space-y-4 pr-1 scrollbar-hide text-left">
+                        <div className="flex-grow overflow-y-auto space-y-3 sm:space-y-4 pr-1 text-left text-xs">
                           <div>
-                            <p className="text-[10px] font-black text-primary uppercase border-b border-primary/10 pb-1">Fisiopatología Integral</p>
-                            <p className="text-xs mt-1 leading-relaxed font-medium text-muted-foreground">{activeFlashcard.definicionCaso}</p>
+                            <p className="text-[9px] sm:text-[10px] font-black text-primary uppercase border-b border-primary/10 pb-1">Fisiopatología Integral</p>
+                            <p className="text-[11px] sm:text-xs mt-1 leading-relaxed font-medium text-muted-foreground">{activeFlashcard.definicionCaso}</p>
                           </div>
 
                           {(activeFlashcard.etiologia || activeFlashcard.fisiopatologiaBasica) && (
@@ -1515,6 +1584,20 @@ function App() {
                                 </div>
                               )}
                             </div>
+                          )}
+
+                          {activeFlashcard.procedimientos && (
+                             <div className="bg-primary/5 p-2 rounded-lg border border-primary/10">
+                               <p className="text-[9px] font-black text-primary uppercase">Procedimientos Inmediatos</p>
+                               <ul className="text-[10px] mt-1 space-y-0.5">
+                                 {activeFlashcard.procedimientos.map((p, i) => (
+                                   <li key={i} className="flex gap-1">
+                                     <span className="text-primary">•</span>
+                                     <span className="font-bold">{p}</span>
+                                   </li>
+                                 ))}
+                               </ul>
+                             </div>
                           )}
 
                           <div className="grid grid-cols-2 gap-3">
@@ -1617,7 +1700,7 @@ function App() {
                           <button 
                             onClick={(e) => { 
                               e.stopPropagation(); 
-                              handleAddTask(`Revisar protocolo: ${activeFlashcard.nombre}`, 'Flashcard Study');
+                              handleAddTask(`Revisar protocolo: ${activeFlashcard.nombre}`, { source: 'Flashcard Study' });
                               toast.success('Guardado en Tareas para revisión posterior');
                             }}
                             className="w-full py-2 bg-white text-primary font-black rounded-xl text-xs flex items-center justify-center gap-2"
@@ -1935,7 +2018,7 @@ function App() {
         );
 
       case 'farmacologia':
-        const drugCategories = ['Todos', 'Analgésicos', 'Antibióticos', 'Cardiovascular', 'Gastrointestinal', 'Respiratorio', 'Sedantes', 'Emergencia'];
+        const drugCategories = ['Todos', 'Analgésicos', 'Antibióticos', 'Cardiovascular', 'Gastrointestinal', 'Respiratorio', 'Sedantes', 'Electrolitos', 'Insulinas', 'Emergencia'];
         
         const getDrugCategory = (drug: Drug): string => {
           const clase = drug.claseTerapeutica.toLowerCase();
@@ -1946,6 +2029,9 @@ function App() {
             clase.includes('antídoto') || clase.includes('reanimación') || 
             drug.icon === 'Zap' || drug.icon === 'Ambulance'
           ) return 'Emergencia';
+
+          if (clase.includes('electrolito')) return 'Electrolitos';
+          if (clase.includes('insulina')) return 'Insulinas';
 
           if (
             clase.includes('sedante') || clase.includes('hipnótico') || clase.includes('benzodiazepina') || 
@@ -2147,69 +2233,6 @@ function App() {
           </motion.div>
         );
 
-      case 'protocolos':
-        const filteredProtocols = PROTOCOLS.filter(p => {
-          const matchesCategory = protocolCategory === 'Todos' || p.category.toLowerCase().includes(protocolCategory.toLowerCase().split(' ')[0]);
-          const matchesSearch = p.title.toLowerCase().includes(protocolSearch.toLowerCase());
-          return matchesCategory && matchesSearch;
-        });
-
-        return (
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-            <SectionHeader title="Guía y Protocolos" subtitle="Manuales de procedimientos y normativas MSP." />
-            
-            <div className="space-y-6 mb-8">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
-                <input 
-                  type="text" 
-                  placeholder="Buscar protocolo por título..." 
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-card focus:ring-2 focus:ring-primary outline-none transition-all"
-                  value={protocolSearch}
-                  onChange={(e) => setProtocolSearch(e.target.value)}
-                />
-              </div>
-              
-              <div className="flex space-x-2 overflow-x-auto pb-2 scrollbar-hide">
-                {['Todos', 'Procedimientos', 'MSP Ecuador', 'Notas', 'Insumos'].map(cat => (
-                  <button 
-                    key={cat} 
-                    onClick={() => setProtocolCategory(cat)}
-                    className={`whitespace-nowrap px-4 py-2 rounded-full border transition-all text-sm font-medium ${protocolCategory === cat ? 'bg-primary text-primary-foreground border-primary shadow-md' : 'border-border hover:bg-accent'}`}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              {filteredProtocols.map(protocol => (
-                <Card 
-                  key={protocol.id} 
-                  onClick={() => toast.info(protocol.title, { description: protocol.content })}
-                  className="flex items-center justify-between group cursor-pointer hover:border-primary"
-                >
-                  <div className="flex items-center space-x-4">
-                    <div className="p-3 bg-primary/10 rounded-xl text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
-                      <FileText size={24} />
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-lg">{protocol.title}</h4>
-                      <p className="text-sm text-muted-foreground">{protocol.category.toUpperCase()}</p>
-                    </div>
-                  </div>
-                  <ChevronRight className="text-muted-foreground group-hover:text-primary transition-all" />
-                </Card>
-              ))}
-              {filteredProtocols.length === 0 && (
-                <div className="py-20 text-center text-muted-foreground">
-                  No se encontraron protocolos en esta categoría.
-                </div>
-              )}
-            </div>
-          </motion.div>
-        );
 
       case 'servicios':
         return (
@@ -2249,7 +2272,7 @@ function App() {
                   {[
                     { id: 'patologias', title: '1. Patologías Frecuentes', subtitle: 'Neumología, Cardiología, Neurología, Nefro, Gastro', icon: Activity },
                     { id: 'escalas', title: '2. Escalas y Scores', subtitle: 'CURB-65, Child-Pugh, Cockcroft-Gault, TIMI', icon: Calculator },
-                    { id: 'protocolos', title: '3. Protocolos y Esquemas', subtitle: 'Insulina, Electrolitos, Anticoagulación', icon: Clipboard },
+                    { id: 'protocolos', title: '3. Protocolos y Esquemas', subtitle: 'Insulina, Electrolitos, Anticoagulación, Vía Aérea', icon: Clipboard },
                     { id: 'visita', title: '4. Pase de Visita y Notas', subtitle: 'Estructura SOAP, Herramienta SAER (SBAR)', icon: FileText },
                     { id: 'diagnostico', title: '5. Diagnóstico Avanzado', subtitle: 'Algoritmo Ácido-Base, Perfiles Hepáticos/Anemias', icon: Search }
                   ].map((block) => (
@@ -3119,92 +3142,261 @@ function App() {
                           <Zap size={24} />
                           <h4 className="text-xl font-bold">3. Equipamiento y Mobiliario Clínico</h4>
                         </div>
-                        <div className="text-sm text-foreground space-y-4">
-                          <p>Actores permanentes en la sala de operaciones y responsabilidad de la circulante:</p>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <div className="bg-accent/20 border p-3 rounded-lg flex flex-col justify-between">
-                              <div><strong className="text-primary text-base">Mesa Quirúrgica</strong></div>
-                              <p className="text-muted-foreground text-xs mt-1">Con controles para posiciones anatómicas según la intervención (Decúbito supino, Trendelenburg, Litotomía, Kraske, etc.).</p>
-                            </div>
-                            <div className="bg-accent/20 border p-3 rounded-lg flex flex-col justify-between">
-                              <div><strong className="text-primary text-base">Torre de Anestesia</strong></div>
-                              <p className="text-muted-foreground text-xs mt-1">Monitorización de signos vitales, ventilador mecánico y vaporizadores de gases. El "cerebro" de la hemodinamia del paciente.</p>
-                            </div>
-                            <div className="bg-accent/20 border p-3 rounded-lg flex flex-col justify-between">
-                              <div><strong className="text-primary text-base">Mesa de Mayo</strong></div>
-                              <p className="text-muted-foreground text-xs mt-1">Mesa de un solo pilar, de altura variable. Se coloca por encima del paciente. Organiza el instrumental de uso inmediato (tiempos de diéresis y hemostasia).</p>
-                            </div>
-                            <div className="bg-accent/20 border p-3 rounded-lg flex flex-col justify-between">
-                              <div><strong className="text-primary text-base">Mesa Riñón (o Pasteur)</strong></div>
-                              <p className="text-muted-foreground text-xs mt-1">Superficie amplia y rectangular. Se utiliza para organizar el bulto quirúrgico y posicionar el instrumental de reserva o pesado.</p>
-                            </div>
-                          </div>
+                        <div className="space-y-6 text-sm text-foreground">
                           
-                          <div className="bg-orange-50 border-l-4 border-orange-500 p-3 rounded-r-lg mt-4">
-                              <h5 className="font-bold text-orange-700 flex items-center gap-2"><Zap size={16}/> Unidad de Electrocirugía (Bisturí eléctrico)</h5>
-                              <p className="text-orange-900/80 text-xs mt-1">Generador de radiofrecuencia para corte y coagulación.</p>
-                              <p className="text-orange-700 text-xs font-bold mt-2">★ Puntos clave de enfermería circulante:</p>
-                              <ul className="list-disc pl-5 text-orange-900 text-xs mt-1 space-y-1">
-                                <li>Colocación de la placa de retorno (placa neutra) en zona muscular limpia, seca, afeitada y bien vascularizada (ej. muslo).</li>
-                                <li><strong>Nunca</strong> colocar sobre prominencias óseas, implantes metálicos o tejido cicatrical para evitar riesgo de quemaduras severas.</li>
-                              </ul>
+                          {/* 1. Equipamiento Médico Principal */}
+                          <div className="space-y-3">
+                            <h5 className="font-bold border-b border-border pb-1">1. Equipamiento Médico Principal (Electromedicina)</h5>
+                            <p className="text-muted-foreground text-xs">Son los dispositivos activos esenciales para realizar la intervención y monitorear al paciente.</p>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                              <div className="bg-accent/20 border p-3 rounded-lg flex flex-col justify-between">
+                                <div><strong className="text-primary text-sm">Mesa Quirúrgica</strong></div>
+                                <p className="text-muted-foreground text-xs mt-1">Debe ser articulada, con capacidad para diferentes posiciones (Trendelenburg, decúbito lateral, etc.), radiotransparente (para uso de Rayos X) y con base estable.</p>
+                              </div>
+                              <div className="bg-accent/20 border p-3 rounded-lg flex flex-col justify-between">
+                                <div><strong className="text-primary text-sm">Lámparas Cielíticas</strong></div>
+                                <p className="text-muted-foreground text-xs mt-1">Iluminación LED de alta intensidad que no genere sombras ni calor excesivo. Deben tener brazos articulados con gran rango de movimiento.</p>
+                              </div>
+                              <div className="bg-accent/20 border p-3 rounded-lg flex flex-col justify-between">
+                                <div><strong className="text-primary text-sm">Máquina de Anestesia</strong></div>
+                                <p className="text-muted-foreground text-xs mt-1">Sistema integral con ventilador mecánico, monitoreo de gases y vaporizadores.</p>
+                              </div>
+                              <div className="bg-accent/20 border p-3 rounded-lg flex flex-col justify-between">
+                                <div><strong className="text-primary text-sm">Torre de Laparoscopia / Endoscopia</strong></div>
+                                <p className="text-muted-foreground text-xs mt-1">En quirófanos modernos, incluye monitor de alta definición, fuente de luz fría, insuflador de CO₂ y procesador de imagen.</p>
+                              </div>
+                              <div className="bg-accent/20 border p-3 rounded-lg flex flex-col justify-between">
+                                <div><strong className="text-primary text-sm">Monitores de Signos Vitales</strong></div>
+                                <p className="text-muted-foreground text-xs mt-1">Para control de frecuencia cardíaca, SpO₂, presión arterial (invasiva y no invasiva), ECG y temperatura.</p>
+                              </div>
+                            </div>
+                            
+                            <div className="bg-orange-50 dark:bg-orange-900/10 border-l-4 border-orange-500 p-3 rounded-r-lg mt-2">
+                                <h5 className="font-bold text-orange-700 dark:text-orange-400 flex items-center gap-2"><Zap size={14}/> Unidad de Electrocirugía (Bisturí eléctrico)</h5>
+                                <p className="text-orange-900/80 dark:text-orange-200/80 text-xs mt-1">Con opciones de corte y coagulación (monopolar y bipolar).</p>
+                                <ul className="list-disc pl-5 text-orange-900 dark:text-orange-200 text-xs mt-1 space-y-1">
+                                  <li><strong>Punto clave circulante:</strong> Colocación de placa de retorno en zona muscular limpia y vascularizada.</li>
+                                  <li><strong>Nunca</strong> sobre prominencias óseas o implantes.</li>
+                                </ul>
+                            </div>
                           </div>
+
+                          {/* 2. Mobiliario Clínico Fijo y Móvil */}
+                          <div className="space-y-3">
+                            <h5 className="font-bold border-b border-border pb-1">2. Mobiliario Clínico Fijo y Móvil</h5>
+                            <p className="text-muted-foreground text-xs">Elementos que sirven de apoyo logístico dentro del quirófano.</p>
+                            <ul className="space-y-2 text-xs">
+                              <li className="bg-card border p-2 rounded-lg"><strong className="text-primary">Mesas Auxiliares:</strong>
+                                <ul className="list-disc pl-4 mt-1 text-muted-foreground space-y-1">
+                                  <li><strong>Mesa de Mayo:</strong> Altura regulable para el instrumental de uso inmediato.</li>
+                                  <li><strong>Mesa de Riñón:</strong> Superficie amplia para organizar el instrumental general de la cirugía.</li>
+                                </ul>
+                              </li>
+                              <li className="bg-card border p-2 rounded-lg flex flex-col"><strong className="text-primary">Carros de Paro (Crash Cart)</strong> <span className="text-muted-foreground">Equipado con desfibrilador, medicación de emergencia y manejo de vía aérea.</span></li>
+                              <li className="bg-card border p-2 rounded-lg flex flex-col"><strong className="text-primary">Negatoscopio o Pantallas Digitales</strong> <span className="text-muted-foreground">Para visualización de estudios de imagen (placas, tomografías o sistemas PACS).</span></li>
+                              <li className="bg-card border p-2 rounded-lg flex flex-col"><strong className="text-primary">Bancos de Altura y Taburetes</strong> <span className="text-muted-foreground">Giratorios, con respaldo y ruedas con freno, ajustables para el cirujano y el anestesiólogo.</span></li>
+                              <li className="bg-card border p-2 rounded-lg flex flex-col"><strong className="text-primary">Soportes de Sueros (Tripies)</strong> <span className="text-muted-foreground">Ajustables y con base pesada para evitar volcamientos.</span></li>
+                            </ul>
+                          </div>
+
+                          {/* 3. Gestión de Residuos y Almacenamiento */}
+                          <div className="space-y-3">
+                            <h5 className="font-bold border-b border-border pb-1">3. Gestión de Residuos y Almacenamiento</h5>
+                            <p className="text-muted-foreground text-xs">Crucial para mantener el orden y la higiene estricta.</p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                              <div className="bg-accent/10 border p-2 rounded-lg"><strong className="text-foreground">Contenedores de Residuos:</strong><p className="text-muted-foreground mt-1">Diferenciados por colores (Bioinfecciosos, comunes, reciclables) y accionados por pedal.</p></div>
+                              <div className="bg-accent/10 border p-2 rounded-lg"><strong className="text-foreground">Guardianes para Punzocortantes:</strong><p className="text-muted-foreground mt-1">Recipientes rígidos para agujas y hojas de bisturí.</p></div>
+                              <div className="bg-accent/10 border p-2 rounded-lg"><strong className="text-foreground">Lavacirujanos:</strong><p className="text-muted-foreground mt-1">Mobiliario de acero inoxidable fuera del quirófano, con grifos de accionamiento por sensor o rodilla.</p></div>
+                              <div className="bg-accent/10 border p-2 rounded-lg"><strong className="text-foreground">Armarios Empotrados:</strong><p className="text-muted-foreground mt-1">Con puertas de vidrio para inventario rápido (deben estar al ras de la pared para evitar polvo).</p></div>
+                            </div>
+                          </div>
+
+                          {/* 4. Características Técnicas del Mobiliario */}
+                          <div className="bg-blue-50 dark:bg-blue-900/10 p-4 rounded-xl border border-blue-200 dark:border-blue-800">
+                             <h5 className="font-bold text-blue-800 dark:text-blue-300 mb-2">4. Características Técnicas del Mobiliario</h5>
+                             <ul className="text-xs text-blue-900/80 dark:text-blue-200/80 space-y-2">
+                               <li><strong className="text-blue-800 dark:text-blue-200 flex space-x-1 items-center">Material:</strong> Acero inoxidable quirúrgico (preferiblemente grado 304) por su resistencia a la corrosión y facilidad de desinfección.</li>
+                               <li><strong className="text-blue-800 dark:text-blue-200 flex space-x-1 items-center">Movilidad:</strong> Ruedas de grado médico, antiestáticas y con sistemas de bloqueo.</li>
+                               <li><strong className="text-blue-800 dark:text-blue-200 flex space-x-1 items-center">Superficies:</strong> Lisas, sin porosidades, con bordes redondeados (para evitar accidentes y acumulación de suciedad).</li>
+                             </ul>
+                          </div>
+
                         </div>
                       </Card>
                     )}
 
                     {selectedService === 'Cirugía' && cirugiaSubTab === 'cir_instrumental' && !selectedDisease && (
                       <Card className="space-y-6">
-                        <div className="flex items-center space-x-3 text-primary">
-                          <Scissors size={24} />
-                          <h4 className="text-xl font-bold">4. Instrumental Quirúrgico por Tiempos</h4>
+                        <div className="flex items-center space-x-3 text-primary border-b pb-4">
+                          <Scissors size={28} />
+                          <h4 className="text-2xl font-bold">4. Instrumental Quirúrgico y Organización</h4>
                         </div>
-                        <div className="text-sm text-foreground space-y-4">
-                           <p className="text-muted-foreground mb-4">El instrumental se clasifica y se dispone en la mesa de Mayo según los "tiempos quirúrgicos", la secuencia lógica de la cirugía:</p>
-                          <div className="space-y-3">
-                            <div className="p-3 border rounded-xl shadow-sm border-l-4 border-l-red-500 bg-red-50/30">
-                              <h5 className="font-bold text-red-700 flex items-center gap-2">1. Diéresis (Corte)</h5>
-                              <p className="text-xs text-muted-foreground mb-2">Incisión y sección de tejidos.</p>
-                              <ul className="text-xs text-foreground font-medium flex gap-2 flex-wrap">
-                                <li className="bg-background px-2 py-1 rounded shadow-sm border">Mangos de bisturí (#3 y #4)</li>
-                                <li className="bg-background px-2 py-1 rounded shadow-sm border">Tijeras de Metzenbaum (tejido delicado)</li>
-                                <li className="bg-background px-2 py-1 rounded shadow-sm border">Tijeras de Mayo (tejido fuerte/hilos)</li>
-                              </ul>
+                        <div className="text-sm text-foreground space-y-8 pt-2">
+                           
+                          <div className="space-y-6">
+                            <div className="flex items-center gap-2 mb-2">
+                                <LayoutDashboard className="text-primary" size={20} />
+                                <h5 className="font-bold text-lg text-primary">Organización de la Mesa de Riñón</h5>
                             </div>
-                            <div className="p-3 border rounded-xl shadow-sm border-l-4 border-l-blue-500 bg-blue-50/30">
-                              <h5 className="font-bold text-blue-700 flex items-center gap-2">2. Hemostasia (Control de sangrado)</h5>
-                              <p className="text-xs text-muted-foreground mb-2">Oclusión temporal de los vasos sanguíneos.</p>
-                              <ul className="text-xs text-foreground font-medium flex gap-2 flex-wrap">
-                                <li className="bg-background px-2 py-1 rounded shadow-sm border">Pinzas Mosquito (Halsted)</li>
-                                <li className="bg-background px-2 py-1 rounded shadow-sm border">Pinzas Kelly (rectas/curvas)</li>
-                                <li className="bg-background px-2 py-1 rounded shadow-sm border">Pinzas Rochester-Pean</li>
-                              </ul>
+                            <p className="text-muted-foreground text-xs">La mesa rectangular (o de riñón) sirve para la preparación de bultos, ropa y organización inicial del material estéril auxiliar a la cirugía.</p>
+                            
+                            {/* Graphic representation of Mesa de Riñón */}
+                            <div className="bg-accent/10 border-2 border-border rounded-xl p-4 sm:p-6 shadow-inner mx-auto max-w-4xl">
+                              <div className="w-full relative shadow-md flex bg-card rounded-t-[100px] rounded-b-xl border border-border h-[250px] sm:h-[300px] overflow-hidden">
+                                {/* Tercio Izquierdo: Instrumental */}
+                                <div className="w-1/3 border-r border-border border-dashed p-4 flex flex-col items-center justify-center relative group">
+                                  <div className="absolute inset-0 bg-blue-500/5 group-hover:bg-blue-500/10 transition-colors"></div>
+                                  <span className="font-bold text-center text-sm sm:text-base relative z-10 text-blue-700 dark:text-blue-400">Instrumental Estéril</span>
+                                  <span className="text-[10px] text-muted-foreground mt-1 relative z-10">(Tercio Proximal)</span>
+                                </div>
+                                {/* Tercio Medio: Esponjeo */}
+                                <div className="w-1/3 border-r border-border border-dashed p-2 flex flex-col items-center justify-center relative group">
+                                  <div className="absolute inset-0 bg-green-500/5 group-hover:bg-green-500/10 transition-colors"></div>
+                                  <span className="font-bold text-center text-sm sm:text-base relative z-10 text-green-700 dark:text-green-400">Esponjeo</span>
+                                  <span className="text-[10px] text-muted-foreground mt-1 relative z-10">(Tercio Medio)</span>
+                                </div>
+                                {/* Tercio Derecho: Retorno (Dividido) */}
+                                <div className="w-1/3 flex flex-col h-full relative">
+                                  <div className="h-1/2 border-b border-border border-dashed p-2 flex flex-col items-center justify-center bg-red-500/5 hover:bg-red-500/10 transition-colors group">
+                                    <span className="font-bold text-center text-xs sm:text-sm text-red-700 dark:text-red-400">Retorno Contaminado</span>
+                                    <span className="text-[9px] text-muted-foreground mt-1">(Tercio Distal - Sup)</span>
+                                  </div>
+                                  <div className="h-1/2 p-2 flex flex-col items-center justify-center bg-teal-500/5 hover:bg-teal-500/10 transition-colors group">
+                                    <span className="font-bold text-center text-xs sm:text-sm text-teal-700 dark:text-teal-400">Retorno Estéril</span>
+                                    <span className="text-[9px] text-muted-foreground mt-1">(Tercio Distal - Inf)</span>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
-                            <div className="p-3 border rounded-xl shadow-sm border-l-4 border-l-green-500 bg-green-50/30">
-                              <h5 className="font-bold text-green-700 flex items-center gap-2">3. Aprehensión / Tracción (Agarre)</h5>
-                              <p className="text-xs text-muted-foreground mb-2">Fijación, sostén y movilización de tejidos y órganos.</p>
-                              <ul className="text-xs text-foreground font-medium flex gap-2 flex-wrap">
-                                <li className="bg-background px-2 py-1 rounded shadow-sm border">Pinzas Allis (para tejido firme)</li>
-                                <li className="bg-background px-2 py-1 rounded shadow-sm border">Pinzas Babcock (atraumáticas, vísceras huecas)</li>
-                                <li className="bg-background px-2 py-1 rounded shadow-sm border">Pinzas Duval/Lovelace (pulmón)</li>
-                                <li className="bg-background px-2 py-1 rounded shadow-sm border">Pinzas Foerster (anillos/esponjas)</li>
-                              </ul>
+
+                            {/* Section Descriptions */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                              <div className="p-4 bg-blue-50 dark:bg-blue-900/10 border-t-4 border-blue-500 rounded-b-xl shadow-sm text-xs space-y-2">
+                                <h6 className="font-bold text-blue-800 dark:text-blue-300">Izquierda / Proximal (Instrumental)</h6>
+                                <p className="text-muted-foreground">Instrumental quirúrgico que no se colocó en la mesa de Mayo y que se pueda necesitar a lo largo del procedimiento.</p>
+                                <ul className="list-disc pl-4 space-y-1 text-blue-900/80 dark:text-blue-200/80 font-medium">
+                                  <li>Jeringas y agujas</li>
+                                  <li>Gasas y compresas de reserva</li>
+                                  <li>Suturas no abiertas</li>
+                                  <li>Pinzas o tijeras extra</li>
+                                  <li>Separadores adicionales</li>
+                                </ul>
+                              </div>
+                              <div className="p-4 bg-green-50 dark:bg-green-900/10 border-t-4 border-green-500 rounded-b-xl shadow-sm text-xs space-y-2">
+                                <h6 className="font-bold text-green-800 dark:text-green-300">Media (Esponjeo)</h6>
+                                <p className="text-muted-foreground">Sección enfocada en la limpieza, hemostasia de barrera y manejo de fluidos en campo.</p>
+                                <ul className="list-disc pl-4 space-y-1 text-green-900/80 dark:text-green-200/80 font-medium">
+                                  <li>Gasas y compresas húmedas</li>
+                                  <li>Riñonera metálica con soluciones (ej. fisiológica)</li>
+                                  <li>Jeringa Asepto (para irrigar cavidades)</li>
+                                  <li>Cotonoides o cotonetes</li>
+                                </ul>
+                              </div>
+                              <div className="p-4 bg-orange-50 dark:bg-orange-900/10 border-t-4 border-orange-500 rounded-b-xl shadow-sm text-xs space-y-3">
+                                <h6 className="font-bold text-orange-800 dark:text-orange-300 flex items-center justify-between">Derecha / Distal (Retorno)</h6>
+                                
+                                <div className="border-l-2 border-red-500 pl-2 bg-red-500/5 p-2 rounded">
+                                  <strong className="text-red-700 dark:text-red-400 block mb-1">Superior: Contaminado</strong>
+                                  <ul className="list-disc pl-4 text-red-900/70 dark:text-red-200/70">
+                                    <li>Bisturí de piel (tras incisión inicial)</li>
+                                    <li>Muestras a patología (en frascos con formalina)</li>
+                                    <li>Instrumental directamente expuesto a vísceras huecas (sucia)</li>
+                                  </ul>
+                                </div>
+                                <div className="border-l-2 border-teal-500 pl-2 bg-teal-500/5 p-2 rounded">
+                                  <strong className="text-teal-700 dark:text-teal-400 block mb-1">Inferior: Estéril</strong>
+                                  <ul className="list-disc pl-4 text-teal-900/70 dark:text-teal-200/70">
+                                    <li>Paquetes de ropa estéril en orden de vestimenta</li>
+                                    <li>Guantes quirúrgicos de cambio</li>
+                                    <li>Instrumental que puede retornar a la cirugía a limpiar</li>
+                                  </ul>
+                                </div>
+                              </div>
                             </div>
-                            <div className="p-3 border rounded-xl shadow-sm border-l-4 border-l-yellow-500 bg-yellow-50/30">
-                              <h5 className="font-bold text-yellow-700 flex items-center gap-2">4. Separación (Exposición)</h5>
-                              <p className="text-xs text-muted-foreground mb-2">Retracción de tejidos y visualización del campo operatorio.</p>
-                              <ul className="text-xs text-foreground font-medium flex gap-2 flex-wrap">
-                                <li className="bg-background px-2 py-1 rounded shadow-sm border">Manuales: Separadores de Farabeuf, Senn, Richardson</li>
-                                <li className="bg-background px-2 py-1 rounded shadow-sm border">Autoestáticos: Balfour (abdomen), Finochietto (tórax)</li>
-                              </ul>
+                          </div>
+
+                          <div className="space-y-6 pt-6 border-t border-border">
+                            <div className="flex items-center gap-2 mb-2">
+                                <Columns className="text-primary" size={20} />
+                                <h5 className="font-bold text-lg text-primary">Organización de la Mesa de Mayo</h5>
                             </div>
-                            <div className="p-3 border rounded-xl shadow-sm border-l-4 border-l-purple-500 bg-purple-50/30">
-                              <h5 className="font-bold text-purple-700 flex items-center gap-2">5. Síntesis (Sutura)</h5>
-                              <p className="text-xs text-muted-foreground mb-2">Reconstrucción y aproximación de los planos tisulares.</p>
-                              <ul className="text-xs text-foreground font-medium flex gap-2 flex-wrap">
-                                <li className="bg-background px-2 py-1 rounded shadow-sm border">Porta-agujas (Hegar, Mathieu)</li>
-                                <li className="bg-background px-2 py-1 rounded shadow-sm border">Pinzas de disección (con y sin dientes)</li>
-                              </ul>
+                            <p className="text-muted-foreground text-xs">La mesa de Mayo (o mesa puente) se coloca por encima del paciente. Contiene el instrumental de uso constante e inmediato. <strong>Se acomoda según los tiempos quirúrgicos.</strong></p>
+                            
+                            {/* Graphic representation of Mesa de Mayo */}
+                            <div className="bg-accent/10 border-2 border-border rounded-xl p-4 sm:p-6 shadow-inner mx-auto max-w-3xl">
+                              <div className="w-full bg-card rounded-md border-4 border-muted h-[200px] sm:h-[250px] shadow-lg relative p-2 flex flex-col gap-2">
+                                <div className="flex h-1/2 gap-2">
+                                  {/* Diéresis */}
+                                  <div className="w-1/3 bg-red-500/10 border border-red-500/30 rounded flex items-center justify-center p-2 text-center group cursor-default">
+                                    <span className="font-bold text-xs sm:text-sm text-red-700 dark:text-red-400 group-hover:scale-110 transition-transform">1. Diéresis (Corte)</span>
+                                  </div>
+                                  {/* Hemostasia */}
+                                  <div className="w-1/3 bg-blue-500/10 border border-blue-500/30 rounded flex items-center justify-center p-2 text-center group cursor-default">
+                                    <span className="font-bold text-xs sm:text-sm text-blue-700 dark:text-blue-400 group-hover:scale-110 transition-transform">2. Hemostasia</span>
+                                  </div>
+                                  {/* Tracción/Agarre */}
+                                  <div className="w-1/3 bg-green-500/10 border border-green-500/30 rounded flex items-center justify-center p-2 text-center group cursor-default">
+                                    <span className="font-bold text-xs sm:text-sm text-green-700 dark:text-green-400 group-hover:scale-110 transition-transform">3. Tracción</span>
+                                  </div>
+                                </div>
+                                <div className="flex h-1/2 gap-2">
+                                  {/* Separación */}
+                                  <div className="w-1/2 bg-yellow-500/10 border border-yellow-500/30 rounded flex items-center justify-center p-2 text-center group cursor-default">
+                                    <span className="font-bold text-xs sm:text-sm text-yellow-700 dark:text-yellow-400 group-hover:scale-110 transition-transform">4. Separación</span>
+                                  </div>
+                                  {/* Síntesis */}
+                                  <div className="w-1/2 bg-purple-500/10 border border-purple-500/30 rounded flex items-center justify-center p-2 text-center group cursor-default">
+                                    <span className="font-bold text-xs sm:text-sm text-purple-700 dark:text-purple-400 group-hover:scale-110 transition-transform">5. Síntesis (Sutura)</span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="text-center mt-3 text-[10px] text-muted-foreground uppercase tracking-widest">
+                                Borde anterior (hacia el instrumentista) 
+                              </div>
+                            </div>
+
+                            {/* Section Descriptions for Mayo */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                              <div className="p-3 border rounded-xl shadow-sm border-l-4 border-l-red-500 bg-red-50/30">
+                                <h5 className="font-bold text-red-700 flex items-center gap-2">1. Diéresis (Corte)</h5>
+                                <p className="text-xs text-muted-foreground mb-2">Incisión y sección de tejidos.</p>
+                                <ul className="text-[11px] text-foreground font-medium flex gap-1.5 flex-wrap">
+                                  <li className="bg-background px-2 py-1 rounded shadow-sm border">Mangos bisturí (#3,#4)</li>
+                                  <li className="bg-background px-2 py-1 rounded shadow-sm border">Tijeras Metzenbaum/Mayo</li>
+                                </ul>
+                              </div>
+                              <div className="p-3 border rounded-xl shadow-sm border-l-4 border-l-blue-500 bg-blue-50/30">
+                                <h5 className="font-bold text-blue-700 flex items-center gap-2">2. Hemostasia</h5>
+                                <p className="text-xs text-muted-foreground mb-2">Control de sangrado (oclusión de vasos).</p>
+                                <ul className="text-[11px] text-foreground font-medium flex gap-1.5 flex-wrap">
+                                  <li className="bg-background px-2 py-1 rounded shadow-sm border">Pinzas Mosquito (Halsted)</li>
+                                  <li className="bg-background px-2 py-1 rounded shadow-sm border">Pinzas Kelly/Pean</li>
+                                </ul>
+                              </div>
+                              <div className="p-3 border rounded-xl shadow-sm border-l-4 border-l-green-500 bg-green-50/30">
+                                <h5 className="font-bold text-green-700 flex items-center gap-2">3. Tracción y Aprehensión</h5>
+                                <p className="text-xs text-muted-foreground mb-2">Fijación y movilización de tejidos/órganos.</p>
+                                <ul className="text-[11px] text-foreground font-medium flex gap-1.5 flex-wrap">
+                                  <li className="bg-background px-2 py-1 rounded shadow-sm border">Pinzas Allis/Babcock</li>
+                                  <li className="bg-background px-2 py-1 rounded shadow-sm border">Pinzas Foerster/Duval</li>
+                                </ul>
+                              </div>
+                              <div className="p-3 border rounded-xl shadow-sm border-l-4 border-l-yellow-500 bg-yellow-50/30">
+                                <h5 className="font-bold text-yellow-700 flex items-center gap-2">4. Separación</h5>
+                                <p className="text-xs text-muted-foreground mb-2">Exposición del campo operatorio.</p>
+                                <ul className="text-[11px] text-foreground font-medium flex gap-1.5 flex-wrap">
+                                  <li className="bg-background px-2 py-1 rounded shadow-sm border">Separadores Farabeuf/Senn</li>
+                                  <li className="bg-background px-2 py-1 rounded shadow-sm border">Manuales cortos</li>
+                                </ul>
+                              </div>
+                              <div className="p-3 border rounded-xl shadow-sm border-l-4 border-l-purple-500 bg-purple-50/30">
+                                <h5 className="font-bold text-purple-700 flex items-center gap-2">5. Síntesis (Sutura)</h5>
+                                <p className="text-xs text-muted-foreground mb-2">Reconstrucción de planos tisulares.</p>
+                                <ul className="text-[11px] text-foreground font-medium flex gap-1.5 flex-wrap">
+                                  <li className="bg-background px-2 py-1 rounded shadow-sm border">Porta-agujas (Hegar)</li>
+                                  <li className="bg-background px-2 py-1 rounded shadow-sm border">Pinzas de disección c/s dientes</li>
+                                </ul>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -6728,6 +6920,10 @@ function App() {
                             </div>
                           </Card>
                         </motion.div>
+                      ) : selectedProcedureCategory === 'Integridad Cutánea y Heridas' ? (
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                          <SkinAndWoundsBlock />
+                        </motion.div>
                       ) : (
                         <div className="h-full flex flex-col items-center justify-center text-center p-6 sm:p-10 border border-dashed border-border rounded-xl text-muted-foreground">
                           <Activity size={32} className="mb-3 opacity-20" />
@@ -6880,6 +7076,17 @@ function App() {
                         />
                       </div>
                       <div className="space-y-2">
+                        <label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Tipo de Interno</label>
+                        <select 
+                          className="w-full p-3 rounded-xl border border-border bg-accent/20 focus:ring-2 focus:ring-primary outline-none"
+                          value={editProfileData.rol}
+                          onChange={(e) => setEditProfileData({ ...editProfileData, rol: e.target.value })}
+                        >
+                          <option value="Interno de Medicina">Interno de Medicina</option>
+                          <option value="Interno de Enfermería">Interno de Enfermería</option>
+                        </select>
+                      </div>
+                      <div className="space-y-2">
                         <label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Teléfono</label>
                         <input 
                           type="text" 
@@ -6953,24 +7160,46 @@ function App() {
         return (
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
             <SectionHeader title="Fundamentos de Enfermería" subtitle="Conceptos básicos y cuidados esenciales." />
-            <WasteManagementBlock />
+            
+            <div className="space-y-8">
+              <WasteManagementBlock />
+              
+              <div className="bg-card border border-border rounded-[32px] p-6 shadow-sm">
+                <h3 className="text-xl font-bold mb-4 flex items-center"><Accessibility size={20} className="mr-2 text-primary" /> Movilización y Manejo del Paciente</h3>
+                <PatientMobilizationBlock />
+              </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card>
-                <h4 className="font-bold mb-3">Signos Vitales</h4>
-                <ul className="space-y-2 text-sm">
-                  <li className="flex justify-between"><span>Tensión Arterial:</span> <span className="font-medium">120/80 mmHg</span></li>
-                  <li className="flex justify-between"><span>Frecuencia Cardíaca:</span> <span className="font-medium">60-100 lpm</span></li>
-                  <li className="flex justify-between"><span>Frecuencia Respiratoria:</span> <span className="font-medium">12-20 rpm</span></li>
-                  <li className="flex justify-between"><span>Temperatura:</span> <span className="font-medium">36.5 - 37.5 °C</span></li>
-                  <li className="flex justify-between"><span>Saturación O2:</span> <span className="font-medium">&gt; 94%</span></li>
-                </ul>
-              </Card>
-              <Card>
-                <h4 className="font-bold mb-3">Mecánica Corporal</h4>
-                <p className="text-sm text-muted-foreground">Principios para el movimiento seguro de pacientes y prevención de lesiones en el personal de salud.</p>
-                <button className="mt-4 text-primary text-sm font-bold">Leer más</button>
-              </Card>
+              <div className="bg-card border border-border rounded-[32px] p-6 shadow-sm">
+                <h3 className="text-xl font-bold mb-4 flex items-center"><ShieldCheck size={20} className="mr-2 text-primary" /> Seguridad del Paciente (MSP Ecuador)</h3>
+                <PatientSafetyBlock />
+              </div>
+
+              <div className="bg-card border border-border rounded-[32px] p-6 shadow-sm">
+                <h3 className="text-xl font-bold mb-4 flex items-center"><Hand size={20} className="mr-2 text-sky-500" /> Higiene de Manos (Técnica Correcta)</h3>
+                <HandHygieneBlock />
+              </div>
+
+              <div className="bg-card border border-border rounded-[32px] p-6 shadow-sm">
+                <h3 className="text-xl font-bold mb-4 flex items-center"><Activity size={20} className="mr-2 text-primary" /> Signos Vitales por Etapa de Vida</h3>
+                <VitalSignsByAgeBlock />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card className="bg-indigo-500/5 border-indigo-500/10">
+                  <h4 className="font-bold mb-3 flex items-center text-indigo-700">Valores de Referencia Adulto</h4>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li className="flex justify-between border-b border-border/50 pb-1"><span>Tensión Arterial:</span> <span className="font-medium text-foreground">120/80 mmHg</span></li>
+                    <li className="flex justify-between border-b border-border/50 pb-1"><span>Frecuencia Cardíaca:</span> <span className="font-medium text-foreground">60-100 lpm</span></li>
+                    <li className="flex justify-between border-b border-border/50 pb-1"><span>Frecuencia Respiratoria:</span> <span className="font-medium text-foreground">12-20 rpm</span></li>
+                    <li className="flex justify-between border-b border-border/50 pb-1"><span>Temperatura:</span> <span className="font-medium text-foreground">36.5 - 37.5 °C</span></li>
+                    <li className="flex justify-between"><span>Saturación O2:</span> <span className="font-medium text-foreground">&gt; 94%</span></li>
+                  </ul>
+                </Card>
+                <Card className="bg-primary/5 border-primary/10 flex flex-col justify-center items-center text-center p-8">
+                  <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">Nota de Enfermería</p>
+                  <p className="text-sm italic">"Los signos vitales son la manifestación externa de las funciones vitales básicas. Su control es la primera herramienta de detección de deterioro."</p>
+                </Card>
+              </div>
             </div>
           </motion.div>
         );
@@ -7038,32 +7267,68 @@ function App() {
                     <li className="flex justify-between border-b border-border py-1"><span>Plaquetas (PLT)</span> <span className="font-medium">150,000 - 450,000 /mm³</span></li>
                   </ul>
                 </div>
-                <div>
-                  <h4 className="font-bold text-sm mb-2 text-primary">Química Sanguínea (QSC)</h4>
+                <div className="border-l-4 border-purple-500 pl-2">
+                  <h4 className="font-bold text-sm mb-2 text-purple-700">Biometría Hemática (BHC)</h4>
                   <ul className="space-y-1 text-xs">
-                    <li className="flex justify-between border-b border-border py-1"><span>Glucosa Ayunas</span> <span className="font-medium">70 - 100 mg/dL</span></li>
-                    <li className="flex justify-between border-b border-border py-1"><span>Creatinina</span> <span className="font-medium">0.6 - 1.2 mg/dL</span></li>
-                    <li className="flex justify-between border-b border-border py-1"><span>Urea</span> <span className="font-medium">15 - 45 mg/dL</span></li>
-                    <li className="flex justify-between border-b border-border py-1"><span>Ácido Úrico</span> <span className="font-medium">2.4 - 7.0 mg/dL</span></li>
+                    <li className="flex justify-between border-b border-border py-1"><span>Hb (M/H)</span> <span className="font-medium">12-16 / 14-18 g/dL</span></li>
+                    <li className="flex justify-between border-b border-border py-1"><span>Hct (M/H)</span> <span className="font-medium">37-47% / 42-52%</span></li>
+                    <li className="flex justify-between border-b border-border py-1"><span>Leucocitos</span> <span className="font-medium">4,000 - 12,000 /mm³</span></li>
+                    <li className="flex justify-between border-b border-border py-1"><span>Plaquetas</span> <span className="font-medium">150k - 450k /mm³</span></li>
                   </ul>
                 </div>
-                <div>
-                  <h4 className="font-bold text-sm mb-2 text-primary">Pruebas de Coagulación</h4>
+                <div className="border-l-4 border-red-500 pl-2">
+                  <h4 className="font-bold text-sm mb-2 text-red-700">Bioquímica</h4>
                   <ul className="space-y-1 text-xs">
-                    <li className="flex justify-between border-b border-border py-1"><span>TP</span> <span className="font-medium">11 - 13.5 seg</span></li>
-                    <li className="flex justify-between border-b border-border py-1"><span>TTP</span> <span className="font-medium">25 - 35 seg</span></li>
+                    <li className="flex justify-between border-b border-border py-1"><span>Glucosa</span> <span className="font-medium">70 - 110 mg/dL</span></li>
+                    <li className="flex justify-between border-b border-border py-1"><span>Creatinina</span> <span className="font-medium">0.7 - 1.3 mg/dL</span></li>
+                    <li className="flex justify-between border-b border-border py-1"><span>Urea</span> <span className="font-medium">20 - 40 mg/dL</span></li>
+                    <li className="flex justify-between border-b border-border py-1"><span>Ácido Úrico</span> <span className="font-medium">2-8 mg/dl</span></li>
                   </ul>
                 </div>
-                <div>
-                  <h4 className="font-bold text-sm mb-2 text-primary">Electrolitos (ESC)</h4>
-                  <ul className="space-y-1 text-xs">
-                    <li className="flex justify-between border-b border-border py-1"><span>Sodio (Na+)</span> <span className="font-medium">135 - 145 mEq/L</span></li>
-                    <li className="flex justify-between border-b border-border py-1"><span>Potasio (K+)</span> <span className="font-medium">3.5 - 5.0 mEq/L</span></li>
-                    <li className="flex justify-between border-b border-border py-1"><span>Cloro (Cl-)</span> <span className="font-medium">98 - 107 mEq/L</span></li>
-                  </ul>
+                <div className="border-l-4 border-amber-500 pl-2">
+                    <h4 className="font-bold text-sm mb-2 text-amber-700">Perfil Hepático</h4>
+                    <ul className="space-y-1 text-xs">
+                        <li className="flex justify-between border-b border-border py-1"><span>TGO/AST</span> <span className="font-medium">12 - 38 U/L</span></li>
+                        <li className="flex justify-between border-b border-border py-1"><span>TGP/ALT</span> <span className="font-medium">10 - 40 U/L</span></li>
+                        <li className="flex justify-between border-b border-border py-1"><span>Bilirrubina T</span> <span className="font-medium">0.3 - 1 mg/dl</span></li>
+                        <li className="flex justify-between border-b border-border py-1"><span>Fosfatasa Alc</span> <span className="font-medium">25 - 100 U/L</span></li>
+                    </ul>
+                </div>
+                <div className="border-l-4 border-yellow-500 pl-2">
+                    <h4 className="font-bold text-sm mb-2 text-yellow-700">Perfil Tiroideo</h4>
+                    <ul className="space-y-1 text-xs">
+                        <li className="flex justify-between border-b border-border py-1"><span>TSH</span> <span className="font-medium">0.4 - 4.0 mCU/ml</span></li>
+                        <li className="flex justify-between border-b border-border py-1"><span>T4 Libre</span> <span className="font-medium">0.8 - 1.8 ng/dl</span></li>
+                        <li className="flex justify-between border-b border-border py-1"><span>T3 Libre</span> <span className="font-medium">2.1 - 4.7 pg/ml</span></li>
+                    </ul>
+                </div>
+                <div className="border-l-4 border-blue-500 pl-2">
+                    <h4 className="font-bold text-sm mb-2 text-blue-700">Coagulación</h4>
+                    <ul className="space-y-1 text-xs">
+                        <li className="flex justify-between border-b border-border py-1"><span>INR</span> <span className="font-medium">0.8 - 1.2</span></li>
+                        <li className="flex justify-between border-b border-border py-1"><span>TP</span> <span className="font-medium">12 - 14 s</span></li>
+                        <li className="flex justify-between border-b border-border py-1"><span>TTP</span> <span className="font-medium">25 - 35 s</span></li>
+                    </ul>
+                </div>
+                <div className="border-l-4 border-emerald-500 pl-2">
+                    <h4 className="font-bold text-sm mb-2 text-emerald-700">Electrolitos</h4>
+                    <ul className="space-y-1 text-xs">
+                        <li className="flex justify-between border-b border-border py-1"><span>Sodio</span> <span className="font-medium">135 - 145 mEq/L</span></li>
+                        <li className="flex justify-between border-b border-border py-1"><span>Potasio</span> <span className="font-medium">3.5 - 5 mEq/L</span></li>
+                        <li className="flex justify-between border-b border-border py-1"><span>Cloro</span> <span className="font-medium">95 - 110 mEq/L</span></li>
+                    </ul>
+                </div>
+                <div className="border-l-4 border-cyan-500 pl-2">
+                    <h4 className="font-bold text-sm mb-2 text-cyan-700">Gasometría (Normal)</h4>
+                    <ul className="space-y-1 text-xs">
+                        <li className="flex justify-between border-b border-border py-1"><span>pH</span> <span className="font-medium">7.35 - 7.45</span></li>
+                        <li className="flex justify-between border-b border-border py-1"><span>pO2</span> <span className="font-medium">80 - 100 mmHg</span></li>
+                        <li className="flex justify-between border-b border-border py-1"><span>pCO2</span> <span className="font-medium">35 - 45 mmHg</span></li>
+                        <li className="flex justify-between border-b border-border py-1"><span>HCO3</span> <span className="font-medium">22 - 26 mEq/L</span></li>
+                    </ul>
                 </div>
               </div>
-              <p className="text-[10px] text-muted-foreground mt-4 italic">Nota: Los valores pueden variar según el laboratorio local.</p>
+              <p className="text-[10px] text-muted-foreground mt-4 italic">Nota: Valores según guía clínica proporcionada. Consultar valores de referencia específicos del laboratorio local.</p>
             </Card>
           </motion.div>
         );
@@ -7118,7 +7383,7 @@ function App() {
                           <button
                             onClick={async () => {
                               if (!newBitacora.actividad.trim()) return;
-                              await handleAddTask(newBitacora.actividad, `Rápida`);
+                              await handleAddTask(newBitacora.actividad, { source: 'Rápida' });
                               toast.success('Tarea rápida añadida');
                               setNewBitacora({ ...newBitacora, actividad: '' });
                             }}
@@ -7615,6 +7880,12 @@ function App() {
         <div className="min-h-screen bg-background text-foreground flex overflow-hidden">
           <Toaster position="top-right" richColors closeButton />
           <NotificationSystem />
+          <HandoverNoteAction />
+          <NotificationsModal 
+            isOpen={isNotificationsOpen} 
+            onClose={() => setIsNotificationsOpen(false)}
+            onNavigateToTasks={() => setActiveTab('bitacora')}
+          />
           
           {/* Main Sidebar Desktop */}
           <aside className={`hidden lg:flex flex-col border-r border-border bg-card transition-all duration-500 ease-in-out relative z-50 ${isSidebarOpen ? 'w-72' : 'w-24'}`}>
@@ -7637,7 +7908,6 @@ function App() {
               <SidebarItem icon={Pill} label="Farmacología" active={activeTab === 'farmacologia'} onClick={() => setActiveTab('farmacologia')} collapsed={!isSidebarOpen} />
               <SidebarItem icon={TestTube} label="Laboratorio" active={activeTab === 'laboratorio'} onClick={() => setActiveTab('laboratorio')} collapsed={!isSidebarOpen} />
               <SidebarItem icon={Calculator} label="Cálculos" active={activeTab === 'calculadoras'} onClick={() => setActiveTab('calculadoras')} collapsed={!isSidebarOpen} />
-              <SidebarItem icon={FileText} label="Protocolos" active={activeTab === 'protocolos'} onClick={() => setActiveTab('protocolos')} collapsed={!isSidebarOpen} />
               <SidebarItem icon={Calendar} label="Bitácora" active={activeTab === 'bitacora'} onClick={() => setActiveTab('bitacora')} collapsed={!isSidebarOpen} />
               <SidebarItem icon={Brain} label="Fundamentos" active={activeTab === 'fundamentos'} onClick={() => setActiveTab('fundamentos')} collapsed={!isSidebarOpen} />
             </nav>
@@ -7657,12 +7927,33 @@ function App() {
 
           {/* Main Layout Content */}
           <div className="flex-grow flex flex-col min-w-0 h-screen overflow-hidden relative">
+            <MobileMenuDrawer 
+              isOpen={isMenuOpen} 
+              onClose={() => setIsMenuOpen(false)} 
+              onSelect={(id) => {
+                if (id === 'notifications') {
+                  setIsNotificationsOpen(true);
+                } else {
+                  setActiveTab(id);
+                }
+              }} 
+              items={[
+                { id: 'dashboard', label: 'Dashboard' },
+                { id: 'servicios', label: 'Servicios' },
+                { id: 'practica', label: 'Práctica Clínica' },
+                { id: 'farmacologia', label: 'Farmacología' },
+                { id: 'laboratorio', label: 'Laboratorio' },
+                { id: 'calculadoras', label: 'Cálculos' },
+                { id: 'bitacora', label: 'Bitácora' },
+                { id: 'fundamentos', label: 'Fundamentos' },
+                { id: 'notifications', label: 'Notificaciones' },
+                { id: 'perfil', label: 'Mi Perfil' }
+              ]}
+            />
             {/* Upper Toolbar */}
-            <header className="h-20 border-b border-border bg-card/50 backdrop-blur-md flex items-center justify-between px-8 shrink-0 relative z-40">
+            <header className="h-16 border-b border-border bg-card/50 backdrop-blur-md flex items-center justify-between px-4 sm:px-8 shrink-0 relative z-40">
               <div className="flex items-center space-x-4">
-                <div className="lg:hidden w-10 h-10 bg-primary rounded-xl flex items-center justify-center mr-2 shadow-lg shadow-primary/20">
-                  <HeartPulse className="text-white" size={20} />
-                </div>
+                <MobileHamburgerButton onClick={() => setIsMenuOpen(true)} />
                 <div className="hidden sm:block">
                    <h2 className="text-xl font-black tracking-tight text-foreground capitalize">{activeTab === 'dashboard' ? 'Centro de Comando' : `Módulo de ${activeTab}`}</h2>
                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{userProfile?.hospital || 'Hospital Universitario'}</p>
@@ -7681,9 +7972,14 @@ function App() {
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <button className="p-2.5 bg-accent/30 text-muted-foreground hover:text-foreground hover:bg-accent rounded-xl transition-all relative">
+                  <button 
+                    onClick={() => setIsNotificationsOpen(true)}
+                    className="p-2.5 bg-accent/30 text-muted-foreground hover:text-foreground hover:bg-accent rounded-xl transition-all relative"
+                  >
                     <Bell size={20} />
-                    <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-destructive rounded-full border-2 border-card" />
+                    {tasks.filter(t => !t.completed && (t.isUrgent || t.isAcademico)).length > 0 && (
+                      <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-destructive rounded-full border-2 border-card animate-pulse" />
+                    )}
                   </button>
                   <button 
                     onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}

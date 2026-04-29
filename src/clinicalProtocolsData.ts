@@ -323,5 +323,51 @@ export const CLINICAL_PROTOCOLS: ClinicalProtocol[] = [
       "Ausencia de progresión de daño de órgano blanco.",
       "Estabilidad clínica y control sintomático."
     ]
+  },
+  {
+    id: "prot_via_aerea",
+    title: "Manejo y Aseguramiento de la Vía Aérea",
+    category: "Anestesiología / Urgencias",
+    description: "Protocolo para la evaluación, oxigenación y aseguramiento de la vía aérea en pacientes críticos con riesgo de compromiso respiratorio o pérdida de protección.",
+    activationCriteria: [
+      "Escala de Glasgow (GCS) <= 8",
+      "Pérdida de reflejos protectores de la vía aérea (tusígeno, nauseoso)",
+      "Hipoxemia refractaria (SpO2 < 90% con suplemento)",
+      "Deterioro rápido del patrón respiratorio / Fatiga muscular",
+      "Trauma facial severo o quemadura de vía aérea"
+    ],
+    algorithm: [
+      {
+        step: "Paso 1: Evaluación",
+        action: "Predecir dificultad y preparar.",
+        details: "Evaluación anatómica rápida (LEMON: Look, Evaluate, Mallampati, Obstruction, Neck). Preparar material: Laringoscopio, Tubos, Guía."
+      },
+      {
+        step: "Paso 2: Pre-oxigenación",
+        action: "Optimizar reserva alveolar.",
+        details: "Administrar O2 al 100% durante 3-5 minutos o 8 capacidades vitales. Posición de olfateo (si no hay sospecha de trauma cervical)."
+      },
+      {
+        step: "Paso 3: Secuencia Rápida (RSI)",
+        action: "Inducción y relajación.",
+        details: "Administración sincronizada de agente inductor (Etomidato o Ketamina) seguida de bloqueador neuromuscular (Succinilcolina o Rocuronio)."
+      },
+      {
+        step: "Paso 4: Intubación Oro-traqueal",
+        action: "Laringoscopía y colocación del tubo.",
+        details: "Laringoscopía directa. Visualizar cuerdas vocales, introducir tubo endotraqueal. Inflar manguito."
+      },
+      {
+        step: "Paso 5: Confirmación e Intubación",
+        action: "Verificar colocación y estabilizar.",
+        details: "Confirmar con capnografía (EtCO2), auscultación y simetría tórax. Fijar el tubo. Sedación post-intubación."
+      }
+    ],
+    resuscitationGoals: [
+      "Confirmación visual y capnográfica (EtCO2) correcta.",
+      "SpO2 > 94% post-intubación.",
+      "Hemodinámica estable durante el procedimiento.",
+      "Prevención de injuria por laringoscopía"
+    ]
   }
 ];
