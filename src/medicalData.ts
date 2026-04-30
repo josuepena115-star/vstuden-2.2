@@ -6548,86 +6548,6 @@ export const DISEASES: Disease[] = [
       },
       "evaluacion": {
         "criteriosExito": [
-          "Estabilizar hemodinámica (PAM > 65), limpieza de lactato sérico en < 24 hrs post UTI.",
-          "Transferencia fluida de quirófano en 60 mins posteriores de ingreso Shock Trauma."
-        ],
-        "criteriosFracaso": [
-          "CID (Coagulación Intravascular Diseminada) refractario, hemorragias de las inserciones de las vías EV."
-        ]
-      },
-      "criterioReferencia": "Solo transferir si no existe UCI neurológica o neurocirujano intrahospitalario.",
-      "cita": "Advanced Trauma Life Support 10th Ed"
-    },
-    "enfermeria": {
-      "nanda": "00024 Perfusión tisular ineficaz",
-      "intervenciones": [
-        { "accion": "Aplicación de presión directa o faja pélvica a evidencia de diástasis pélvica.", "razon": "Inmovilización detiene parcialmente hemorragias masivas retroperitoneales." },
-        { "accion": "Administración perentoria de fluidos calentados.", "razon": "Hipotermia induce coagulopatía e interfiere con los funciones plaquetarias." }
-      ],
-      "cita": "Manual Urgencias en Trauma"
-    }
-  },
-  {
-    "id": "em_trauma_2",
-    "nombre": "Quemaduras Graves",
-    "servicio": "Emergencias",
-    "system": "Trauma",
-    "color": "#FFF3E0",
-    "icon": "Shield",
-    "clinica": {
-      "signosSintomas": [
-        "Extensión > 20% de Superficie Corporal Total (SCT) en adultos",
-        "Vibrisas nasales quemadas o esputo carbonáceo (Sugerente de Inhalación)",
-        "Pérdida de sensibilidad en áreas de 3er grado (aspecto acartonado)",
-        "Flictenas y dolor intenso en 2do grado",
-        "Signos de hipovolemia (shock por quemadura)",
-        "Estridor o sibilancias (Edema de vía aérea)"
-      ],
-      "maniobraExploracion": "1. Cálculo de SCT usando la Regla de los 9 (Wallace). 2. Evaluación de la profundidad (1°, 2° superficial/profunda, 3° grado). 3. Búsqueda de quemaduras circunferenciales (riesgo compartimental). 4. Laringoscopia si hay sospecha de compromiso subglótico.",
-      "banderasRojas": [
-        "Quemadura circunferencial en tórax o extremidades",
-        "Evidencia de inhalación de humo (ronquera, estridor)",
-        "Quemaduras por químicos o electricidad (daño interno oculto)",
-        "Olíguria persistente (< 0.5 ml/kg/h)"
-      ],
-      "cita": "ABA (American Burn Association) Guidelines"
-    },
-    "fisiopatologia": {
-      "textoTecnico": "Respuesta inmediata del cuerpo al daño térmico donde se aumenta la permeabilidad endotelial y hay extravasación general de líquidos perdiendo líquidos intravascular.",
-      "esquemaMental": {
-        "inicio": "Estrés térmico al epitelio que descompone matriz extracelular.",
-        "dano": "Ruptura de barrera principal y filtración difusa (Third Spacing).",
-        "consecuencia": "Choque por extravasación vascular e inmunosupresión global."
-      },
-      "cita": "Bates 13.ª Ed./ Tratado Fisiopatología Quemaduras"
-    },
-    "manejo": {
-      "diagnostico": "Clínico en extensión por tablas métricas (SCT). Broncofibroscopia si hay sospecha de injuria inhalatoria térmica.",
-      "tratamiento": "Manejo A (Vía Aérea protectora precozmente si hay signos inhalatorios), oxigenoterapia de > 10 L. Cristaloides de Fórmula de Parkland / Brooke revisadas: (2-4 mL * kg * %SCT) primera mitad en 8 horas post quemadura. Limpieza y vendajes estériles, sedoanalgesia profunda y manejo por unidad de especialidad.",
-      "tratamientoDetallado": {
-        "farmacos": [
-          { "nombre": "Ringer Lactato", "dosis": "2 a 4 mL * Peso * %SCQ (Regla actual recomendada de 2ml)", "frecuencia": "Mitad del vol. total en primeras 8hs desde quemadura, el resto en 16hs.", "observaciones": "El Parkland ya no recomienda 4mL obligatorio, se da a 2mL para adultos térmicos evitando sobrehidratar (Fluid Creep)." },
-          { "nombre": "Opiáceos Analgesia", "dosis": "Titulación estricta en bolo IV exclusivam.", "frecuencia": "Antes de debridamientos o apósitos continuos", "observaciones": "NUNCA por vía intramuscular/subcutánea, hay nula absorción en el paciente con edema periférico crítico." },
-          { "nombre": "Toxoide Tetánico", "dosis": "0.5 mL IM", "frecuencia": "Paciente en urgencias", "observaciones": "Indispensable por herida grave y abierta." }
-        ],
-        "medidasGenerales": [
-          "Colocación de sonda foley obligatoria a ingreso de la quemadura mayor al 15% SCT adulto.",
-          "Vendajes con sulfadiazina argéntica previa limpieza clorexidina 1% o suero limpio/tibio."
-        ]
-      },
-      "monitoreo": {
-        "parametros": [
-          "Volumen urinario CADA HORA (Criterio oro de la reanimación hídrica: meta 0.5-1ml/kg/hr).",
-          "Fibrobroncoscopía diaria si sospecha injuria térmica en vía",
-          "Monitor cardiovascular y carboxihemoglobina basal arteria"
-        ],
-        "signosAlerta": [
-          "Falta de pulso Doppler o extremidad cianótica en quemaduras en banda o escara circunferencial (Necesita Escharotomía urgente).",
-          "Gasto Urinario < 30 mL en la primera hora (Escalar terapia de infusión)."
-        ]
-      },
-      "evaluacion": {
-        "criteriosExito": [
           "Mantenimiento diuresis en 0.5 ml/kg/h con corrección a la baja progresiva de infusiones.",
           "Epitelización programada tras injertos tempranos en dermo/hipodermos."
         ],
@@ -6725,55 +6645,59 @@ export const DISEASES: Disease[] = [
     servicio: 'Medicina Interna',
     system: 'Sistema Respiratorio',
     color: 'var(--primary)',
-    definicionCaso: 'Infección del parénquima pulmonar adquirida fuera hospitalaria.',
-    sintomasClave: ['Tos productiva', 'Fiebre', 'Dolor pleurítico', 'Disnea'],
+    icon: 'Wind',
+    definicionCaso: 'Infección aguda del parénquima pulmonar adquirida fuera del entorno hospitalario.',
+    sintomasClave: ['Tos productiva', 'Fiebre >38.5°C', 'Dolor pleurítico', 'Disnea', 'Matidez focal'],
     clinica: {
       signosSintomas: [
-        "Tos con expectoración (purulenta o herrumrosa).",
-        "Fiebre (>38.5°C) y escalofríos.",
-        "Dolor torácico tipo pleurítico.",
-        "Taquipnea y uso de músculos accesorios.",
-        "Crepitantes focalizados a la auscultación."
+        "Tos con expectoración purulenta o de aspecto herrumbroso.",
+        "Fiebre de inicio súbito superior a 38.5°C acompañada de escalofríos intensos.",
+        "Dolor torácico de tipo pleurítico (punzada de costado) que aumenta con la inspiración profunda.",
+        "Taquipnea (frecuencia respiratoria aumentada) y disnea de esfuerzo progresiva.",
+        "Signos físicos de consolidación: Matidez a la percusión, aumento de vibraciones vocales y crepitantes focalizados."
       ],
       maniobraExploracion: "1. Percusión: Matidez focalizada. 2. Auscultación: Estertores crepitantes y broncofonía. 3. Palpación: Aumento de vibraciones vocales.",
       banderasRojas: [
-        "Confusión (Mental status change).",
-        "Frecuencia Respiratoria > 30 rpm.",
-        "Hipotensión arterial (PAS < 90 mmHg).",
-        "Uremia (Urea > 20 mg/dL) o CURB-65 ≥ 2."
+        "Confusión mental o alteración del estado de conciencia de reciente aparición.",
+        "Frecuencia respiratoria ≥ 30 respiraciones por minuto (Taquipnea severa).",
+        "Hipotensión arterial (Presión arterial sistólica < 90 mmHg o diastólica ≤ 60 mmHg).",
+        "Saturación de oxígeno < 90% en aire ambiente o cianosis central."
       ],
-      cita: "ATS/IDSA Guidelines 2024"
+      cita: "ATS/IDSA Community-Acquired Pneumonia Guidelines 2024"
     },
     fisiopatologia: {
       textoTecnico: `### Introducción: El Evento Disparador
-La Neumonía Adquirida en la Comunidad (NAC) es una infección aguda del tejido pulmonar. El evento disparador es la llegada y multiplicación de microorganismos patógenos (típicamente bacterias como *Streptococcus pneumoniae*) en los alvéolos, logrando evadir los mecanismos de defensa iniciales como el reflejo de la tos y los macrófagos alveolares.
+La Neumonía Adquirida en la Comunidad (NAC) se desencadena tras la superación de los mecanismos de defensa de la vía aérea inferior (aclaramiento mucociliar, reflejo de la tos y macrófagos alveolares) por una carga bacteriana o viral crítica, frecuentemente tras una microaspiración de flora orofaríngea. La colonización del espacio alveolar por patógenos como *Streptococcus pneumoniae* induce una respuesta inflamatoria inmediata caracterizada por el reclutamiento masivo de neutrófilos y la liberación de citocinas proinflamatorias.
 
 ### Desenlace: La Cascada de Disfunción
-**Mecanismo de Progresión (El Mapa):**
-- **Reacción Inflamatoria:** Al ser detectada la invasión bacteriana, el sistema inmunitario desencadena una oleada inflamatoria agresiva. Los capilares pulmonares se vuelven altamente permeables.
-- **Formación del Exudado:** Plasma sanguíneo, glóbulos blancos, proteínas y eritrocitos invaden el interior de los alvéolos (Hepatización roja), ahogando el espacio donde antes había aire.
-- **Consolidación:** Con los alvéolos obstruidos por pus y escombros celulares (Hepatización gris), esa región del pulmón se vuelve maciza como el hígado, incapaz de expandirse o llenarse de aire nuevo.
-
-### Afectación de Órganos y Sistemas Relacionados:
-- **Sistema Respiratorio:** Las áreas "consolidadas" están llenas de líquido pero siguen recibiendo sangre (Efecto Shunt). La sangre pasa por el pulmón y sigue de largo sin recoger oxígeno, causando hipoxemia (bajada de oxígeno en sangre) que obliga al paciente a respirar rápido (taquipnea) y usar músculos auxiliares.
-- **Sistema Cardiovascular:** El cuerpo intenta enviar aún más sangre para compensar la falta de oxígeno, aumentando la frecuencia cardíaca y la presión arterial. En casos graves, la inflamación sistémica provoca vasoplejía desencadenando Choque Séptico.
-- **Sistema Seroso (Pleura):** Frecuentemente, la inflamación llega al borde exterior del pulmón, irritando la pleura y causando un dolor punzante al respirar profundo (Dolor pleurítico), y desencadenando un derrame pleural paraneumónico.
-
-### Alteraciones Hormonales y Bioquímicas (Eje Químico):
-- **Respuesta de Fase Aguda:** El hígado recibe señales de estrés (citoquinas IL-6, TNF-alfa) y dispara la producción masiva de Proteína C Reactiva (PCR) y Procalcitonina (PCT), además de estimular la liberación de miles de leucocitos jóvenes desde la médula ósea al torrente sanguíneo (Leucocitosis con desviación a la izquierda).
-
-### Correlación con Comorbilidades:
-- **Enfermedad Pulmonar Obstructiva Crónica (EPOC):** Estos pacientes tienen el mecanismo de limpieza de las vías aéreas destruido por el tabaco, por lo que la bacteria se asienta y coloniza con extrema facilidad, transformando una NAC banal en un evento potencialmente mortal.`,
+**Mecanismo de Progresión:** La inflamación local provoca una vasodilatación capilar pulmonar y un aumento severo de la permeabilidad endotelial, lo que resulta en la formación de un exudado alveolar rico en proteínas, eritrocitos y restos celulares (Hepatización). Esta ocupación del espacio aéreo genera un desequilibrio ventilación/perfusión (V/Q) masivo con efecto de cortocircuito (shunt), donde la sangre perfunde el tejido pulmonar no ventilado, provocando hipoxemia sistémica. La respuesta sistémica mediada por IL-1 y TNF-alfa eleva los reactantes de fase agude y puede derivar en vasoplejía periférica y fallo multiorgánico si la infección progresa a sepsis.`,
       esquemaMental: {
-        inicio: "Inhalación/Aspiración de patógenos que evaden defensas locales.",
-        dano: "Ocupación alveolar por exudado inflamatorio purulento.",
-        consecuencia: "Consolidación pulmonar, alteración del intercambio gaseoso (hipoxemia) y sepsis."
+        inicio: "Evasión de barreras mecánicas e inmunológicas alveolares.",
+        dano: "Ocupación alveolar por exudado y consolidación parenquimatosa.",
+        consecuencia: "Falla del intercambio gaseoso (hipoxemia) y potencial choque séptico."
       },
-      cita: "Harrison's Principles of Internal Medicine"
+      cita: "Harrison's Principles of Internal Medicine 21st Ed."
     },
+    complicaciones: [
+      "Derrame pleural paraneumónico y empiema por extensión directa de la infección al espacio pleural.",
+      "Insuficiencia respiratoria aguda y Síndrome de Distrés Respiratorio Agudo (SDRA) mediado por inflamación difusa.",
+      "Choque Séptico y disfunción multiorgánica por translocación bacteriana y tormenta de citocinas."
+    ],
     manejo: {
       diagnostico: "RX Tórax (Infiltrado nuevo). Laboratorio: Procalcitonina (guía), Gram y Cultivo de esputo. Saturación O2.",
       tratamiento: "Antibioticoterapia empírica (Amoxi/Clav o Macrólidos). Oxigenoterapia si SatO2 <92%. Hidratación activa.",
+      tratamientoDetallado: {
+        farmacos: [
+          { nombre: "Amoxicilina + Ácido Clavulánico", dosis: "875/125 mg", frecuencia: "Cada 12 horas VO", observaciones: "Tratamiento de elección ambulatorio en pacientes sin comorbilidades." },
+          { nombre: "Ceftriaxona", dosis: "1 - 2 g", frecuencia: "Cada 24 horas IV", observaciones: "Para manejo intrahospitalario; suele combinarse con macrólido." },
+          { nombre: "Azitromicina", dosis: "500 mg inicial, luego 250 mg", frecuencia: "Cada 24 horas VO", observaciones: "Cubre patógenos atípicos (Mycoplasma, Chlamydia)." }
+        ],
+        medidasGenerales: [
+          "Hidratación oral o IV abundante para fluidificar secreciones.",
+          "Oxigenoterapia para mantener saturación > 92%.",
+          "Control térmico con paracetamol si fiebre > 38.5°C."
+        ]
+      },
       cita: "Guías GPC MSP Ecuador"
     },
     enfermeria: {
@@ -6788,60 +6712,63 @@ La Neumonía Adquirida en la Comunidad (NAC) es una infección aguda del tejido 
   },
   {
     id: 'int_1_epoc',
-    nombre: 'EPOC (Exacerbación)',
+    nombre: 'EPOC (Exacerbación Aguda)',
     servicio: 'Medicina Interna',
     system: 'Sistema Respiratorio',
     color: 'var(--primary)',
-    definicionCaso: 'Limitación crónica al flujo aéreo, persistente y progresiva.',
-    sintomasClave: ['Disnea crónica', 'Tos', 'Expectoración', 'Tabaquismo'],
+    icon: 'Wind',
+    definicionCaso: 'Limitación crónica al flujo aéreo, persistente y progresiva, caracterizada por un aumento agudo de síntomas respiratorios que requiere cambio terapéutico.',
+    sintomasClave: ['Disnea progresiva', 'Aumento de esputo', 'Purulencia', 'Sibilancias', 'Tabaquismo'],
     clinica: {
       signosSintomas: [
-        "Aumento de la disnea y producción de esputo.",
-        "Cambio en la purulencia del esputo (Criterios de Anthonisen).",
-        "Tórax en tonel y respiración con labios fruncidos.",
-        "Sibilancias y espiración prolongada.",
-        "Uso de músculos accesorios (Signo de Hoover)."
+        "Disnea de esfuerzo o de reposo progresiva.",
+        "Aumento en la cantidad y purulencia del esputo (Criterios de Anthonisen).",
+        "Tórax en tonel e hiperinsuflación pulmonar.",
+        "Sibilancias espiratorias y prolongación de la fase espiratoria.",
+        "Uso de músculos accesorios y signo de Hoover (retracción paradójica del tórax inferior)."
       ],
       maniobraExploracion: "1. Inspección: Búsqueda de cianosis central y edemas (Cor pulmonale). 2. Auscultación: Disminución generalizada del murmullo vesicular.",
       banderasRojas: [
-        "Fallo respiratorio agudo (PaO2 < 60 mmHg).",
-        "Acidosis respiratoria (pH < 7.35).",
-        "Confusión o somnolencia extrema.",
-        "Inestabilidad hemodinámica asociada."
+        "Insuficiencia respiratoria hipercápnica (Somnolencia, asterixis).",
+        "Acidosis respiratoria grave (pH < 7.25).",
+        "Inestabilidad hemodinámica o necesidad de soporte ventilatorio mecánico.",
+        "Disfunción del ventrículo derecho aguda (Cor Pulmonale)."
       ],
-      cita: "Guide GOLD 2024"
+      cita: "Global Initiative for Chronic Obstructive Lung Disease (GOLD) 2024"
     },
     fisiopatologia: {
       textoTecnico: `### Introducción: El Evento Disparador
-La Enfermedad Pulmonar Obstructiva Crónica (EPOC) es una limitación crónica, progresiva y no totalmente reversible al flujo aéreo. El evento disparador es la exposición prolongada a partículas nocivas (tabaco o biomasa), lo que genera una inflamación persistente que remodela profundamente la arquitectura de las vías aéreas y el parénquima.
+La Enfermedad Pulmonar Obstructiva Crónica (EPOC) se desencadena por la exposición prolongada a partículas nocivas, principalmente humo de tabaco o biomasa, que induce una inflamación crónica mediada por macrófagos, linfocitos CD8+ y neutrófilos en las vías aéreas pequeñas. El evento disparador de la exacerbación suele ser una infección bronquial (viral o bacteriana) o la contaminación ambiental, que exacerba drásticamente esta respuesta inflamatoria preexistente.
 
 ### Desenlace: La Cascada de Disfunción
-**Mecanismo de Progresión (El Mapa):**
-- **Bronquitis Crónica:** Hiperplasia de glándulas mucosas y estrechamiento de los bronquiolos, lo que aumenta la resistencia al paso del aire.
-- **Enfisema:** Destrucción de las paredes alveolares y pérdida de la elasticidad pulmonar. Durante la espiración, la vía aérea pierde su sustento y colapsa prematuramente, atrapando aire en los pulmones (hiperinsuflación).
-
-### Afectación de Órganos y Sistemas Relacionados:
-- **Sistema Respiratorio:** Aumento del volumen residual y aplanamiento del diafragma, lo que obliga al uso de músculos accesorios y genera fatiga respiratoria crónica.
-- **Sistema Cardiovascular:** Vasoconstricción pulmonar hipóxica que deriva en hipertensión pulmonar y posterior fallo del ventrículo derecho (*Cor Pulmonale*).
-- **Sistema Musculoesquelético:** Atrofia muscular sistémica debida a la inflamación crónica por citoquinas y el sedentarismo condicionado por la disnea.
-
-### Alteraciones Hormonales y Bioquímicas (Eje Químico):
-- **Desequilibrio Proteasa-Antiproteasa:** El humo del tabaco inactiva la alfa-1 antitripsina y estimula las elastasas leucocitarias, degradando literalmente el tejido elástico del pulmón.
-- **Estrés Oxidativo:** La liberación masiva de radicales libres de oxígeno perpetúa la inflamación incluso después de cesar la exposición al tabaco.
-
-### Correlación con Comorbilidades:
-- **Enfermedad Cardiovascular:** La inflamación sistémica del EPOC acelera la aterosclerosis y aumenta el riesgo de infarto de miocardio.
-- **Osteoporosis:** Favorecida por el uso frecuente de corticoides, la inactividad física y el tabaquismo activo.`,
+**Mecanismo de Progresión:** La inflamación aguda aumenta el edema de la mucosa bronquial y la producción de moco, exacerbando el atrapamiento aéreo (hiperinsuflación dinámica). Esto incrementa el trabajo respiratorio y coloca al diafragma en una desventaja mecánica severa. La cascada de disfunción culmina en un desequilibrio ventilación/perfusión (V/Q) masivo con aumento del espacio muerto alveolar, lo que deriva en hipoxemia y retención de CO2 (hipercapnia). A nivel sistémico, el estrés oxidativo y la liberación de TNF-alfa inducen atrofia muscular y un estado catabólico que debilita la capacidad ventilatoria del paciente.`,
       esquemaMental: {
-        inicio: "Exposición a tabaco/biomasa.",
-        dano: "Bronquitis crónica y enfisema.",
-        consecuencia: "Obstrucción irreversible al flujo aéreo."
+        inicio: "Gatillo infeccioso sobre base inflamatoria crónica inhalatoria.",
+        dano: "Aumento del atrapamiento aéreo, edema bronquial e hipercrinia.",
+        consecuencia: "Insuficiencia respiratoria hipercápnica y fatiga de músculos respiratorios."
       },
-      cita: "Guide GOLD 2024"
+      cita: "GOLD Report 2024"
     },
+    complicaciones: [
+      "Cor Pulmonale e Insuficiencia Cardíaca Derecha secundaria a vasoconstricción pulmonar hipóxica.",
+      "Neumotórax espontáneo por ruptura de bullas enfisematosas.",
+      "Policitemia secundaria y riesgo aumentado de eventos tromboembólicos venosos."
+    ],
     manejo: {
       diagnostico: "Espirometría (VEF1/CVF < 0.70 post-broncodilatador). RX Tórax: Hiperinsuflación, aumento del espacio claro retroesternal.",
       tratamiento: "Broncodilatadores (SABA/SAMA o LABA/LAMA). Corticoides sistémicos si hay exacerbación. Oxígeno si SatO2 <88%.",
+      tratamientoDetallado: {
+        farmacos: [
+          { nombre: "Salbutamol / Ipratropio", dosis: "2 - 4 pufs", frecuencia: "Cada 20 min en la primera hora (Crisis)", observaciones: "Broncodilatación de acción rápida para rescate sintomático." },
+          { nombre: "Prednisona", dosis: "40 mg", frecuencia: "Cada 24 horas VO por 5 días", observaciones: "Reduce la inflamación y acelera la recuperación de la función pulmonar." },
+          { nombre: "Tiotropio (LAMA)", dosis: "1 inhalación", frecuencia: "Cada 24 horas", observaciones: "Tratamiento de mantenimiento de larga duración." }
+        ],
+        medidasGenerales: [
+          "Cese absoluto del tabaquismo.",
+          "Oxigenoterapia controlada para mantener SatO2 entre 88-92% (evitar abolición del estímulo hipóxico).",
+          "Vacunación antigripal y neumocócica."
+        ]
+      },
       cita: "Guías GOLD 2024"
     },
     enfermeria: {
@@ -7423,97 +7350,81 @@ El Síndrome de Distrés Respiratorio Agudo (SDRA) es la forma más grave de ins
       cita: 'Guías de Práctica Clínica'
     },
     fisiopatologia: {
-      textoTecnico: `### Introducción: El Evento Disparador
-El Cor Pulmonale es la hipertrofia y dilatación del ventrículo derecho (VD) como consecuencia de una enfermedad que afecta la estructura o la función de los pulmones. El evento disparador es la **Hipertensión Pulmonar**, que obliga al corazón derecho (diseñado para manejar bajas presiones) a trabajar contra una resistencia extenuante.
+      textoTecnico: `### Nivel 1: El Evento Disparador (Injuria Primaria)
+El Cor Pulmonale se desata por un incremento crónico de la resistencia vascular pulmonar (Hipertensión Pulmonar), frecuentemente debido a enfermedades parenquimatosas (EPOC, Fibrosis) o vasculares (TEP crónico). Esto impone una carga mecánica insostenible para un ventrículo derecho (VD) evolutivamente adaptado a sistemas de bajo flujo y alta distensibilidad.
 
-### Desenlace: La Cascada de Disfunción
-**Mecanismo de Progresión (El Mapa):**
-- **Vasoconstricción Hipóxica:** Ante la falta de oxígeno en los alvéolos, las arterias pulmonares se cierran para desviar la sangre, aumentando la presión global en el circuito pulmonar.
-- **Remodelado del VD:** El ventrículo derecho se engrosa (hipertrofia) para vencer la presión, pero eventualmente se dilata y falla (insuficiencia cardíaca derecha).
+### Nivel 2: Cascada de Disfunción (El Desenlace)
+La poscarga elevada induce hipertrofia miocítica en el VD para mantener el volumen sistólico. Eventualmente, se produce una dilatación del VD, lo que altera la geometría del corazón y desplaza el tabique interventricular hacia la izquierda (interdependencia ventricular), comprometiendo el llenado del VI. El resultado es una disminución del gasto cardíaco sistémico y una congestión retrógrada masiva.
 
-### Afectación de Órganos y Sistemas Relacionados:
-- **Sistema Cardiovascular:** Disminución del gasto cardíaco izquierdo por interdependencia ventricular (el VD dilatado "empuja" el tabique y colapsa el ventrículo izquierdo).
-- **Sistema Hepático:** Congestión pasiva del hígado (hígado "de choque" o en nuez moscada), pudiendo causar cirrosis cardíaca.
-- **Sistema Renal:** La caída del gasto cardíaco y la congestión de las venas renales reducen la filtración glomerular, activando el sistema RAA y empeorando los edemas.
+### Nivel 3: Alteraciones Bioquímicas y Hormonales
+La hipoperfusión renal gatilla el eje **RAA**, resultando en una retención ávida de sodio y agua que empeora el edema. Se observa una elevación moderada de péptidos natriuréticos (**BNP/NT-proBNP**) por distensión de las fibras miocárdicas del VD. El estrés oxidativo en el tejido pulmonar perpetúa el remodelado vascular.
 
-### Alteraciones Hormonales y Bioquímicas (Eje Químico):
-- **Péptido Natriurético Cerebral (BNP):** Elevado significativamente debido al estiramiento de las fibras del ventrículo derecho.
-- **Eritropoyetina:** La hipoxia pulmonar crónica estimula la médula ósea para producir más glóbulos rojos (Poliglobulia), lo que aumenta la viscosidad de la sangre y empeora la carga de trabajo del VD.
-
-### Correlación con Comorbilidades:
-- **SAOS (Apnea del Sueño):** Los episodios repetidos de hipoxia nocturna disparan picos de hipertensión pulmonar que terminan causando Cor Pulmonale.
-- **EPOC:** Es la causa más común; la destrucción del lecho vascular pulmonar y la hipoxia alveolar son los motores principales de la falla derecha.`,
+### Nivel 4: Correlación Histopatológica
+Se observa hipertrofia de los miocitos derechos, fibrosis intersticial y, en casos avanzados, degeneración grasa del miocardio ventricular derecho. A nivel vascular pulmonar, se evidencia hiperplasia de la túnica media e íntima en las arteriolas (remodelado plexiforme en casos severos).`,
       esquemaMental: {
-        inicio: "Hipertensión pulmonar crónica (EPOC, Fibrosis).",
-        dano: "Sobrecarga de presión en el ventrículo derecho.",
-        consecuencia: "Fallo cardíaco derecho y congestión sistémica."
+        inicio: "Hipertensión pulmonar crónica (poscarga del VD elevada).",
+        dano: "Hipertrofia y dilatación del ventrículo derecho facilitando falla sistólica.",
+        consecuencia: "Falla cardíaca derecha, congestión venosa sistémica y bajo gasto izquierdo."
       },
-      cita: "Harrison's Principles of Internal Medicine"
+      cita: "ESC Guidelines on Pulmonary Hypertension 2022"
     },
     manejo: {
-      diagnostico: 'Laboratorios de rutina (BH, QS, ES), Biomarcadores específicos y gasometría si aplica.',
-      tratamiento: 'Soporte vital avanzado (vía aérea, oxígeno, perfusión), terapia farmacológica dirigida causal y estabilización hidroelectrolítica.',
-      cita: 'Protocolo Institucional'
-    },
-    enfermeria: {
-      nanda: '00204 Riesgo de perfusión tisular ineficaz r/c estado crítico.',
-      intervenciones: [
-        { accion: 'Monitorizar signos vitales al menos cada 4 horas.', razon: 'Permite la detección temprana de inestabilidad hemodinámica e insuficiencia multiorgánica asociada al cuadro clínico.' },
-        { accion: 'Administrar medicamentos estrictamente según horarios y vías prescritas.', razon: 'Asegura la eficacia máxima de la terapia específica para Cor Pulmonale y reduce iatrogenias médicas.' },
-        { accion: 'Mantener un control riguroso de ingresos y egresos hídricos.', razon: 'Evalúa la función renal y detecta posible sobrecarga hídrica, crítico en abordajes sistémicos.' },
-        { accion: 'Educar al paciente y familiar sobre los signos de alarma específicos.', razon: 'Fomenta la participación activa y el autocuidado, y mejora en gran medida la adherencia post-alta.' },
-        { accion: 'Evaluar la intensidad del dolor y administrar confort.', razon: 'Reduce la respuesta de estrés simpático y facilita una recuperación tisular y metabólica óptima.' }
-      ],
-      cita: 'NIC/NOC Enfermería'
+      diagnostico: 'Gold Standard: Cateterismo cardíaco derecho (presión media de AP >20 mmHg). Tamizaje: Ecocardiografía (estimación de PASP mediante el jet de regurgitación tricuspídea). Biomarcadores: Elevación de BNP/NT-proBNP refleja estrés parietal del VD.',
+      tratamiento: 'Manejo paso a paso: 1. Optimización de la Oxigenoterapia (Meta SatO2 >90% para reducir vasoconstricción hipóxica). 2. Diuréticos de asa (Furosemida) para manejo de congestión volémica. 3. Manejo agresivo de la patología pulmonar de base (broncodilatadores, esteroides si procede). 4. Vasodilatadores pulmonares específicos en casos indicados.',
+      monitoreo: {
+        parametros: ['Peso diario (monitorizar edema)', 'Saturación de O2 continua', 'Niveles de electrolitos séricos (K+, Mg++)'],
+        signosAlerta: ['Aumento de la distensión venosa yugular', 'Hepatomegalia dolorosa', 'Edema de MMII progresivo']
+      },
+      cita: 'Harrison Principles of Internal Medicine'
     }
   },
-{
-    id: 'int_13_atelectasia',
-    nombre: 'Atelectasia',
-    servicio: 'Medicina Interna',
-    system: 'Sistema Respiratorio',
-    color: 'var(--primary)',
-    definicionCaso: 'Colapso completo o parcial de un lóbulo pulmonar.',
-    sintomasClave: ['Evaluar ABCDE', 'Monitorización de signos vitales cada hora o según gravedad', 'Identificación de comorbilidades', 'Vigilancia de complicaciones'],
+  {
+    id: "int_13_atelectasia",
+    nombre: "Atelectasia",
+    servicio: "Medicina Interna / Neumología",
+    system: "Sistema Respiratorio",
+    color: "var(--primary)",
+    icon: "Wind",
+    definicionCaso: "Colapso parcial o total de uno o más lóbulos pulmonares debido a la pérdida de gas alveolar.",
+    sintomasClave: ["Disnea súbita", "Dolor pleurítico", "Tos seca", "Disminución de ruidos respiratorios"],
     clinica: {
-      signosSintomas: ['Fiebre/hipotermia', 'Taquicardia', 'Alteración del estado mental'],
-      maniobraExploracion: 'Exploración física exhaustiva por sistemas.',
-      banderasRojas: ['Inestabilidad hemodinámica', 'Fallo respiratorio', 'Deterioro neurológico agudo'],
-      cita: 'Guías de Práctica Clínica'
+      signosSintomas: [
+        "Auscultación: Disminución o abolición del murmullo vesicular en el área afectada.",
+        "Percusión: Matidez sobre la zona colapsada.",
+        "Taquipnea y uso de musculatura accesoria si el colapso es masivo.",
+        "Desviación de la tráquea hacia el lado afectado en atelectasias lobares extensas."
+      ],
+      maniobraExploracion: "Exploración torácica estática y dinámica. Búsqueda de asimetría en la expansión pulmonar.",
+      banderasRojas: ["Cianosis central", "Taquicardia severa", "Hipotensión o choque hipóxico"],
+      cita: "Sabiston Textbook of Surgery"
     },
     fisiopatologia: {
-      textoTecnico: `### Introducción: El Evento Disparador
-La Atelectasia es la pérdida de volumen del tejido pulmonar debido a la falta de expansión de los alvéolos. No es una enfermedad *per se*, sino una complicación mecánica. El evento disparador suele ser una obstrucción bronquial (moco, cuerpo extraño) o una compresión externa, que impide que el aire mantenga inflado el saco alveolar.
+      textoTecnico: `### Nivel 1: El Evento Disparador (Injuria Primaria)
+La Atelectasia se inicia por la pérdida de volumen pulmonar debida al colapso alveolar. Puede ser **obstructiva** (tapones mucosos, tumores), **compresiva** (derrame pleural, neumotórax) o **adhesiva** (disfunción del surfactante). El evento clave es el cese de la ventilación en un segmento o lóbulo manteniendo la perfusión sanguínea.
 
-### Desenlace: La Cascada de Disfunción
-**Mecanismo de Progresión (El Mapa):**
-- **Atelectasia por Reabsorción:** Si un bronquio se obstruye, el aire atrapado en los alvéolos es absorbido por la sangre; al agotarse el aire, el alvéolo se colapsa.
-- **Atelectasia por Compresión:** Líquido (derrame) o aire (neumotórax) en la pleura "aplastan" el pulmón hacia adentro.
-- **Atelectasia por Contracción:** Fibrosis en la pleura o el parénquima tira del tejido, impidiendo su expansión.
+### Nivel 2: Cascada de Disfunción (El Desenlace)
+Tras la obstrucción bronquial, el aire atrapado en los alvéolos es absorbido por la sangre capilar (Nitrógeno residual se absorbe). El alvéolo pierde su soporte gaseoso interno y se colapsa. Esto genera un **Shunt intrapulmonar** (V/Q = 0): la sangre desoxigenada regresa al corazón izquierdo, provocando hipoxemia. La pérdida de volumen reduce la compliance pulmonar, exigiendo mayor trabajo respiratorio.
 
-### Afectación de Órganos y Sistemas Relacionados:
-- **Sistema Respiratorio:** Creación de un cortocircuito (*Shunt*) pulmonar: la sangre pasa por zonas colapsadas donde no hay oxígeno, regresando al corazón sin oxigenarse.
-- **Mediastino:** Las atelectasias masivas generan una presión negativa que "tira" de la tráquea y del corazón hacia el lado afectado (desviación ipsilateral).
-- **Sistema Inmune:** El tejido colapsado y falto de ventilación es el caldo de cultivo ideal para la colonización bacteriana, derivando frecuentemente en neumonía.
+### Nivel 3: Alteraciones Bioquímicas y Hormonales
+La hipoxia local induce vasoconstricción pulmonar hipóxica para minimizar el Shunt, elevando regionalmente la presión vascular. Se observa una depleción local de **Surfactante** pulmonar, lo que aumenta la tensión superficial y dificulta enormemente la reexpansión del tejido comprometido.
 
-### Alteraciones Hormonales y Bioquímicas (Eje Químico):
-- **Surfactante Pulmonar:** La falta de ventilación reduce la producción de surfactante, aumentando la tensión superficial y dificultando enormemente la reexpansión del pulmón.
-- **Mediadores de la Hipoxia:** La vasoconstricción local busca reducir el Shunt, pero aumenta la presión en la arteria pulmonar de esa zona.
-
-### Correlación con Comorbilidades:
-- **Postoperatorio de Cirugía Abdominal/Torácica:** Es la causa más frecuente debido al dolor al respirar profundo y al efecto de la anestesia sobre el diafragma.
-- **Obesidad:** El exceso de peso abdominal comprime las bases de los pulmones, provocando micro-atelectasias constantes durante el reposo.`,
+### Nivel 4: Correlación Histopatológica
+Se observa parénquima colapsado con alvéolos en forma de rendija y congestión de vasos capilares adyacentes. El estasis de secreciones favorece la proliferación microbiana, transformando frecuentemente la atelectasia en una neumonía obstructiva si no se resuelve el factor mecánico inicial.`,
       esquemaMental: {
-        inicio: "Obstrucción o compresión alveolar.",
-        dano: "Reabsorción del aire alveolar y colapso del tejido.",
-        consecuencia: "Disminución del intercambio gaseoso y Shunt funcional."
+        inicio: "Obstrucción o compresión de la vía aérea distal.",
+        dano: "Reabsorción de gas alveolar y colapso del tejido parenquimatoso.",
+        consecuencia: "Shunt funcional, hipoxemia y riesgo de infección secundaria."
       },
-      cita: "Fisiopatología Estándar"
+      cita: "Fisiopatología Quirúrgica (Sabiston)"
     },
     manejo: {
-      diagnostico: 'Laboratorios de rutina (BH, QS, ES), Biomarcadores específicos y gasometría si aplica.',
-      tratamiento: 'Soporte vital avanzado (vía aérea, oxígeno, perfusión), terapia farmacológica dirigida causal y estabilización hidroelectrolítica.',
-      cita: 'Protocolo Institucional'
+      diagnostico: 'Hallazgos físicos (Abolición de ruidos), Rx de Tórax (Desviación ipsilateral de estructuras del mediastino), TC de Tórax para ver causa obstructiva.',
+      tratamiento: '1. Fisioterapia respiratoria intensiva (técnicas de expansión pulmonar). 2. Espirometría de incentivo. 3. Fibrobroncoscopia diagnóstica/terapéutica si hay sospecha de tapón mucoso refractario. 4. Control del dolor postoperatorio para permitir respiración profunda.',
+      monitoreo: {
+        parametros: ['Saturación de oxígeno persistente', 'Frecuencia respiratoria y uso de músculos accesorios', 'Auscultación pulmonar periódica'],
+        signosAlerta: ['Aparición de fiebre (sugiere neumonía)', 'Cianosis central', 'Dificultad respiratoria súbita']
+      },
+      cita: 'ATS - Management of Postoperative Pulmonary Complications'
     },
     enfermeria: {
       nanda: '00204 Riesgo de perfusión tisular ineficaz r/c estado crítico.',
@@ -7529,217 +7440,170 @@ La Atelectasia es la pérdida de volumen del tejido pulmonar debido a la falta d
   },
 {
     id: 'int_15_icc',
-    nombre: 'ICC',
+    nombre: 'Insuficiencia Cardíaca Congestiva (ICC)',
     servicio: 'Medicina Interna',
     system: 'Sistema Cardiovascular',
     color: 'var(--destructive)',
-    definicionCaso: 'Insuficiencia Cardíaca Congestiva.',
-    sintomasClave: ['Evaluar ABCDE', 'Monitorización de signos vitales cada hora o según gravedad', 'Identificación de comorbilidades', 'Vigilancia de complicaciones'],
+    icon: 'Heart',
+    definicionCaso: 'Incapacidad del corazón para bombear sangre en volúmenes adecuados o hacerlo solo a expensas de altas presiones de llenado.',
+    sintomasClave: ['Disnea', 'Ortopnea', 'Edema', 'Ingurgitación yugular', 'Estertores'],
     clinica: {
       signosSintomas: [
-        '1. Disnea de esfuerzo',
-        '2. Ortopnea',
-        '3. Disnea paroxística nocturna',
-        '4. Fatiga y debilidad',
-        '5. Edema de miembros inferiores',
-        '6. Ingurgitación yugular',
-        '7. Hepatomegalia (congestión)',
-        '8. Crepitantes pulmonares',
-        '9. Ascitis',
-        '10. Taquicardia'
+        "Disnea de esfuerzo progresiva que evoluciona a disnea de reposo y ortopnea.",
+        "Ingurgitación yugular (distensión de venas del cuello) y reflujo hepatoyugular.",
+        "Edema de miembros inferiores, blando, con fóvea, de predominio vespertino.",
+        "Estertores crepitantes bibasales (congestión pulmonar) y sibilancias (asma cardíaca).",
+        "Fatiga y debilidad muscular por bajo gasto cardíaco sostenido."
       ],
-      maniobraExploracion: 'Auscultación pulmonar (crepitantes bibasales); auscultación cardíaca (tercer tono - S3, soplos); evaluación de presión venosa yugular (PVY); palpación abdominal (hepatomegalia, reflujo hepatoyugular); evaluación de edema periférico con fóvea.',
+      maniobraExploracion: "1. Auscultación: Búsqueda de S3 (ritmo de galope). 2. Palpación: Choque de la punta desplazado. 3. Evaluación de PVY (Presión Venosa Yugular).",
       banderasRojas: [
-        'Edema agudo de pulmón (EAP) inminente',
-        'Hipotensión severa o shock cardiogénico',
-        'Hipoperfusión tisular (cianosis, oliguria, alteración mental)',
-        'Arritmias ventriculares o FA con RC rápida',
-        'Desaturación grave que no responde a oxígeno',
-        'Dolor torácico asociado (sospecha de SCA)',
-        'Respiración de Cheyne-Stokes evidente',
-        'Signos de bajo gasto cardíaco sostenido'
+        "Edema Agudo de Pulmón (Disnea extrema, expectoración asalmonada).",
+        "Choque cardiogénico (Hipotensión + signos de hipoperfusión).",
+        "Arritmias ventriculares o FA con respuesta ventricular rápida.",
+        "Disfunción renal aguda (Síndrome cardiorrenal)."
       ],
-      cita: 'Guías ESC insuficiencia cardiaca aguda'
+      cita: "ESC Guidelines for the diagnosis and treatment of acute and chronic heart failure 2021"
     },
     fisiopatologia: {
-      textoTecnico: `### Introducción: El Evento Disparador
-La ICC no es una enfermedad aislada, sino el estadio final de cualquier injuria miocárdica (infartos, hipertensión crónica o valvulopatías). Se define por la incapacidad del ventrículo para mantener un gasto cardíaco suficiente para satisfacer las demandas metabólicas del organismo, o lograrlo solo a expensas de un aumento crítico en las presiones de llenado. El evento disparador es la pérdida de la contractilidad o la distensibilidad, lo que genera un remanente de sangre en las cavidades cardiacas al final de cada latido.
+      textoTecnico: `### Nivel 1: El Evento Disparador (Injuria Primaria)
+La ICC se inicia por una injuria miocárdica (isquemia, sobrecarga de presión por HTA o valvulopatía) que reduce la eficiencia mecánica del ventrículo. La caída del volumen latido es detectada por barorreceptores en el arco aórtico y seno carotídeo, disparando una descarga simpática compensatoria inicial.
 
-### Desenlace: La Cascada de Disfunción
-**Mecanismo de Progresión (El Mapa):**
-Ante el descenso del volumen sistólico, el cuerpo activa mecanismos compensatorios que, a largo plazo, son los que destruyen al paciente.
-- **Ley de Frank-Starling:** El corazón se estira para intentar bombear más (dilatación), pero al sobrepasar el límite elástico, la fuerza de contracción cae drásticamente.
-- **Remodelado Ventricular:** El miocardio sufre hipertrofia y fibrosis, cambiando su estructura elástica por una rígida, lo que perpetúa el fallo diastólico.
+### Nivel 2: Cascada de Disfunción (El Desenlace)
+La activación crónica del sistema RAA y el sistema simpático induce la liberación de Angiotensina II, Noradrenalina y Aldosterona. Estos mediadores promueven la hipertrofia del miocito y la apoptosis mediada por estrés oxidativo. El aumento de la poscarga y la retención hidrosalina incrementan el estrés parietal diastólico, provocando una disfunción de la microcirculación coronaria y un círculo vicioso de isquemia subendocárdica funcional.
 
-### Afectación de Órganos y Sistemas Relacionados: (Efecto Dominó):
-- **Sistema Pulmonar:** El aumento de presión en la aurícula izquierda se transmite hacia atrás a las venas pulmonares y capilares. Al superar la presión hidrostática a la oncótica, el líquido sale al espacio alveolar, causando edema pulmonar y disnea paroxística.
-- **Sistema Renal:** La hipoperfusión renal es detectada como una "hemorragia falsa". El riñón, creyendo que falta volumen, retiene sodio y agua, aumentando la precarga y empeorando la congestión.
-- **Sistema Hepático:** La falla derecha genera congestión venosa sistémica. El hígado se agranda (hepatomegalia congestiva) y puede desarrollar "hígado de choque" por falta de oxígeno.
+### Nivel 3: Alteraciones Bioquímicas y Hormonales
+Detección de niveles elevados de **NT-proBNP** y **BNP** sintetizados en respuesta al estiramiento de los cardiomiocitos. Se observa hiponatremia dilucional por secreción no osmótica de **ADH** (Vasopresina) y elevación de **Lactato** en estadios de bajo gasto severo (Choque cardiogénico). El eje HPA mantiene niveles elevados de **Cortisol** que contribuyen a la resistencia a la insulina y al catabolismo muscular (caquexia cardíaca).
 
-### Alteraciones Hormonales y Bioquímicas (Eje Químico): (El Eje Neurohormonal):
-- **Sistema RAA (Renina-Angiotensina-Aldosterona):** La Angiotensina II causa una vasoconstricción periférica severa para mantener la presión arterial, pero esto aumenta la poscarga, agotándolo más rápido.
-- **Péptidos Natriuréticos (BNP/ANP):** El corazón libera estas hormonas para intentar orinar el exceso de líquido; su elevación es el marcador clave del fallo.
-- **Catecolaminas:** La adrenalina aumenta la frecuencia cardiaca, lo cual reduce el tiempo de llenado coronario, provocando isquemia relativa.
-
-### Correlación con Comorbilidades:
-- **Enfermedad Renal Crónica (Síndrome Cardiorrenal):** El daño en un órgano acelera el daño en el otro por congestión venosa renal.
-- **Diabetes Mellitus:** Genera productos de glicación avanzada que vuelven rígido al colágeno del corazón, impidiendo que se relaje.`,
+### Nivel 4: Correlación Histopatológica
+Se observa hipertrofia de miocitos, desorganización de las miofibrillas y fibrosis intersticial densa (depósito de colágeno tipo I y III). Estos cambios reducen la distensibilidad (disfunción diastólica) y la fuerza contráctil (disfunción sistólica), traduciéndose clínicamente en **estertores crepitantes** por trasudado alveolar y **edema periférico** por aumento de la presión hidrostática venosa.`,
       esquemaMental: {
-        inicio: 'Lesión miocárdica (IAM, HTA, Valvulopatía).',
-        dano: 'Descenso del volumen sistólico y sobrecarga de presiones.',
-        consecuencia: 'Congestión sistémica/pulmonar e hipoperfusión tisular.'
+        inicio: "Injuria miocárdica y activación de barorreceptores por bajo gasto.",
+        dano: "Remodelado ventricular mediado por neurohormonas (RAA/Simpático).",
+        consecuencia: "Fallo de bomba, congestión sistémica y trasudado tisular."
       },
-      cita: 'Braunwald\'s Heart Disease: A Textbook of Cardiovascular Medicine'
+      cita: "Braunwald's Heart Disease: A Textbook of Cardiovascular Medicine 12th Ed."
     },
+    complicaciones: [
+      "Edema agudo de pulmón por fallo ventricular izquierdo súbito.",
+      "Síndrome Cardiorrenal tipo 1 por congestión venosa renal e hipoperfusión.",
+      "Muerte súbita por arritmias ventriculares mediadas por fibrosis miocárdica."
+    ],
     manejo: {
-      diagnostico: 'Ecocardiograma (FEVI). NT-proBNP/BNP. RX Tórax (Cefalización, líneas de Kerley). ECG de 12 derivaciones.',
-      tratamiento: 'Pilares: IECA/ARAII/ARNI + Betabloqueadores + iSGLT2 + Antag. Mineralocorticoides.',
+      diagnostico: 'Hallazgos específicos: NT-proBNP (>125 pg/mL en crónico, >300 en agudo) como Gold Standard. En BH puede hallarse anemia de trastornos crónicos o policitemia compensatoria. QS: Elevación de creatinina (falla renal aguda sobre crónica). ES: Hiponatremia o hipopotasemia. Gasometría: Hipoxemia progresiva y alcalosis respiratoria inicial por taquipnea.',
+      tratamiento: 'Manejo paso a paso: 1. Estabilización hemodinámica (PAM >65 mmHg, SatO2 >90-92%). 2. Diuresis agresiva con Furosemida hasta euvolemia. 3. Introducción de los "4 pilares" (ARNI, Beta-bloqueador, MRA, iSGLT2). 4. Control hidroelectrolítico estricto.',
       tratamientoDetallado: {
         farmacos: [
-          { nombre: 'Furosemida', dosis: '20-40 mg IV/VO', frecuencia: 'Según volemia', observaciones: 'Diurético de asa para control de síntomas congestivos. Vigilar potasio.' },
-          { nombre: 'Sacubitrilo / Valsartán (ARNI)', dosis: '24/26 mg a 97/103 mg', frecuencia: 'Cada 12 horas', observaciones: 'Sustituye a IECA/ARAII en falla cardíaca con FEVI reducida para reducción de mortalidad.' },
-          { nombre: 'Dapagliflozina / Empagliflozina', dosis: '10 mg', frecuencia: 'Cada 24 horas', observaciones: 'Inhibidor de SGLT2 con beneficio demostrado en insuficiencia cardíaca con FEVI reducida y preservada.' }
+          { nombre: "Furosemida", dosis: "20 - 40 mg", frecuencia: "Cada 12-24 horas IV/VO", observaciones: "Diurético de asa; bloquea el cotransportador Na-K-2Cl." },
+          { nombre: "Sacubitrilo/Valsartán", dosis: "24/26 mg", frecuencia: "Cada 12 horas VO", observaciones: "ARNI; inhibe neprilisina y bloquea receptores AT1." },
+          { nombre: "Empagliflozina", dosis: "10 mg", frecuencia: "Cada 24 horas VO", observaciones: "iSGLT2; induce natriuresis y glucosuria." }
         ],
         medidasGenerales: [
-          'Restricción de sodio (< 2 g/día) y restricción hídrica en casos severos (1.5 - 2 L/día).',
-          'Control de peso diario (reportar aumento > 2 kg en 3 días).',
-          'Ejercicio aeróbico moderado según tolerancia funcional.'
+          "Restricción hídrica estricta (1.5 L/día) y sódica (< 2g/día).",
+          "Control de peso diario en ayunas.",
+          "Posición semifowler para optimizar mecánica ventilatoria."
         ]
       },
       monitoreo: {
         parametros: [
-          'Función renal (Creatinina) y electrolitos (K+, Mg++) periódicos.',
-          'Nivel de actividad física (NYHA Class).',
-          'Presión arterial y frecuencia cardíaca.'
+          "Balance hídrico acumulado cada 8 horas.",
+          "Niveles de potasio y magnesio sérico.",
+          "Trabajo respiratorio y uso de musculatura accesoria."
         ],
         signosAlerta: [
-          'Ortopnea progresiva o disnea paroxística nocturna.',
-          'Incremento súbito de peso con edema en esclavina.',
-          'Síncope o palpitaciones rápidas.'
+          "Disnea paroxística nocturna o incremento de ortopnea.",
+          "Ganancia de peso rápida (>2kg en 72h).",
+          "Confusión o disminución del gasto urinario."
         ]
       },
-      evaluacion: {
-        criteriosExito: [
-          'Compensación clínica (NYHA I-II).',
-          'Ausencia de reingresos hospitalarios.',
-          'Estabilización de biomarcadores (BNP).'
-        ],
-        criteriosFracaso: [
-          'Falla cardíaca refractaria (necesidad de inotrópicos).',
-          'Disfunción renal progresiva secundaria (Síndrome cardiorrenal).'
-        ]
-      },
-      cita: '2021 ESC Guidelines for the diagnosis and treatment of acute and chronic heart failure'
+      criterioReferencia: 'Frecuencia respiratoria > 30 rpm, Saturación < 88%, Necesidad de soporte inotrópico.',
+      cita: "ESC HF Guidelines 2021"
     },
     enfermeria: {
-      nanda: '00204 Riesgo de perfusión tisular ineficaz r/c estado crítico.',
+      nanda: '00030 Deterioro del intercambio de gases',
       intervenciones: [
-        { accion: 'Monitorizar signos vitales al menos cada 4 horas.', razon: 'Permite la detección temprana de inestabilidad hemodinámica e insuficiencia multiorgánica asociada al cuadro clínico.' },
-        { accion: 'Administrar medicamentos estrictamente según horarios y vías prescritas.', razon: 'Asegura la eficacia máxima de la terapia específica para ICC y reduce iatrogenias médicas.' },
-        { accion: 'Mantener un control riguroso de ingresos y egresos hídricos.', razon: 'Evalúa la función renal y detecta posible sobrecarga hídrica, crítico en abordajes sistémicos.' },
-        { accion: 'Educar al paciente y familiar sobre los signos de alarma específicos.', razon: 'Fomenta la participación activa y el autocuidado, y mejora en gran medida la adherencia post-alta.' },
-        { accion: 'Evaluar la intensidad del dolor y administrar confort.', razon: 'Reduce la respuesta de estrés simpático y facilita una recuperación tisular y metabólica óptima.' }
+        { accion: 'Balance hídrico estricto y peso diario.', razon: 'Permite monitorizar la eficacia de la terapia diurética y evitar la sobrecarga hídrica.' },
+        { accion: 'Posición de Fowler elevada (45-90°).', razon: 'Optimiza la excursión diafragmática y reduce el retorno venoso al corazón insuficiente.' },
+        { accion: 'Vigilancia de electrolitos (K+ y Mg++).', razon: 'Los diuréticos pueden causar hipopotasemia, aumentando el riesgo de arritmias.' }
       ],
-      cita: 'NIC/NOC Enfermería'
+      cita: 'NIC/NOC'
     }
   },
-{
+  {
     id: 'int_16_sca',
-    nombre: 'SCA',
-    servicio: 'Medicina Interna',
+    nombre: 'Síndrome Coronario Agudo (SCA)',
+    servicio: 'Medicina Interna / Emergencias',
     system: 'Sistema Cardiovascular',
     color: 'var(--destructive)',
-    definicionCaso: 'El Síndrome Coronario Agudo (SCA) comprende todas las manifestaciones clínicas derivadas de la oclusión súbita de una arteria coronaria, generalmente provocada por la ruptura de una placa de ateroma inestable. Fisiopatológicamente, la exposición del núcleo lipídico de la placa al torrente sanguíneo desencadena una cascada protrombótica que forma un trombo (oclusivo en IAMEST/IAMCEST, no oclusivo en IAMNEST/angina inestable). Esta obstrucción compromete el aporte de oxígeno, obligando al miocardio a realizar un metabolismo anaeróbico, lo cual, de prolongarse, conlleva a la necrosis celular irreversible, inestabilidad eléctrica (arritmias) y disfunción mecánica ventricular.',
-    etiologia: 'Primariamente aterosclerosis coronaria, agravada por factores predisponentes (hipertensión, diabetes, dislipidemia). Factores gatillo: estrés emocional, esfuerzo físico intenso, infecciones sistémicas o crisis hipertensivas que aumentan la demanda miocárdica.',
-    fisiopatologiaBasica: 'La rotura de la placa inestable desencadena trombosis y reducción brusca del flujo sanguíneo coronario. La isquemia resultante altera primero el metabolismo miocárdico, luego la diástole, posteriormente la sístole, y finaliza con la necrosis irreversible del tejido si no se restablece la perfusión oportunamente.',
-    complicaciones: [
-      'Arritmias ventriculares letales (TV/FV)',
-      'Falla Cardíaca Aguda / Shock Cardiogénico',
-      'Complicaciones mecánicas (ruptura de pared libre, septum o músculo papilar)',
-      'Bloqueos AV de alto grado',
-      'Pericarditis post-infarto'
-    ],
-    riesgosNoTratado: [
-      'Muerte súbita cardíaca',
-      'Insuficiencia cardíaca terminal',
-      'Aneurisma ventricular con riesgo de embolización',
-      'Daño neurológico secundario a bajo gasto',
-      'Cronicidad anginosa invalidante'
-    ],
-    sintomasClave: ['Evaluar ABCDE', 'Monitorización de signos vitales cada hora o según gravedad', 'Identificación de comorbilidades', 'Vigilancia de complicaciones'],
-    banderasRojas: [
-      'Dolor retroesternal persistente (>20 min) refractario',
-      'Cambios isquémicos significativos en el ECG (ST ↑ o ↓)',
-      'Inestabilidad hemodinámica extrema',
-      'Signos de falla de bomba (estertores agudos)',
-      'Alteración de consciencia o soplo cardíaco de novo'
-    ],
+    icon: 'Heart',
+    definicionCaso: 'Manifestación clínica de oclusión coronaria súbita, debida a la ruptura de una placa de ateroma inestable con formación de trombo.',
+    sintomasClave: ['Dolor opresivo', 'Diaforesis', 'Disnea', 'Irradiación', 'Náuseas'],
+    clinica: {
+      signosSintomas: [
+        "Dolor retroesternal opresivo intenso (>20 min) que no cede con reposo.",
+        "Irradiación del dolor a mandíbula, cuello, hombro o brazo izquierdo.",
+        "Diaforesis (sudoración fría profusa) y náuseas/vómitos de origen central.",
+        "Disnea de aparición súbita o equivalente anginoso (especialmente en diabéticos y mujeres).",
+        "Sensación de muerte inminente (angustia extrema)."
+      ],
+      maniobraExploracion: "1. ECG de 12 derivaciones inmediato. 2. Auscultación cardíaca: Búsqueda de S3/S4 o soplos nuevos. 3. Monitorización de signos de choque.",
+      banderasRojas: [
+        "Inestabilidad hemodinámica (Choque cardiogénico: hipotensión + frialdad distal).",
+        "Edema Agudo de Pulmón (Estertores crepitantes bilaterales agudos).",
+        "Arritmias ventriculares malignas (Taquicardia Ventricular / Fibrilación Ventricular).",
+        "Dolor refractario a nitratos intravenosos."
+      ],
+      cita: "ACC/AHA/ESC Acute Coronary Syndromes Guidelines 2023"
+    },
     fisiopatologia: {
-      textoTecnico: `### Introducción: El Evento Disparador
-El SCA es el resultado de la interrupción súbita del flujo sanguíneo coronario, generalmente debido a la erosión o ruptura de una placa de ateroma inestable. Este evento dispara una cascada protrombótica que reduce la luz arterial, imposibilitando que el miocardio reciba el oxígeno necesario para su función contráctil. La isquemia resultante progresa rápidamente a necrosis celular si no se restablece la perfusión.
+      textoTecnico: `### Nivel 1: El Evento Disparador (Injuria Primaria)
+El SCA se desata tras la ruptura o erosión de una placa de ateroma rica en lípidos con capa fibrótica delgada. La ruptura expone el núcleo lipídico, el colágeno subendotelial y el factor tisular a la sangre, detonando una cascada de coagulación explosiva y la activación masiva de receptores GP IIb/IIIa plaquetarios.
 
-### Desenlace: La Cascada de Disfunción
-**Mecanismo de Progresión (El Mapa):**
-- **La Cascada Isquémica:** El primer cambio es metabólico (cambio a glucólisis anaerobia), seguido de fallo diastólico, luego sistólico y finalmente cambios en el ECG y dolor.
-- **Aturdimiento Miocárdico:** Incluso tras reabrir la arteria, el tejido puede permanecer disfuncionante por horas o días debido al daño por reperfusión y radicales libres.
+### Nivel 2: Cascada de Disfunción (El Desenlace)
+La formación del trombo genera una oclusión arterial (total en IAMCEST, parcial en IAMSEST/AI), provocando el cese del flujo de oxígeno (isquemia). El miocito desplaza su metabolismo a la glicólisis anaerobia, resultando en el fallo de la bomba Na+/K+-ATPasa por depleción de ATP intracelular. Esto causa una despolarización celular sostenida, acumulación de calcio citosólico y activación de calpaínas (proteasas intracelulares) que inician la destrucción del citoesqueleto miocítico.
 
-### Afectación de Órganos y Sistemas Relacionados:
-- **Sistema Cardiovascular:** Genera una caída del gasto cardíaco y riesgo inminente de arritmias ventriculares (TV/FV) por inestabilidad eléctrica en la zona de penumbra.
-- **Sistema Pulmonar:** La falla del ventrículo izquierdo genera un aumento súbito de la presión diastólica final, derivando en edema agudo de pulmón "flash".
-- **Sistema Nervioso:** El dolor extremo activa una respuesta simpática masiva que puede elevar la TA y FC, aumentando aún más el daño isquémico.
+### Nivel 3: Alteraciones Bioquímicas y Hormonales
+La muerte celular libera biomarcadores **Troponina I y T** de alta sensibilidad (Gold Standard) y **CPK-MB**. Se produce una acidosis láctica local por el metabolismo anaerobio. El estrés masivo activa el eje HPA y el sistema simpático, liberando niveles críticos de **Catecolaminas** y **Cortisol**, lo que induce hiperglicemia de estrés e incrementa la demanda miocárdica de oxígeno, agravando la zona de penumbra isquémica.
 
-### Alteraciones Hormonales y Bioquímicas (Eje Químico):
-- **Biomarcadores de Necrosis:** El daño a la membrana del miocito libera Troponinas (I/T) y CPK-MB al torrente sanguíneo, siendo el estándar de oro diagnóstico.
-- **Respuesta Adrenérgica:** La liberación de norepinefrina aumenta el inotropismo y cronotropismo, lo que irónicamente incrementa el consumo de oxígeno en un corazón que no lo tiene.
+### Nivel 4: Correlación Histopatológica
+Histológicamente se observa necrosis por coagulación, pérdida de estrías transversales y edema intersticial. Macro de horas: moteado oscuro del miocardio. Estos cambios físico-químicos se traducen en el **dolor retroesternal opresivo** por activación de quimiorreceptores neuronales (adenosina, bradicinina) y **disfunción contráctil** (segmentaria o global) observable por ecocardiografía.
 
 ### Correlación con Comorbilidades:
-- **Dislipidemia:** Es la base fisiopatológica de la formación de la placa vulnerable.
-- **Tabaquismo:** Aumenta la adhesividad plaquetaria y favorece el vasoespasmo coronario agudo.`,
+- La Hipertensión Arterial crónica aumenta la poscarga y el consumo de oxígeno miocárdico, lo que acelera el tiempo de transmutación de isquemia a necrosis.`,
       esquemaMental: {
-        inicio: 'Inestabilidad de placa aterosclerótica y trombosis.',
-        dano: 'Isquemia miocárdica y muerte celular por hipoxia.',
-        consecuencia: 'Disfunción ventricular, arritmias o complicaciones mecánicas.'
+        inicio: "Accidente de placa y trombosis oclusiva coronaria.",
+        dano: "Fallo metabólico del miocito y necrosis celular progresiva.",
+        consecuencia: "Disfunción sistólica, arritmias letales y muerte tisular."
       },
-      cita: 'ESC/ACC/AHA/WHF Universal Definition of Myocardial Infarction'
+      cita: "Universal Definition of Myocardial Infarction 2018"
     },
     manejo: {
-      diagnostico: 'ECG de 12 derivaciones (en menos de 10 min). Troponinas ultrasensibles. Ecocardiograma point-of-care.',
-      tratamiento: 'MONA (Morfina, Oxígeno, Nitratos, Aspirina) + Revascularización (ICP o Fibrinolisis).',
+      diagnostico: 'Hallazgos específicos: ECG de 12 derivaciones (Gold Standard: elevación o depresión del ST). Biomarcadores (Troponina I/T ultrasensible). BH: Leucocitosis reactiva por inflamación. QS: Hiperglicemia de estrés y elevación de azoados en caso de choque. Gasometría: Crucial para detectar acidosis metabólica compensada o descompensada y niveles de pO2/pCO2 en edema pulmonar asociado.',
+      tratamiento: 'Manejo paso a paso: 1. Monitorización continua y ECG en <10 min. 2. Administración de Antiagregación Plaquetaria Dual (Aspirina + Inhibidor P2Y12). 3. Soporte Vital (SatO2 >90%, PAM >65). 4. Revascularización de urgencia (ICP primaria en <90 min o Fibrinólisis en <30 min si no hay hemodinamia). 5. Estabilización metabólica con estatinas de alta intensidad.',
       tratamientoDetallado: {
         farmacos: [
-          { nombre: 'Aspirina', dosis: '162 - 325 mg (Carga)', frecuencia: 'Dosis única inicial', observaciones: 'Masticada para absorción rápida; antiagregación irreversible.' },
-          { nombre: 'Clopidogrel / Ticagrelor', dosis: '300-600 mg / 180 mg', frecuencia: 'Carga inicial', observaciones: 'Inhibidor P2Y12; parte de la doble antiagregación plaquetaria (DAPT).' },
-          { nombre: 'Atorvastatina', dosis: '80 mg', frecuencia: 'Cada 24 horas', observaciones: 'Efecto pleiotrópico estabilizador de placa en fase aguda.' }
+          { nombre: 'Aspirina', dosis: '162 - 325 mg (Carga)', frecuencia: 'Dosis única inicial', observaciones: 'Antiagregante; inhibición irreversible de la COX-1 para prevenir mayor crecimiento del trombo.' },
+          { nombre: 'Clopidogrel / Ticagrelor', dosis: '300-600 mg / 180 mg', frecuencia: 'Carga inicial', observaciones: 'Inhibidor P2Y12; bloquea la activación plaquetaria mediada por ADP.' },
+          { nombre: 'Atorvastatina', dosis: '80 mg', frecuencia: 'Cada 24 horas', observaciones: 'Efecto pleiotrópico: estabiliza la placa rota y reduce la inflamación vascular inmediata.' }
         ],
         medidasGenerales: [
           'Monitorización electrocardiográfica continua (telemetría).',
-          'Reposo absoluto inicial y ayuno preventivo por riesgo de intervención.',
-          'Oxígeno suplementario solo si saturación < 90%.'
+          'Alivio del dolor con Nitratos (si no hay hipotensión/uso de PDE5) o Morfina.',
+          'Oxígeno suplementario solo si saturación < 90% o en caso de disnea extrema.'
         ]
       },
       monitoreo: {
         parametros: [
-          'Curva de Troponinas cada 3-6 horas.',
-          'Segmento ST en monitor continuo.',
-          'Presión arterial y signos de choque cardiogénico.'
+          'Curva de Troponinas cada 3-6 horas para valorar extensión.',
+          'Nivel de Lactato sérico para predecir choque cardiogénico.',
+          'Presión arterial invasiva si hay inestabilidad hemodinámica.'
         ],
         signosAlerta: [
-          'Dolor torácico persistente o recurrente tras tratamiento.',
-          'Arritmias ventriculares (TV/FV) o bloqueos post-IAM.',
-          'Crepitantes pulmonares (falla cardíaca aguda).'
+          "Dolor torácico persistente a pesar de tratamiento (re-oclusión).",
+          "Nuevos soplos cardíacos (sospecha de compl. mecánica).",
+          "Elevación persistentemente del segmento ST tras reperfusión (no-reflow)."
         ]
       },
-      evaluacion: {
-        criteriosExito: [
-          'Resolución del dolor isquémico.',
-          'Reperfusión exitosa documentada (descenso ST > 50%).',
-          'Preservación de la función sistólica ventricular.'
-        ],
-        criteriosFracaso: [
-          'Shock cardiogénico refractario.',
-          'Complicación mecánica (ruptura de pared libre, septum o músculo papilar).'
-        ]
-      },
+      criterioReferencia: 'Choque cardiogénico, arritmias ventriculares letales, necesidad de asistencia circulatoria.',
       cita: '2023 ESC Guidelines for the management of acute coronary syndromes'
     },
     enfermeria: {
@@ -7757,126 +7621,79 @@ El SCA es el resultado de la interrupción súbita del flujo sanguíneo coronari
 {
     id: 'int_17_crisishipertensiva',
     nombre: 'Crisis Hipertensiva',
-    servicio: 'Medicina Interna',
+    servicio: 'Medicina Interna / Emergencias',
     system: 'Sistema Cardiovascular',
     color: 'var(--destructive)',
-    definicionCaso: 'Elevación aguda y severa de la PA (>180/120 mmHg) que supera los mecanismos de autorregulación vascular. Fisiopatológicamente, este aumento brusco genera fuerzas de cizallamiento que dañan el endotelio arterial, provocando necrosis fibrinoide de la pared vascular, activación plaquetaria, y formación de microtrombos, con la consecuente isquemia y daño estructural irreversible de órganos diana (cerebro, corazón, riñones).',
-    etiologia: 'Generalmente causada por el abandono del tratamiento crónico, consumo excesivo de sodio, estrés severo, uso de drogas simpatomiméticas (cocaína) o patologías renales agudas.',
-    fisiopatologiaBasica: 'El aumento brusco de presión supera la autorregulación vascular, causando daño mecánico directo al endotelio (vasculitis hipertensiva) y activando una cascada proinflamatoria y protrombótica.',
-    complicaciones: [
-      'Accidente Cerebrovascular (Hemorrágico o Isquémico)',
-      'Edema Agudo de Pulmón Cardiopático',
-      'Infarto Agudo de Miocardio',
-      'Disección Aórtica',
-      'Encefalopatía Hipertensiva',
-      'Insuficiencia Renal Aguda'
-    ],
-    riesgosNoTratado: [
-      'Muerte súbita cardiovascular',
-      'Daño neurológico irreversible y discapacidad permanente',
-      'Necesidad de diálisis crónica por falla renal fulminante',
-      'Ceguera por desprendimiento de retina o hemorragia vítrea'
-    ],
-    sintomasClave: ['Evaluar ABCDE', 'Monitorización de signos vitales cada hora o según gravedad', 'Identificación de comorbilidades', 'Vigilancia de complicaciones'],
-    banderasRojas: [
-      'Dolor torácico opresivo o desgarrador',
-      'Déficit neurológico focal (parálisis, afasia)',
-      'Visión borrosa o pérdida súbita de visión',
-      'Disnea súbita con estertores rales',
-      'Confusión o agitación extrema'
-    ],
+    icon: 'Activity',
+    definicionCaso: 'Aumento severo de la presión arterial (>180/120 mmHg) que conlleva riesgo o presencia de daño agudo en órganos diana.',
+    sintomasClave: ['Cefalea intensa', 'Visión borrosa', 'Disnea', 'Dolor torácico', 'Confusión'],
     clinica: {
       signosSintomas: [
-        '1. Cefalea intensa u occipital',
-        '2. Alteración del nivel de conciencia (encefalopatía)',
-        '3. Visión borrosa o escotomas',
-        '4. Dolor torácico severo (opresivo o desgarrador)',
-        '5. Disnea aguda (clínica de EAP)',
-        '6. Déficit neurológico focal',
-        '7. Epistaxis persistente',
-        '8. Náuseas y vómitos',
-        '9. Palpitaciones o ansiedad severa',
-        '10. Oliguria (lesión renal aguda)'
+        "Cefalea occipital o global de intensidad severa.",
+        "Alteración visual súbita (visión borrosa, escotomas o diplopía).",
+        "Disnea aguda por falla ventricular izquierda inicial.",
+        "Dolor torácico (opresivo o desgarrador si hay disección).",
+        "Náuseas y vómitos constantes (signo de hipertensión intracraneal o encefalopatía)."
       ],
-      maniobraExploracion: 'Toma de TA en ambos brazos; fondo de ojo (papiledema o hemorragias y exudados); auscultación cardíaca y pulmonar (S3, crepitantes, soplo aórtico); evaluación neurológica completa (fuerza, sensibilidad, pares craneales); palpación de pulsos (diferencia de presión y pulsos entre brazos).',
+      maniobraExploracion: "Fondo de ojo (papiledema), Evaluación neurológica focal, Toma de PA en ambos brazos.",
       banderasRojas: [
-        'Papiledema en fondo de ojo (emergencia hipertensiva mayor)',
-        'Signos focales neurológicos (ACV agudo)',
-        'Asimetría de pulsos o dolor torácico desgarrador (Disección Aórtica)',
-        'Signos de edema agudo de pulmón (crepitantes, disnea severa)',
-        'Confusión profunda o convulsiones (Encefalopatía hipertensiva)',
-        'Dolor opresivo torácico con cambios ECG (SCA)',
-        'Elevación aguda de azoados',
-        'PA diastólica confirmada persistentemente >120-130 mmHg'
+        "Déficit neurológico focal (ACV agudo concomitante).",
+        "Papiledema en fondo de ojo (Emergencia hipertensiva mayor).",
+        "Anuria u oliguria súbita (Fallo renal agudo).",
+        "Asimetría de pulsos en extremidades (Sugiere Disección Aórtica)."
       ],
-      cita: 'Guías AHA/JNC Elevación de PA'
+      cita: "ACC/AHA Hypertension Clinical Practice Guidelines"
     },
     fisiopatologia: {
-      textoTecnico: `### Introducción: El Evento Disparador
-La Crisis Hipertensiva es un aumento brusco de la presión arterial que supera los mecanismos protectores de la microcirculación. En la Emergencia Hipertensiva, este aumento es tan severo que provoca una necrosis fibrinoide de las arteriolas, rompiendo la barrera hematoencefálica o dañando directamente el endotelio glomerular y miocárdico. El evento crítico es el paso de una vasoconstricción funcional a un daño estructural vascular.
+      textoTecnico: `### Nivel 1: El Evento Disparador (Injuria Primaria)
+La Crisis Hipertensiva ocurre cuando un incremento súbito y severo de la PA (generalmente >180/120 mmHg) supera la capacidad de autorregulación del flujo sanguíneo local. El estrés de cizallamiento (shear stress) mecánico extremo sobre el endotelio vascular causa una disfunción endotelial aguda, exponiendo la matriz subendotelial a la circulación.
 
-### Desenlace: La Cascada de Disfunción
-**Mecanismo de Progresión (El Mapa):**
-- **Activación de la Cascada de Coagulación:** El daño mecánico al endotelio expone colágeno subendotelial, activando plaquetas y formando microtrombos que perpetúan la hipoperfusión.
-- **Hipovolemia Paradójica:** La presión alta genera una natriuresis por presión, lo que reduce el volumen plasmático y activa aún más el sistema RAA, elevando más la presión en un círculo vicioso.
+### Nivel 2: Cascada de Disfunción (El Desenlace)
+La exposición del colágeno activa la cascada de coagulación y la liberación de mediadores como la endotelina-1 y serotonina, provocando una vasoconstricción severa refleja. Se produce una necrosis fibrinoide arteriolar diseminada, resultando en una microangiopatía trombótica que ocluye capilares y detiene el flujo sanguíneo a órganos vitales (Cerebro, Corazón, Riñón), disparando un edema vasogénico o isquemia aguda.
 
-### Afectación de Órganos y Sistemas Relacionados:
-- **Sistema Cerebrovascular:** La pérdida de autorregulación cerebral puede causar edema vasogénico (Encefalopatía Hipertensiva) o rotura de vasos (Ictus Hemorrágico).
-- **Sistema Renal:** Necrosis fibrinoide de las arteriolas aferentes, llevando a una pérdida aguda de la tasa de filtración glomerular.
-- **Sistema Cardiovascular:** Sobrecarga aguda del ventrículo izquierdo, pudiendo desencadenar Edema Agudo de Pulmón o disección de la aorta.
+### Nivel 3: Alteraciones Bioquímicas y Hormonales
+Activación masiva del sistema **RAA** sistémico debido a la hipoperfusión renal arteriolar (a pesar de la PA sistémica extrema). La natriuresis por presión induce una pérdida masiva de sodio y agua, resultando en una **hipovolemia paradójica** que eleva aún más los niveles de angiotensina II. En analítica: Elevación de **Creatinina**, **Lactato** y biomarcadores cardíacos si existe sufrimiento miocárdico asociado.
 
-### Alteraciones Hormonales y Bioquímicas (Eje Químico):
-- **Eje Renina-Angiotensina:** Se mantiene sobreactivado por la isquemia renal secundaria, a pesar de las cifras tensionales altísimas.
-- **Estrés Oxidativo:** El aumento de angiotensina II genera radicales libres que inhiben el óxido nítrico, eliminando la capacidad de vasodilatación natural (vasospasmo persistente).
+### Nivel 4: Correlación Histopatológica
+Se observa engrosamiento de la íntima en "capas de cebolla" y depósitos eosinofílicos de fibrina dentro de la pared vascular (necrosis fibrinoide). Estos cambios estructurales comprometen la integridad de la barrera hematoencefálica, traduciéndose clínicamente en **papiledema** (observado en fondo de ojo), **encefalopatía** (confusión/convulsión) y **anuria** por fallo glomerular isquémico agudo.
 
 ### Correlación con Comorbilidades:
-- **Enfermedad Renal Preexistente:** Los pacientes renales tienen umbrales de autorregulación alterados, siendo más susceptibles a crisis hipertensivas malignas.
-- **Abuso de Sustancias (Cocaína/Anfetaminas):** Generan crisis hipertensivas por tormentas adrenérgicas directas.`,
+- La Insuficiencia Renal Crónica preexistente agrava la crisis por la incapacidad del riñón para manejar la natriuresis impulsiva, manteniendo niveles de presión arterial refractarios.`,
       esquemaMental: {
-        inicio: 'Fallo de autorregulación vascular arterial.',
-        dano: 'Lesión endotelial y necrosis fibrinoide arteriolar.',
-        consecuencia: 'Isquemia aguda de órgano blanco (Cerebro, Corazón, Riñón).'
+        inicio: "Falla de autorregulación vascular por presión mecánica extrema.",
+        dano: "Necrosis fibrinoide arteriolar y microangiopatía trombótica.",
+        consecuencia: "Daño agudo multiorgánico (encefalopatía, fallo renal, SCA)."
       },
-      cita: 'Harrison\'s Principles of Internal Medicine'
+      cita: "ESC/ESH Guidelines for the management of arterial hypertension 2018"
     },
     manejo: {
-      diagnostico: 'MAPA/AMPA (confirmación). Fondo de ojo. Función renal y EGO. Biomarcadores (si SCA/EAP). TC simple de cráneo (si focalidad).',
-      tratamiento: 'Urgencia: Control oral (24-48h). Emergencia: Control IV inmediato (descenso 20-25% inicial).',
+      diagnostico: 'Hallazgos específicos: BH (puede mostrar esquistocitos por microangiopatía), QS (Deterioro agudo de urea/creatinina). Gold Standard: Fondo de ojo (presencia de hemorragias, exudados o papiledema). Electrolitos: Hipopotasemia por hiperaldosteronismo secundario. Gasometría: Crucial para descartar hipoxemia en EAP o acidosis metabólica en falla renal severa.',
+      tratamiento: 'Manejo paso a paso: 1. Diferenciar Urgencia vs Emergencia. 2. En Emergencia: Descenso de PAM no mayor al 20-25% en la primera hora usando fármacos IV (Labetalol, Nitroprusiato, Nitroglicerina). 3. Soporte Vital: PAM objetivo 100-110 mmHg inicial (salvo disección o ACV). 4. Estabilización hídrica cautelosa para no agravar la hipovolemia por natriuresis.',
       tratamientoDetallado: {
         farmacos: [
-          { nombre: 'Labetalol', dosis: '20 mg bolo inicial (luego 20-80 mg)', frecuencia: 'Cada 10 min PRN', observaciones: 'Alfa/Beta bloqueador de elección en la mayoría de emergencias, especialmente embarazo y disección.' },
-          { nombre: 'Nitroprusiato de Sodio', dosis: '0.25 - 10 mcg/kg/min', frecuencia: 'Infusión continua', observaciones: 'Vasodilatador potente; requiere monitoreo invasivo de PA. Riesgo de toxicidad por cianuro.' },
-          { nombre: 'Nitroglicerina IV', dosis: '5 - 200 mcg/min', frecuencia: 'Infusión continua', observaciones: 'De elección en emergencias hipertensivas asociadas a isquemia coronaria o EAP.' }
+          { nombre: 'Labetalol', dosis: '20 mg bolo inicial IV (luego 20-80 mg)', frecuencia: 'Cada 10 min PRN', observaciones: 'Alfa/Beta bloqueador; evita la taquicardia refleja y disminuye la RVS de forma suave.' },
+          { nombre: 'Nitroprusiato de Sodio', dosis: '0.25 - 10 mcg/kg/min', frecuencia: 'Infusión continua', observaciones: 'Vasodilatador potente; de elección en encefalopatía, pero requiere monitoreo invasivo de PA.' },
+          { nombre: 'Nitroglicerina IV', dosis: '5 - 200 mcg/min', frecuencia: 'Infusión continua', observaciones: 'De elección en emergencias hipertensivas con isquemia miocárdica o edema pulmonar.' }
         ],
         medidasGenerales: [
-          'Diferenciar claramente Urgencia (sin daño de órgano) de Emergencia (con daño).',
-          'Evitar descensos bruscos de PA en ACV isquémico (salvo >185/110 si va a trombolisis).',
-          'Paciente en decúbito supino en ambiente tranquilo.'
+          'Paciente en decúbito supino en ambiente tranquilo y sin estímulos lumínicos.',
+          'Control de gasto urinario mediante sonda Foley si hay sospecha de falla renal.',
+          'Evitar el descenso agresivo de PA en ACV isquémico (salvo >185/110 pre-trombolisis).'
         ]
       },
       monitoreo: {
         parametros: [
-          'Presión Arterial Media (PAM) horaria o continua (Línea arterial).',
-          'Gasto urinario (vigilancia de falla renal aguda).',
-          'Estado neurológico seriado.'
+          'Presión Arterial Media (PAM) cada 5-15 minutos.',
+          'Estado neurológico seriado mediante escala de Glasgow.',
+          'Función renal (creatinina) y diuresis horaria.'
         ],
         signosAlerta: [
-          'Confusión o focalización neurológica brusca.',
-          'Dolor torácico nuevo o disnea.',
-          'Anuria o hematuria franca.'
+          "Deterioro del nivel de conciencia o focalidad neurológica.",
+          "Dolor torácico desgarrador (sugerente de disección aórtica).",
+          "Oliguria progresiva o hematuria franca."
         ]
       },
-      evaluacion: {
-        criteriosExito: [
-          'Reducción controlada de la PA según metas específicas por patología.',
-          'Ausencia de progresión del daño de órgano blanco.',
-          'Transición exitosa a terapia oral.'
-        ],
-        criteriosFracaso: [
-          'Ictus isquémico provocado por descenso excesivamente rápido de PA.',
-          'Fallo multiorgánico progresivo.'
-        ]
-      },
+      criterioReferencia: 'Necesidad de control tensional con infusión continua, EAP agudo, PAM > 140 mmHg refractaria.',
       cita: '2020 International Society of Hypertension Global Hypertension Practice Guidelines'
     },
     enfermeria: {
@@ -12043,6 +11860,304 @@ La Gastritis Crónica es la inflamación persistente, de bajo grado y silenciosa
         { accion: 'Fomentar la adherencia estricta al tratamiento antibiótico.', razon: 'Esencial para erradicar la bacteria y prevenir la recaída o resistencia.' },
         { accion: 'Instruir sobre la higiene de manos y alimentos.', razon: 'H. pylori se transmite principalmente por vía fecal-oral u oral-oral.' },
         { accion: 'Asesoría nutricional para evitar irritantes de la mucosa.', razon: 'Reducir la sintomatología dispéptica y facilitar la cicatrización mucosa.' }
+      ],
+      cita: 'NIC/NOC Enfermería'
+    }
+  },
+  {
+    id: 'int_75_sepsisshockseptico',
+    nombre: 'Sepsis y Shock Séptico',
+    servicio: 'Medicina Interna',
+    system: 'Multisistémico',
+    color: 'var(--destructive)',
+    icon: 'AlertTriangle',
+    definicionCaso: 'Disfunción orgánica potencialmente mortal causada por una respuesta desregulada del huésped a la infección. El Shock Séptico es un subconjunto donde las anomalías circulatorias y celulares son lo suficientemente profundas como para aumentar sustancialmente la mortalidad.',
+    sintomasClave: ['Alteración mental', 'Hipotensión', 'Taquipnea', 'Fiebre/Hipotermia'],
+    clinica: {
+      signosSintomas: [
+        "Alteración del estado de conciencia (Escala Glasgow < 15).",
+        "Hipotensión arterial (PAS < 100 mmHg).",
+        "Taquipnea (> 22 respiraciones por minuto).",
+        "Oliguria (disminución del gasto urinario).",
+        "Piel moteada o llenado capilar lento (> 3 seg)."
+      ],
+      maniobraExploracion: "1. qSOFA (Quick SOFA): Evaluar conciencia, FR y PAS. 2. Búsqueda exhaustiva del foco infeccioso (pulmón, urinario, abdomen, piel). 3. Evaluación de perfusión distal.",
+      banderasRojas: [
+        "Lactato Sérico > 2 mmol/L.",
+        "Necesidad de vasopresores para mantener PAM > 65 mmHg.",
+        "Hipotensión persistentesta a pesar de reanimación hídrica (30 ml/kg).",
+        "Disfunción orgánica nueva (Creatinina ↑, Bilirrubina ↑, Plaquetas ↓)."
+      ],
+      cita: "Surviving Sepsis Campaign 2021"
+    },
+    fisiopatologia: {
+      textoTecnico: `### Nivel 1: El Evento Disparador (Injuria Primaria)
+La Sepsis se desata por el reconocimiento de patrones moleculares asociados a patógenos (**PAMPs**) o daños (**DAMPs**) mediante receptores tipo Toll (TLR). Esto activa macrófagos y monocitos que inician una respuesta inmune masiva y desregulada. La injuria endotelial por endotoxinas bacterianas (LPS) es el primer paso hacia el colapso circulatorio.
+
+### Nivel 2: Cascada de Disfunción (El Desenlace)
+La activación leucocitaria genera una **tormenta de citoquinas** (TNF-α, IL-1, IL-6), que induce una expresión masiva de Óxido Nítrico Sintasa Inducible (iNOS), resultando en una vasodilatación arterial profunda (vasoplejía). Simultáneamente, se destruye el glicocálix endotelial, provocando fuga capilar masiva (edema intersticial) e hipovolemia relativa. La microvasculatura se ocluye por microtrombosis fibrinoide, privando a los tejidos de oxígeno a pesar de un flujo macrocirculatorio aparentemente normal.
+
+### Nivel 3: Alteraciones Bioquímicas y Hormonales
+La hipoperfusión celular obliga al cambio hacia el metabolismo anaerobio, resultando en hiperlactatemia severa (>2 mmol/L = Sepsis; >4 mmol/L = Choque Inminente). Existe una disfunción del eje HPA con insuficiencia adrenal relativa. Se observa un estado de hipercoagulabilidad inicial que progresa a Coagulación Intravascular Diseminada (CID) por consumo de factores.
+
+### Nivel 4: Correlación Histopatológica
+Se evidencia edema intersticial multiorgánico, necrosis tubular aguda en riñones y daño alveolar difuso en pulmones (SDRA). A nivel celular, la disfunción mitocondrial ("hibernación celular") explica por qué los órganos fallan incluso sin una necrosis tisular masiva inicial, traduciéndose en el **Síndrome de Disfunción Multiorgánica (MODS)**.`,
+      esquemaMental: {
+        inicio: "Respuesta inmune desregulada ante una infección sistémica.",
+        dano: "Tormenta de citoquinas, vasoplejía profunda y microtrombosis masiva.",
+        consecuencia: "Choque distributivo, falla multiorgánica (MODS) y muerte celular."
+      },
+      cita: "The 3rd International Consensus Definitions for Sepsis (Sepsis-3)"
+    },
+    manejo: {
+      diagnostico: 'Hallazgos específicos: Lactato sérico > 2 mmol/L. Hemocultivos par (mínimo 2 sets) antes de antibióticos. Procalcitonina > 0.5 ng/mL. Score SOFA (↑ ≥ 2 puntos). Monitoreo de ScvO2 y Delta de Lactato (aclaramiento >10% en 2h).',
+      tratamiento: 'Manejo paso a paso (Bundle de 1 hora): 1. Medir lactato inmediato. 2. Obtener hemocultivos x2. 3. Antibióticos de amplio espectro (Pip/Tazo o Carbapenémicos). 4. Reanimación agresiva con cristaloides balanceados (30 ml/kg) si PAM < 65 o Lactato > 4. 5. Inicio precoz de Norepinefrina si no hay respuesta a fluidos.',
+      tratamientoDetallado: {
+        farmacos: [
+          { nombre: "Norepinefrina", dosis: "0.01 - 3 mcg/kg/min", frecuencia: "Infusión continua", observaciones: "Vasopresor de elección; actúa sobre receptores Alfa-1 para restaurar el tono vascular." },
+          { nombre: "Meropenem", dosis: "1 - 2 g", frecuencia: "Cada 8 horas IV", observaciones: "Tratamiento empírico en sepsis de origen desconocido o foco abdominal severo." },
+          { nombre: "Hidrocortisona", dosis: "200 mg / día", frecuencia: "Infusión o bolos cada 6h", observaciones: "Considerar en choque séptico refractario a vasopresores y fluidos." }
+        ],
+        medidasGenerales: [
+          "Control estricto del foco infeccioso (debridación, drenaje, retiro de dispositivos).",
+          "Protección pulmonar con volúmenes fiduciarios bajos si requiere ventilación.",
+          "Metas: PAM > 65 mmHg, Gasto urinario > 0.5 ml/kg/h, Llenado capilar < 2 seg."
+        ]
+      },
+      cita: "Surviving Sepsis Campaign 2021 Update"
+    },
+    enfermeria: {
+      nanda: '00027 Perfusión tisular periférica ineficaz',
+      intervenciones: [
+        { accion: 'Control estricto de diuresis horaria (Sonda Foley).', razon: 'El riñón es el centinela de la perfusión orgánica.' },
+        { accion: 'Monitorización de temperatura y signos vitales cada 15-30 min.', razon: 'Permite detectar el fallo de respuesta a la reanimación.' },
+        { accion: 'Administrar antibióticos en la primera hora de identificación.', razon: 'Cada hora de retraso aumenta significativamente la mortalidad.' }
+      ],
+      cita: 'NIC/NOC'
+    }
+  },
+  {
+    id: 'int_76_cetoacidosisdiabetica',
+    nombre: 'Cetoacidosis Diabética (CAD)',
+    servicio: 'Medicina Interna',
+    system: 'Sistema Endocrino',
+    color: 'var(--primary)',
+    icon: 'Droplet',
+    definicionCaso: 'Complicación aguda de la diabetes caracterizada por la tríada: Hiperglucemia (>250 mg/dL), Acidosis metabólica (pH < 7.3 o Bicarbonato < 18) y Cetonemia/Cetonuria.',
+    sintomasClave: ['Poliuria/Polidipsia', 'Dolor abdominal', 'Náuseas/Vómitos', 'Respiración de Kussmaul'],
+    clinica: {
+      signosSintomas: [
+        "Deshidratación severa (mucosas secas, ojos hundidos).",
+        "Aliento cetónico (olor a frutas/manzana podrida).",
+        "Respiración de Kussmaul (profunda y rápida).",
+        "Dolor abdominal difuso (puede simular abdomen agudo).",
+        "Alteración del sensorio progresiva."
+      ],
+      maniobraExploracion: "1. Evaluación de hidratación (Turgencia cutánea). 2. Auscultación respiratoria (patrón ventilatorio). 3. Evaluación neurológica basal.",
+      banderasRojas: [
+        "pH < 7.0 (Acidosis severa).",
+        "Potasio < 3.3 mEq/L (Riesgo de arritmia al iniciar insulina).",
+        "Alteración neurológica severa (Riesgo de edema cerebral).",
+        "Falla renal aguda o hipotensión persistente."
+      ],
+      cita: "ADA Standards of Medical Care in Diabetes 2024"
+    },
+    fisiopatologia: {
+      textoTecnico: `### Nivel 1: El Evento Disparador (Injuria Primaria)
+La CAD se dispara por una deficiencia absoluta (Diabetes Tipo 1) o relativa (estrés extremo en Tipo 2) de **Insulina**, exacerbada por un pico de hormonas contrarreguladoras (**Glucagón**, Cortisol, Adrenalina). El disparador suele ser una infección o la omisión del tratamiento, lo que rompe el equilibrio metabólico basal hacia un estado catabólico descontrolado.
+
+### Nivel 2: Cascada de Disfunción (El Desenlace)
+La ausencia de insulina impide que la glucosa entre a las células, activando la lipólisis masiva en el tejido adiposo. Esto libera ácidos grasos libres que viajan al hígado, donde sufren beta-oxidación acelerada, transformándose en cuerpos cetónicos (**Acetoacetato** y **Beta-hidroxibutirato**). Estos ácidos se disocian, liberando H+, lo que agota las reservas de bicarbonato y produce **Acidosis Metabólica** severa. La hiperglucemia extrema (>250 mg/dL) genera una diuresis osmótica masiva, causando deshidratación profunda y pérdida de electrolitos.
+
+### Nivel 3: Alteraciones Bioquímicas y Hormonales
+Se produce una **Hipopotasemia de depósito**: el potasio sale de las células hacia el plasma por el intercambio H+/K+ durante la acidosis, pareciendo normal en analítica pero estando severamente depletado a nivel corporal total. El **Anion Gap** se eleva debido a los aniones de los cetoácidos. La osmolaridad plasmática aumenta, atrayendo agua del espacio intracelular al extracelular (deshidratación celular).
+
+### Nivel 4: Correlación Histopatológica
+Histológicamente se observa contracción del volumen celular e infiltración grasa hepática aguda por el flujo masivo de ácidos grasos. Clínicamente se traduce en la **Respiración de Kussmaul** (esfuerzo respiratorio extremo para eliminar CO2 y compensar la acidosis) y el **Dolor abdominal** por irritación peritoneal y náuseas centrales provocadas por los cuerpos cetónicos.`,
+      esquemaMental: {
+        inicio: "Déficit crítico de insulina + Tormenta de hormonas de estrés.",
+        dano: "Cetogénesis hepática masiva y diuresis osmótica descompensada.",
+        consecuencia: "Acidosis metabólica severa, choque hipovolémico y colapso metabólico."
+      },
+      cita: "ADA Standards of Care in Diabetes 2024"
+    },
+    manejo: {
+      diagnostico: 'Hallazgos específicos: Glucemia > 250 mg/dL. pH < 7.3 y Bicarbonato < 18 mEq/L. Cetonemia (B-hidroxibutirato > 3 mmol/L). Anion Gap > 10-12. Electrolitos: K+ real suele ser < 3.3 mEq/L a pesar de valores iniciales normales/altos. Osmolaridad calculada habitualmente moderada (< 320 mOsm/kg).',
+      tratamiento: 'Manejo paso a paso: 1. Hidratación inicial agresiva (Suero salino 0.9%). 2. Reposición de Potasio (Si K < 5.2; MANDATORIO si K < 3.3 previo a insulina). 3. Infusión de Insulina de acción rápida (0.1 U/kg/h) tras asegurar K > 3.3. 4. Transición a Solución Glucosada al 5% cuando la glucosa < 200 mg/dL. 5. Bicarbonato solo si pH < 6.9.',
+      tratamientoDetallado: {
+        farmacos: [
+          { nombre: "Insulina Humana Rápida", dosis: "0.1 U/kg/h (Infusión)", frecuencia: "Bomba de infusión continua", observaciones: "No iniciar si K < 3.3. Meta: Reducción de glucosa 50-75 mg/dL/h y cierre de Anion Gap." },
+          { nombre: "Cloruro de Potasio (KCl)", dosis: "20-40 mEq/L en cada litro", frecuencia: "Infusión continua", observaciones: "Prevenir hipopotasemia severa aguda al desplazar K al interior celular con la insulina." },
+          { nombre: "Solución Salina 0.9%", dosis: "1 L en la 1ª hora", frecuencia: "Carga inicial", observaciones: "Reponer déficit hídrico calculado (habitualmente 3-6 litros total)." }
+        ],
+        medidasGenerales: [
+          "Monitoreo horario de glucemia capilar y balance hídrico estricto.",
+          "Medición de gases arteriales y electrolitos cada 2-4 horas hasta cierre de GAP.",
+          "Vigilancia neurológica para detección temprana de edema cerebral (especialmente en jóvenes)."
+        ]
+      },
+      cita: "ADA 2024 Guidelines on Hyperglycemic Crises"
+    },
+    enfermeria: {
+      nanda: '00002 Desequilibrio nutricional: inferior a las necesidades corporales / 00027 Riesgo de desequilibrio electrolítico',
+      intervenciones: [
+        { accion: 'Vigilancia estrecha del estado neurológico.', razon: 'Detección temprana de edema cerebral (complicación temida, especialmente en niños).' },
+        { accion: 'Control estricto de la velocidad de infusión de insulina y líquidos.', razon: 'Evita cambios osmóticos bruscos.' },
+        { accion: 'Monitoreo de signos de hipopotasemia (debilidad, cambios EKG).', razon: 'Detección de complicación iatrogénica por terapia insulínica.' }
+      ],
+      cita: 'NIC/NOC'
+    }
+  },
+  {
+    id: 'int_77_preeclampsia',
+    nombre: 'Preeclampsia con Signos de Severidad',
+    servicio: 'Gineco-Obstetricia',
+    system: 'Sistema Cardiovascular / Gestacional',
+    color: 'var(--destructive)',
+    icon: 'Baby',
+    definicionCaso: 'Trastorno multisistémico del embarazo (>20 semanas) caracterizado por hipertensión (≥140/90) y daño de órgano blanco, con o sin proteinuria.',
+    sintomasClave: ['Cefalea intensa', 'Fosfenos/Tinnitus', 'Epigastralgia', 'Edema'],
+    clinica: {
+      signosSintomas: [
+        "Hipertensión severa (≥160/110 mmHg).",
+        "Cefalea persistente que no cede a analgésicos.",
+        "Trastornos visuales (fosfenos, visión borrosa).",
+        "Dolor en hipocondrio derecho o epigastrio (Signo de Chaussier).",
+        "Hiperreflexia (Reflejos aumentados)."
+      ],
+      maniobraExploracion: "1. Toma de TA en reposo. 2. Evaluación de reflejos osteotendinosos. 3. Palpación abdominal buscando dolor hepático. 4. Auscultación fetal y dinámica uterina.",
+      banderasRojas: [
+        "PAS ≥ 160 o PAD ≥ 110 mmHg.",
+        "Plaquetopenia (< 100,000/uL).",
+        "Elevación de enzimas hepáticas (TGO/TGP al doble).",
+        "Insuficiencia renal nueva (Creatinina > 1.1 mg/dL o duplicación).",
+        "Edema agudo de pulmón."
+      ],
+      cita: "ACOG Practice Bulletin No. 222"
+    },
+    fisiopatologia: {
+      textoTecnico: `### Introducción: El Evento Disparador
+La Preeclampsia se origina por una "falla en la placentación". Durante las primeras semanas, las arterias espirales del útero no se remodelan correctamente, quedando estrechas y de alta resistencia. Esto genera una placenta mal oxigenada (isquémica).
+
+### Desenlace: La Cascada de Disfunción
+**Mecanismo de Progresión (El Mapa):**
+- **Estrés Placentario:** La placenta sufriente libera factores antiangiogénicos (sFlt-1) al torrente sanguíneo materno.
+- **Disfunción Endotelial Sistémica:** Estos factores "atacan" el revestimiento de todos los vasos de la madre, causando vasoespasmo, daño capilar y activación de la coagulación.
+- **Daño de Órgano Blanco:** El vasoespasmo reduce el flujo al cerebro (convulsiones), riñón (proteinuria) e hígado (isquemia hepática).
+
+### Afectación de Órganos y Sistemas Relacionados:
+- **Sistema Nervioso:** El edema cerebral y el vasoespasmo causan los síntomas premonitorios y pueden derivar en Eclampsia (convulsiones).
+- **Hígado:** El daño endotelial en los sinusoides hepáticos causa depósito de fibrina y hemorragia, lo que puede llevar al Síndrome de HELLP.
+- **Riñón:** La endoteliosis glomerular reduce la tasa de filtración y causa la pérdida típica de proteínas por la orina.
+
+### Alteraciones Hormonales y Bioquímicas (Eje Químico):
+- **Ácido Úrico:** Se eleva por disminución del aclaramiento renal, siendo marcador de severidad.
+- **Relación sFlt-1/PlGF:** Es el marcador pronóstico moderno que refleja el desequilibrio angiogénico.
+
+### Correlación con Comorbilidades:
+- **Obesidad y HTA Previa:** Aumentan el riesgo basal de disfunción endotelial, predisponiendo a la sobreimposición de preeclampsia.`,
+      esquemaMental: {
+        inicio: "Placentación defectuosa e isquemia placentaria.",
+        dano: "Liberación de factores anti-angiogénicos y daño endotelial sistémico.",
+        consecuencia: "Hipertensión arterial, daño multiorgánico y riesgo de eclampsia."
+      },
+      cita: "Obstetrics: Normal and Problem Pregnancies (Gabbe)"
+    },
+    manejo: {
+      diagnostico: "Presión Arterial. Proteinuria (Tira reactiva o 24h). Perfil toxémico (Hemograma, Creatinina, TGO, TGP, LDH, Ácido úrico). Bienestar fetal.",
+      tratamiento: "1. Prevención de convulsiones (Sulfato de Magnesio). 2. Control de TA (Hidralazina o Labetalol). 3. Finalización del embarazo (único tratamiento definitivo).",
+      tratamientoDetallado: {
+        farmacos: [
+          { nombre: "Sulfato de Magnesio (MgSO4)", dosis: "4g Carga IV, luego 1-2 g/h", frecuencia: "Infusión continua", observaciones: "Neuroprotección y prevención de eclampsia. Vigilar reflejos y diuresis." },
+          { nombre: "Labetalol", dosis: "20 - 40 mg IV bolo lento", frecuencia: "Cada 10-15 min según respuesta", observaciones: "Antihipertensivo de elección. Evitar si hay asma bronquial." },
+          { nombre: "Nifedipino", dosis: "10 mg VO", frecuencia: "Cada 20 min en crisis (max 3 dosis)", observaciones: "Acción rápida por vía oral, útil cuando no hay acceso IV inmediato." }
+        ],
+        medidasGenerales: [
+          "Reposo relativo y control de balance hídrico.",
+          "Maduración pulmonar fetal con Betametasona si < 34 semanas.",
+          "Monitoreo materno y fetal estricto (Perfil biofísico)."
+        ]
+      },
+      cita: "ACOG 2020 Guidelines"
+    },
+    enfermeria: {
+      nanda: '00024 Perfusión tisular ineficaz / 00132 Dolor agudo',
+      intervenciones: [
+        { accion: 'Control estricto de reflejos y frecuencia respiratoria durante el uso de MgSO4.', razon: 'El Sulfato de Magnesio puede causar toxicidad (abolición de reflejos, depresión respiratoria).' },
+        { accion: 'Mantener ambiente tranquilo y con luz tenue.', razon: 'Reduce los estímulos que podrían desencadenar una convulsión eclamptica.' },
+        { accion: 'Control riguroso de líquidos ingeridos y eliminados.', razon: 'Prevenir el edema agudo de pulmón por sobrecarga en un endotelio dañado.' }
+      ],
+      cita: 'NIC/NOC'
+    }
+  },
+  {
+    id: 'int_78_estadohiperosmolar',
+    nombre: 'Estado Hiperglucémico Hiperosmolar (EHH)',
+    servicio: 'Medicina Interna / UCI',
+    system: 'Sistema Endocrino',
+    color: 'var(--primary)',
+    icon: 'Droplet',
+    definicionCaso: 'Complicación diabética aguda caracterizada por hiperglucemia extrema, hiperosmolaridad y deshidratación severa, sin cetoacidosis significativa.',
+    sintomasClave: ['Alteración mental severa', 'Glucosa >600 mg/dL', 'Deshidratación profunda', 'Hipotensión'],
+    clinica: {
+      signosSintomas: [
+        "Estado mental alterado (letargo hasta coma profundo).",
+        "Signos de deshidratación extrema (turgencia cutánea nula, ojos hundidos).",
+        "Hipotensión arterial y taquicardia refleja.",
+        "Signos neurológicos focales que pueden imitar un ACV.",
+        "Poliuria marcada inicial que progresa a oliguria por fallo renal."
+      ],
+      maniobraExploracion: "Evaluación de hidratación (Turgencia cutánea), Evaluación neurológica basal, Signos de focalidad.",
+      banderasRojas: [
+        "Osmolaridad efectiva > 320 mOsm/kg.",
+        "Glucemia > 1000 mg/dL.",
+        "Inestabilidad hemodinámica persistente.",
+        "Signos de trombosis vascular (debido al estado de hiperviscosidad)."
+      ],
+      cita: "ADA Hyperglycemic Crises Management 2024"
+    },
+    fisiopatologia: {
+      textoTecnico: `### Nivel 1: El Evento Disparador (Injuria Primaria)
+El EHH ocurre típicamente en pacientes con Diabetes Tipo 2 que tienen suficiente insulina residual para evitar la lipólisis descontrolada (y por ende la cetosis), pero insuficiente para manejar cargas elevadas de glucosa generadas por eventos estresantes (Infección-NAC, ACV, IAM).
+
+### Nivel 2: Cascada de Disfunción (El Desenlace)
+La hiperglucemia masiva (>600 mg/dL) actúa como un agente osmótico potente en los túbulos renales, provocando una **Diuresis Osmótica** extrema. El cuerpo pierde entre 8 y 12 litros de agua (déficit aproximado del 10-15% del peso corporal). El agua sale de las neuronas hacia el plasma para intentar equilibrar la presión osmótica (deshidratación cerebral), lo que explica el profundo coma característico.
+
+### Nivel 3: Alteraciones Bioquímicas y Hormonales
+La **Hiperosmolaridad Sérica** (>320 mOsm/kg) es el sello distintivo. Se produce una hemoconcentración severa que eleva el riesgo de eventos tromboembólicos. El Sodio sérico puede estar falsamente normal o elevado, requiriendo su corrección por el nivel de glucosa (Na corregido = Na medido + 1.6 * [Glucosa-100]/100).
+
+### Nivel 4: Correlación Histopatológica
+Se observa una deshidratación tisular generalizada y microtrombosis por hiperviscosidad. A diferencia de la CAD, no hay acidosis metabólica por cetoácidos (el pH suele ser >7.3 y el HCO3 >18), pero existe un estado pro-inflamatorio y pro-trombótico extremo debido al estrés oxidativo masivo inducido por la hiperosmolaridad.`,
+      esquemaMental: {
+        inicio: "Insuficiencia relativa de insulina + Estrés severo (infección).",
+        dano: "Hiperglucemia extrema y diuresis osmótica con pérdida de 10-12L de agua.",
+        consecuencia: "Hiperosmolaridad plasmática, deshidratación cerebral profunda y coma."
+      },
+      cita: "Standards of Medical Care in Diabetes - ADA 2024"
+    },
+    manejo: {
+      diagnostico: 'Hallazgos específicos: Glucosa > 600 mg/dL. Osmolaridad efectiva > 320 mOsm/kg. pH > 7.3 y Bicarbonato > 18 mEq/L. Cetonas negativas o levemente positivas. Elevación de Creatinina y Nitrógeno Ureico (BUN) por deshidratación prerenal.',
+      tratamiento: 'Manejo paso a paso: 1. Hidratación agresiva con Suero Salino 0.9% (la prioridad absoluta). 2. Reposición de electrolitos (Sodio y Potasio según niveles corregidos). 3. Insulina (dosis bajas: 0.05 - 0.1 U/kg/h) solo tras iniciar la hidratación y asegurar potasio > 3.3. 4. Profilaxis antitrombótica (Heparina de bajo peso molecular).',
+      tratamientoDetallado: {
+        farmacos: [
+          { nombre: "Suero Salino 0.45% o 0.9%", dosis: "1 L/h inicialmente", frecuencia: "Variable según sodio", observaciones: "Uso de 0.45% si sodio corregido es > 145. Evaluar balance hídrico cada hora." },
+          { nombre: "Insulina de acción rápida", dosis: "0.1 U/kg/h", frecuencia: "Infusión continua", observaciones: "Bajar la glucosa más lentamente que en CAD para evitar edema cerebral." },
+          { nombre: "Enoxaparina", dosis: "40 mg", frecuencia: "Cada 24 horas SC", observaciones: "Crucial debido al estado de hiperviscosidad y riesgo de TVP/TEP." }
+        ],
+        medidasGenerales: [
+          "Monitoreo neurológico constante (Escala de Glasgow).",
+          "Control de la osmolaridad efectiva cada 2-4 horas.",
+          "Balance hídrico negativo inicial no es la meta; se busca restaurar el déficit masivo."
+        ]
+      },
+      cita: "ADA 2024 Hyperglycemic Crises Guidelines"
+    },
+    enfermeria: {
+      nanda: '00027 Riesgo de desequilibrio electrolítico / 00028 Riesgo de déficit de volumen de líquidos',
+      intervenciones: [
+        { accion: 'Monitorización de la osmolaridad calculada y estado de alerta.', razon: 'Permite evaluar la respuesta neurológica a la hidratación.' },
+        { accion: 'Cuidado estricto de la integridad cutánea y mucosas.', razon: 'La deshidratación extrema aumenta el riesgo de úlceras por presión.' },
+        { accion: 'Vigilancia de signos de sobrecarga hídrica tras hidratación agresiva.', razon: 'El balance es delicado entre rehidratar y causar edema cerebral o pulmonar.' }
       ],
       cita: 'NIC/NOC Enfermería'
     }

@@ -56,6 +56,7 @@ import {
   Table,
   History,
   RotateCw,
+  RefreshCw,
   ClipboardList,
   ShieldAlert,
   Scissors,
@@ -66,6 +67,7 @@ import {
   Columns
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import Markdown from 'react-markdown';
 import { Toaster, toast } from 'sonner';
 import { ThemeProvider, useTheme } from 'next-themes';
 import { WasteManagementBlock } from './components/WasteManagementBlock';
@@ -74,6 +76,7 @@ import { SkinAndWoundsBlock } from './components/SkinAndWoundsBlock';
 import PatientSafetyBlock from './components/PatientSafetyBlock';
 import HandHygieneBlock from './components/HandHygieneBlock';
 import VitalSignsByAgeBlock from './components/VitalSignsByAgeBlock';
+import { LaboratoriesBlock } from './components/LaboratoriesBlock';
 import NotificationSystem from './components/NotificationSystem';
 import HandoverNoteAction from './components/HandoverNoteAction';
 import NotificationsModal from './components/NotificationsModal';
@@ -84,6 +87,7 @@ import { PROCEDURE_CATEGORIES, PROCEDURES } from './proceduresData.ts';
 import { CLINICAL_PROTOCOLS } from './clinicalProtocolsData.ts';
 import Calculators from './components/Calculators';
 import MedicalScores, { MEDICAL_SCORES } from './components/MedicalScores';
+import { AIAssistant } from './components/AIAssistant';
 import { auth, db, getDb, signInWithGoogle, logout, handleFirestoreError, OperationType } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, setDoc, onSnapshot, collection, query, where, addDoc, deleteDoc, updateDoc, serverTimestamp, getDocs } from 'firebase/firestore';
@@ -116,16 +120,17 @@ interface Shift {
   ubicacion?: string;
   checklistRelevo?: string;
   isAcademico?: boolean;
+  shiftLogId?: string;
 }
 
 const SHIFT_PRESETS = {
-  H12D: { name: 'H12D', start: '07:00', end: '19:00', color: '#f97316', icon: Sun },
-  H12N: { name: 'H12N', start: '19:00', end: '07:00', color: '#6366f1', icon: Moon },
-  H6M: { name: 'H6M', start: '07:00', end: '13:00', color: '#0ea5e9', icon: Clock },
+  H12D: { name: 'H12D', start: '07:00', end: '20:00', color: '#f97316', icon: Sun },
+  H12N: { name: 'H12N', start: '19:00', end: '08:00', color: '#6366f1', icon: Moon },
+  H6M: { name: 'H6M', start: '07:00', end: '14:00', color: '#0ea5e9', icon: Clock },
   H6T: { name: 'H6T', start: '13:00', end: '19:00', color: '#22c55e', icon: Activity },
   "D/A": { name: 'D/A', start: '08:00', end: '14:00', color: '#a855f7', icon: BookOpen },
   "X/L": { name: 'X/L', start: '00:00', end: '00:00', color: '#94a3b8', icon: X },
-  H8: { name: 'H8', start: '08:00', end: '16:00', color: '#eab308', icon: Settings },
+  H8: { name: 'H8', start: '07:00', end: '16:00', color: '#eab308', icon: Settings },
 };
 
 interface Protocol {
@@ -172,7 +177,7 @@ const ICON_MAP: Record<string, any> = {
 
 const MobileHamburgerButton = ({ onClick }: { onClick: () => void }) => (
   <button onClick={onClick} className="p-2 sm:hidden text-foreground bg-card border rounded-lg shadow-sm">
-    <Menu size={20} />
+    <Menu size={12} />
   </button>
 );
 
@@ -181,17 +186,22 @@ const MobileMenuDrawer = ({ isOpen, items, onClose, onSelect }: { isOpen: boolea
     {isOpen && (
       <>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/90 backdrop-blur-md z-[100]" onClick={onClose} />
-        <motion.div initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }} className="fixed top-0 left-0 w-3/4 max-w-[300px] h-full bg-background z-[101] p-4 flex flex-col gap-2 border-r border-border shadow-2xl">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="font-black text-lg text-primary">Menu</h2>
-            <button onClick={onClose} className="p-2 bg-accent rounded-lg"><X size={20} /></button>
+        <motion.div initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }} className="fixed top-0 left-0 w-[85%] max-w-[400px] h-full bg-background z-[101] p-[12px] flex flex-col gap-[8px] border-r border-border shadow-2xl">
+          <div className="flex justify-between items-center mb-[12px] pt-[8px] px-[4px]">
+            <h2 className="font-black text-[12px] leading-[14px] text-primary tracking-tight">Menú</h2>
+            <button onClick={onClose} className="p-[4px] bg-accent/50 hover:bg-accent text-foreground rounded-[4px] transition-colors"><X size={18} /></button>
           </div>
-          <div className="flex-grow overflow-y-auto w-full">
-            {items.map(item => (
-              <button key={item.id} onClick={() => { onSelect(item.id); onClose(); }} className="w-full text-left p-3 font-semibold text-sm border-b border-border/50 hover:bg-accent rounded-lg">
-                {item.label}
+          <div className="flex-grow overflow-y-auto w-full space-y-[3px] px-[3px] pb-[12px]">
+            {items.map(item => {
+              const Icon = item.icon;
+              return (
+              <button key={item.id} onClick={() => { onSelect(item.id); onClose(); }} className="w-full flex items-center space-x-[6px] p-[6px] font-bold text-[8px] leading-[11px] text-foreground hover:bg-primary/5 hover:text-primary rounded-[6px] transition-all border border-border/30 hover:border-primary/30 bg-card/50 shadow-sm">
+                <div className="p-[3px] bg-primary/10 rounded-[4px] text-primary">
+                  {Icon && <Icon size={21} strokeWidth={2.5} />}
+                </div>
+                <span>{item.label}</span>
               </button>
-            ))}
+            )})}
           </div>
         </motion.div>
       </>
@@ -203,7 +213,7 @@ const SidebarItem = ({ icon: Icon, label, active, onClick, collapsed = false }: 
   <button
     onClick={onClick}
     title={collapsed ? label : undefined}
-    className={`w-full flex items-center ${collapsed ? 'justify-center p-3' : 'space-x-3 px-4 py-3'} rounded-xl transition-all duration-300 relative group ${
+    className={`w-full flex items-center ${collapsed ? 'justify-center p-[4px]' : 'space-x-[4px] px-[6px] py-[4px]'} rounded-[4px] transition-all duration-300 relative group ${
       active 
         ? 'bg-primary/10 text-primary' 
         : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
@@ -212,13 +222,13 @@ const SidebarItem = ({ icon: Icon, label, active, onClick, collapsed = false }: 
     {active && (
       <motion.div 
         layoutId="sidebar-active"
-        className="absolute left-0 w-1 h-6 bg-primary rounded-r-full"
+        className="absolute left-0 w-[2px] h-[9px] bg-primary rounded-r-full"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       />
     )}
-    <Icon size={20} className={`${active ? 'scale-110' : 'group-hover:scale-110'} transition-transform duration-300`} />
-    {!collapsed && <span className={`font-semibold text-sm ${active ? 'opacity-100' : 'opacity-80'}`}>{label}</span>}
+    <Icon size={9} className={`${active ? 'scale-110' : 'group-hover:scale-110'} transition-transform duration-300`} />
+    {!collapsed && <span className={`font-semibold text-[6px] leading-[9px] ${active ? 'opacity-100' : 'opacity-80'}`}>{label}</span>}
   </button>
 );
 
@@ -227,10 +237,10 @@ const SectionHeader = ({ title, subtitle, icon: Icon }: { title: string, subtitl
     <div className="flex items-center space-x-3">
       {Icon && (
         <div className="p-2 bg-primary/10 rounded-lg text-primary">
-          <Icon size={24} />
+          <Icon size={14} />
         </div>
       )}
-      <h2 className="text-3xl font-black tracking-tight text-foreground">{title}</h2>
+      <h2 className="text-xl sm:text-lg sm:text-xl font-black tracking-tight text-foreground">{title}</h2>
     </div>
     {subtitle && <p className="text-muted-foreground text-sm font-medium pl-1">{subtitle}</p>}
   </div>
@@ -265,6 +275,7 @@ function App() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isLoginLoading, setIsLoginLoading] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -273,13 +284,13 @@ function App() {
   
   // Auth & Profile Sync
   useEffect(() => {
-    console.log("App.tsx mount, db is:", db);
+    console.log("App.tsx mount, using db instance");
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      setIsAuthLoading(true);
       if (firebaseUser) {
+        setIsAuthLoading(true);
         setUser(firebaseUser);
         try {
-          const userDoc = await getDoc(doc(getDb(), 'users', firebaseUser.uid));
+          const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
           if (userDoc.exists()) {
             setUserProfile(userDoc.data() as UserProfile);
           } else {
@@ -293,19 +304,22 @@ function App() {
               universidad: '',
               hospital: '',
               servicioActual: '',
-              horario: ''
+              horario: '07:00 - 20:00 (Turno A)'
             };
-            await setDoc(doc(getDb(), 'users', firebaseUser.uid), newProfile);
+            await setDoc(doc(db, 'users', firebaseUser.uid), newProfile);
             setUserProfile(newProfile);
           }
         } catch (error) {
           console.error("Error fetching user profile:", error);
+          toast.error("Error al cargar perfil de usuario");
+        } finally {
+          setIsAuthLoading(false);
         }
       } else {
         setUser(null);
         setUserProfile(null);
+        setIsAuthLoading(false);
       }
-      setIsAuthLoading(false);
     });
     return () => unsubscribe();
   }, []);
@@ -387,6 +401,21 @@ function App() {
   const [isFlashcardOpen, setIsFlashcardOpen] = useState(false);
   const [activeFlashcard, setActiveFlashcard] = useState<Disease | null>(null);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [favoriteFlashcardIds, setFavoriteFlashcardIds] = useState<string[]>([]);
+  const [flashcardTab, setFlashcardTab] = useState<'daily' | 'favorites'>('daily');
+
+  const procedureStats = React.useMemo(() => {
+    const stats: Record<string, number> = {};
+    bitacoraEntries.forEach(entry => {
+      if (entry.procedimientos) {
+        const procs = entry.procedimientos.split(',').map((p: string) => p.trim());
+        procs.forEach((p: string) => {
+          if (p) stats[p] = (stats[p] || 0) + 1;
+        });
+      }
+    });
+    return Object.entries(stats).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  }, [bitacoraEntries]);
 
   // Bitácora State
   const [bitacoraSubTab, setBitacoraSubTab] = useState<'actividades' | 'turnos'>('actividades');
@@ -412,6 +441,9 @@ function App() {
     checklistRelevo: '',
     diasSemana: [] as string[],
     horariosPorDia: {} as Record<string, { entrada: string, salida: string }>,
+    diaAcademico: [] as string[],
+    personalCargo: '',
+    syncCalendar: false,
   });
 
   // Batch Mode State
@@ -507,6 +539,8 @@ function App() {
         uid: user.uid,
         nombre: user.displayName || 'Estudiante',
         email: user.email || '',
+        telefono: '',
+        direccion: '',
         rol: 'Estudiante de Medicina',
         universidad: 'UIDE',
         hospital: '',
@@ -578,6 +612,32 @@ function App() {
       localStorage.setItem('dailyDataVersion', '4');
     }
   }, []);
+
+  // Effect for Favorite Flashcards
+  useEffect(() => {
+    const storedFavorites = localStorage.getItem('favoriteFlashcards');
+    if (storedFavorites) {
+      setFavoriteFlashcardIds(JSON.parse(storedFavorites));
+    }
+  }, []);
+
+  const toggleFlashcardFavorite = (id: string, e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
+    setFavoriteFlashcardIds(prev => {
+      const newFavorites = prev.includes(id) 
+        ? prev.filter(fId => fId !== id)
+        : [...prev, id];
+      localStorage.setItem('favoriteFlashcards', JSON.stringify(newFavorites));
+      if (!prev.includes(id)) {
+          toast.success('Añadido a favoritos');
+      } else {
+          toast.success('Removido de favoritos');
+      }
+      return newFavorites;
+    });
+  };
 
   const handleAddTask = async (text: string, options?: { source?: string, isAcademico?: boolean, isUrgent?: boolean, dueDate?: string }) => {
     if (!user) return;
@@ -775,9 +835,9 @@ function App() {
         
         const dayNameMap = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
         const currentDayName = dayNameMap[d.getDay()];
-        const specificTimes = newShift.horariosPorDia[currentDayName] || { entrada: preset?.start || '07:00', salida: preset?.end || '19:00' };
+        const specificTimes = newShift.horariosPorDia[currentDayName] || { entrada: preset?.start || '07:00', salida: preset?.end || '20:00' };
         const tEntrada = specificTimes.entrada || preset?.start || '07:00';
-        const tSalida = specificTimes.salida || preset?.end || '19:00';
+        const tSalida = specificTimes.salida || preset?.end || '20:00';
 
         const isAcademico = newShift.tipoTurno === 'D/A';
         
@@ -795,7 +855,7 @@ function App() {
             title: eventTitle || 'Turno',
             date: dateString,
             startTime: tEntrada || '07:00',
-            endTime: tSalida || '19:00',
+            endTime: tSalida || '20:00',
             type: newShift.tipoTurno || 'H12D',
             color: evColor || '#10b981',
             servicio: finalService || 'General',
@@ -821,8 +881,51 @@ function App() {
       checklistRelevo: '',
       diasSemana: [] as string[],
       horariosPorDia: {} as Record<string, { entrada: string, salida: string }>,
+      diaAcademico: [] as string[],
+      personalCargo: '',
+      syncCalendar: false,
     });
     toast.success('Turno registrado correctamente');
+  };
+
+  const handleFixShifts = async () => {
+    if (!user || !shifts || shifts.length === 0) {
+      toast.info("No hay turnos para corregir.");
+      return;
+    }
+    
+    setIsLoading(true);
+    let count = 0;
+    
+    try {
+      // Create a batch-like operation by iterating
+      for (const shift of shifts) {
+        if (!shift.id) continue;
+        
+        const preset = SHIFT_PRESETS[shift.type as keyof typeof SHIFT_PRESETS];
+        if (preset) {
+          // Check if times need update based on nomenclature
+          if (shift.startTime !== preset.start || shift.endTime !== preset.end) {
+            await updateDoc(doc(getDb(), 'shifts', shift.id), {
+              startTime: preset.start,
+              endTime: preset.end
+            });
+            count++;
+          }
+        }
+      }
+      
+      if (count > 0) {
+        toast.success(`Se corrigieron ${count} turnos con horarios desactualizados.`);
+      } else {
+        toast.info("Todos los turnos ya tienen los horarios correctos según la nomenclatura.");
+      }
+    } catch (error) {
+      console.error("Error al corregir turnos:", error);
+      toast.error("Hubo un error al intentar corregir los turnos.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Protocols State
@@ -871,12 +974,12 @@ function App() {
 
   const LoginScreen = () => (
     <div className="min-h-screen flex items-center justify-center p-4 bg-background">
-      <Card className="w-full max-w-md p-10 space-y-8 shadow-2xl border-primary/10">
+      <Card className="w-full max-w-[448px] p-5 sm:p-6 space-y-8 shadow-2xl border-primary/10">
         <div className="text-center space-y-4">
           <div className="w-20 h-20 bg-primary rounded-3xl flex items-center justify-center mx-auto shadow-xl shadow-primary/20 rotate-3">
-            <Heart size={40} className="text-white" fill="currentColor" />
+            <Heart size={24} className="text-white" fill="currentColor" />
           </div>
-          <h2 className="text-4xl font-black tracking-tighter text-primary">VitaStudent</h2>
+          <h2 className="text-2xl sm:text-3xl font-black tracking-tighter text-primary">VitaStudent</h2>
           <p className="text-muted-foreground font-medium">Tu compañero clínico personal.</p>
         </div>
 
@@ -884,14 +987,14 @@ function App() {
           <div className="space-y-2">
             <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Email</label>
             <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={12} />
               <input type="email" placeholder="correo@ejemplo.com" className="w-full pl-12 pr-4 py-4 rounded-2xl border border-border bg-accent/10 focus:ring-2 focus:ring-primary outline-none transition-all" />
             </div>
           </div>
           <div className="space-y-2">
             <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Contraseña</label>
             <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={12} />
               <input type="password" placeholder="••••••••" className="w-full pl-12 pr-4 py-4 rounded-2xl border border-border bg-accent/10 focus:ring-2 focus:ring-primary outline-none transition-all" />
             </div>
           </div>
@@ -943,7 +1046,7 @@ function App() {
                     <p className="text-xs text-muted-foreground mt-1">{userProfile?.horario || 'Sin horario'}</p>
                   </div>
                   <div className="p-2 bg-primary/20 rounded-lg text-primary">
-                    <History size={20} />
+                    <History size={12} />
                   </div>
                 </div>
               </GlassCard>
@@ -958,7 +1061,7 @@ function App() {
                     </p>
                   </div>
                   <div className="p-2 bg-accent rounded-lg text-muted-foreground">
-                    <CheckCircle2 size={20} />
+                    <CheckCircle2 size={12} />
                   </div>
                 </div>
               </GlassCard>
@@ -971,7 +1074,7 @@ function App() {
                     <p className="text-xs text-muted-foreground mt-1">Este mes</p>
                   </div>
                   <div className="p-2 bg-accent rounded-lg text-muted-foreground">
-                    <BookOpen size={20} />
+                    <BookOpen size={12} />
                   </div>
                 </div>
               </GlassCard>
@@ -984,75 +1087,151 @@ function App() {
                     <p className="text-xs text-muted-foreground mt-1">Sistemas operativos</p>
                   </div>
                   <div className="p-2 bg-green-500/10 rounded-lg text-green-500">
-                    <ShieldCheck size={20} />
+                    <ShieldCheck size={12} />
                   </div>
                 </div>
-                <Activity size={80} className="absolute -bottom-4 -right-4 text-green-500/5 rotate-12" />
+                <Activity size={48} className="absolute -bottom-4 -right-4 text-green-500/5 rotate-12" />
               </GlassCard>
             </div>
 
             {/* Daily Diseases - Flashcards Style */}
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-black text-foreground uppercase tracking-[0.2em] flex items-center">
-                  <Sparkles size={16} className="mr-2 text-primary" />
-                  Repaso Diario (Flashcards)
-                </h3>
-                <button 
-                  onClick={() => {
-                    const shuffled = [...DISEASES].sort(() => 0.5 - Math.random());
-                    setDailyDiseases(shuffled.slice(0, 3));
-                    toast.info('Nuevas patologías generadas');
-                  }}
-                  className="text-[10px] font-black uppercase text-primary hover:bg-primary/5 px-3 py-1.5 rounded-full transition-all"
-                >
-                  <RotateCw size={12} className="inline mr-1" /> Refrescar
-                </button>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {dailyDiseases.map((disease) => (
-                  <motion.div
-                    key={disease.id}
-                    whileHover={{ y: -5 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    <GlassCard 
-                      className="group cursor-pointer p-0 overflow-hidden h-40 flex flex-col"
-                      onClick={() => {
-                        setActiveFlashcard(disease);
-                        setIsFlashcardOpen(true);
-                        setIsFlipped(false);
-                      }}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                  <h3 className="text-sm font-black text-foreground uppercase tracking-[0.2em] flex items-center">
+                    <Sparkles size={12} className="mr-2 text-primary" />
+                    Repaso Clínico Avanzado
+                  </h3>
+                  <div className="flex bg-accent rounded-full p-1 border border-border/50">
+                    <button 
+                      onClick={() => setFlashcardTab('daily')}
+                      className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${flashcardTab === 'daily' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                     >
-                      <div className="p-5 flex-grow">
-                        <div className="flex items-center space-x-3 mb-3">
-                          <div className="p-2 bg-primary/10 rounded-lg text-primary group-hover:bg-primary group-hover:text-white transition-all">
-                            {ICON_MAP[disease.icon || 'Activity'] && React.createElement(ICON_MAP[disease.icon || 'Activity'], { size: 18 })}
-                          </div>
-                          <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{disease.servicio}</span>
-                        </div>
-                        <h4 className="font-black text-lg text-foreground leading-tight">{disease.nombre}</h4>
-                      </div>
-                      <div className="px-5 py-3 bg-accent/50 border-t border-border/50 flex items-center justify-between">
-                        <span className="text-[10px] font-bold text-muted-foreground">Toca para repasar</span>
-                        <ChevronRight size={14} className="text-muted-foreground group-hover:translate-x-1 transition-transform" />
-                      </div>
-                    </GlassCard>
-                  </motion.div>
-                ))}
+                      Diarias
+                    </button>
+                    <button 
+                      onClick={() => setFlashcardTab('favorites')}
+                      className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5 ${flashcardTab === 'favorites' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                    >
+                      <Heart size={12} className={favoriteFlashcardIds.length > 0 ? 'text-red-500 fill-red-500' : ''} /> Favoritas ({favoriteFlashcardIds.length})
+                    </button>
+                  </div>
+                </div>
+                {flashcardTab === 'daily' && (
+                  <button 
+                    onClick={() => {
+                      const shuffled = [...DISEASES].sort(() => 0.5 - Math.random());
+                      setDailyDiseases(shuffled.slice(0, 3));
+                      toast.info('Nuevas patologías generadas');
+                    }}
+                    className="text-[10px] shrink-0 font-black uppercase text-primary hover:bg-primary/5 px-3 py-1.5 rounded-full transition-all border border-primary/20"
+                  >
+                    <RotateCw size={12} className="inline mr-1" /> Refrescar
+                  </button>
+                )}
               </div>
+              
+              {flashcardTab === 'daily' ? (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+                  {dailyDiseases.map((disease) => (
+                    <motion.div
+                      key={disease.id}
+                      whileHover={{ y: -5 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      <GlassCard 
+                        className="group cursor-pointer p-0 overflow-hidden min-h-[6rem] sm:min-h-[8rem] flex flex-col relative"
+                        onClick={() => {
+                          setActiveFlashcard(disease);
+                          setIsFlashcardOpen(true);
+                          setIsFlipped(false);
+                        }}
+                      >
+                        {favoriteFlashcardIds.includes(disease.id) && (
+                          <div className="absolute top-3 right-3 text-red-500">
+                            <Heart size={12} className="fill-red-500" />
+                          </div>
+                        )}
+                        <div className="p-5 flex-grow">
+                          <div className="flex items-center space-x-3 mb-3">
+                            <div className="p-2 bg-primary/10 rounded-lg text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                              {ICON_MAP[disease.icon || 'Activity'] && React.createElement(ICON_MAP[disease.icon || 'Activity'], { size: 18 })}
+                            </div>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{disease.servicio}</span>
+                          </div>
+                          <h4 className="font-black text-lg text-foreground leading-tight">{disease.nombre}</h4>
+                        </div>
+                        <div className="px-5 py-3 bg-accent/50 border-t border-border/50 flex items-center justify-between">
+                          <span className="text-[10px] font-bold text-muted-foreground">Toca para repasar</span>
+                          <ChevronRight size={12} className="text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                        </div>
+                      </GlassCard>
+                    </motion.div>
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {favoriteFlashcardIds.length === 0 ? (
+                    <div className="col-span-full flex flex-col items-center justify-center p-12 bg-accent/30 rounded-[2rem] border border-dashed border-border/50 text-center">
+                      <Heart size={29} className="text-muted-foreground mb-4 opacity-20" />
+                      <p className="text-sm font-bold text-muted-foreground">Aún no tienes flashcards en favoritos.</p>
+                      <p className="text-xs text-muted-foreground mt-1 max-w-[384px]">
+                        Abre cualquier flashcard clínica y presiona el ícono del corazón para guardarla aquí y repasarla rápido durante la guardia.
+                      </p>
+                    </div>
+                  ) : (
+                    favoriteFlashcardIds.map((id) => {
+                      const disease = DISEASES.find(d => d.id === id);
+                      if (!disease) return null;
+                      return (
+                        <motion.div
+                          key={disease.id}
+                          whileHover={{ y: -5 }}
+                          transition={{ type: "spring", stiffness: 300 }}
+                        >
+                          <GlassCard 
+                            className="group cursor-pointer p-0 overflow-hidden h-40 flex flex-col relative"
+                            onClick={() => {
+                              setActiveFlashcard(disease);
+                              setIsFlashcardOpen(true);
+                              setIsFlipped(false);
+                            }}
+                          >
+                            <div className="absolute top-3 right-3 text-red-500">
+                              <Heart size={12} className="fill-red-500" />
+                            </div>
+                            <div className="p-5 flex-grow">
+                              <div className="flex items-center space-x-3 mb-3">
+                                <div className="p-2 bg-primary/10 rounded-lg text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                                  {ICON_MAP[disease.icon || 'Activity'] && React.createElement(ICON_MAP[disease.icon || 'Activity'], { size: 18 })}
+                                </div>
+                                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{disease.servicio}</span>
+                              </div>
+                              <h4 className="font-black text-lg text-foreground leading-tight">{disease.nombre}</h4>
+                            </div>
+                            <div className="px-5 py-3 bg-accent/50 border-t border-border/50 flex items-center justify-between">
+                              <span className="text-[10px] font-bold text-muted-foreground">Toca para repasar</span>
+                              <ChevronRight size={12} className="text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                            </div>
+                          </GlassCard>
+                        </motion.div>
+                      );
+                    })
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Intelligent Study Planning */}
             <div className="space-y-4">
               <h3 className="text-sm font-black text-foreground uppercase tracking-[0.2em] flex items-center">
-                <Brain size={16} className="mr-2 text-purple-500" />
+                <Brain size={12} className="mr-2 text-purple-500" />
                 Planificación de Estudio Inteligente
               </h3>
               <GlassCard className="p-6 border-purple-500/20 bg-gradient-to-br from-purple-500/5 to-transparent">
                 <div className="flex flex-col md:flex-row gap-6 items-center">
                   <div className="w-16 h-16 bg-purple-500 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-purple-500/20 shrink-0">
-                    <BookOpen size={32} />
+                    <BookOpen size={19} />
                   </div>
                   <div className="flex-grow space-y-2">
                     <h4 className="text-lg font-black italic">
@@ -1089,14 +1268,14 @@ function App() {
               </GlassCard>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
               <div className="lg:col-span-2 space-y-8">
                 {/* Advanced Calendar Integration */}
                 <GlassCard className="p-0 overflow-hidden shadow-2xl border-primary/10">
                   <div className="p-6 border-b border-border bg-accent/5 flex justify-between items-center">
                     <div className="flex items-center space-x-4">
                       <div className="p-2 bg-primary/10 rounded-xl text-primary">
-                        <Calendar size={20} />
+                        <Calendar size={12} />
                       </div>
                       <div>
                         <h3 className="font-black text-lg tracking-tight">Cronograma de Guardias</h3>
@@ -1105,13 +1284,22 @@ function App() {
                     </div>
                     <div className="flex items-center gap-3">
                       <button 
+                        onClick={handleFixShifts}
+                        disabled={isLoading}
+                        className="px-4 py-1.5 rounded-full text-[10px] font-black uppercase transition-all flex items-center gap-2 bg-yellow-500/10 text-yellow-600 hover:bg-yellow-500/20 disabled:opacity-50"
+                        title="Sincronizar horarios de turnos existentes con la nomenclatura oficial"
+                      >
+                        <RefreshCw size={12} className={isLoading ? 'animate-spin' : ''} />
+                        Sincronizar
+                      </button>
+                      <button 
                         onClick={() => {
                           setIsBatchMode(!isBatchMode);
                           setSelectedBatchDates([]);
                         }}
                         className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase transition-all flex items-center gap-2 ${isBatchMode ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20' : 'bg-accent/50 text-muted-foreground hover:text-foreground'}`}
                       >
-                        <Zap size={14} />
+                        <Zap size={12} />
                         {isBatchMode ? 'Cancelar Modo Rápido' : 'Modo Rápido'}
                       </button>
                       <div className="flex items-center bg-background rounded-full p-1 border border-border shadow-inner">
@@ -1150,7 +1338,7 @@ function App() {
                           if (calendarView === 'week') d.setDate(d.getDate() - 7);
                           if (calendarView === 'month') d.setMonth(d.getMonth() - 1);
                           setSelectedDate(d);
-                        }} className="p-2 hover:bg-card rounded-lg text-muted-foreground hover:text-primary transition-all"><ChevronLeft size={20}/></button>
+                        }} className="p-2 hover:bg-card rounded-lg text-muted-foreground hover:text-primary transition-all"><ChevronLeft size={12}/></button>
                         
                         <button onClick={() => setSelectedDate(new Date())} className="px-4 py-1.5 hover:bg-card rounded-lg text-xs font-black text-muted-foreground hover:text-primary transition-all uppercase tracking-widest">Hoy</button>
                         
@@ -1160,7 +1348,7 @@ function App() {
                           if (calendarView === 'week') d.setDate(d.getDate() + 7);
                           if (calendarView === 'month') d.setMonth(d.getMonth() + 1);
                           setSelectedDate(d);
-                        }} className="p-2 hover:bg-card rounded-lg text-muted-foreground hover:text-primary transition-all"><ChevronRight size={20}/></button>
+                        }} className="p-2 hover:bg-card rounded-lg text-muted-foreground hover:text-primary transition-all"><ChevronRight size={12}/></button>
                       </div>
                     </div>
 
@@ -1172,7 +1360,7 @@ function App() {
                       >
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-orange-500/20">
-                            <Zap size={20} />
+                            <Zap size={12} />
                           </div>
                           <div>
                             <p className="text-sm font-black">{selectedBatchDates.length} días seleccionados</p>
@@ -1267,9 +1455,147 @@ function App() {
                               return cells;
                             })()}
                           </div>
+                        ) : calendarView === 'week' ? (
+                          <div className="grid grid-cols-7 gap-3">
+                            {['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'].map((d) => (
+                              <div key={d} className="text-center text-[10px] font-black uppercase text-muted-foreground/60 mb-2 tracking-widest">{d}</div>
+                            ))}
+                            {(() => {
+                              const startOfWeek = new Date(selectedDate);
+                              startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+                              
+                              return Array.from({ length: 7 }).map((_, i) => {
+                                const d = new Date(startOfWeek);
+                                d.setDate(d.getDate() + i);
+                                const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                                const isToday = d.toDateString() === new Date().toDateString();
+                                const dayShifts = shifts.filter(s => s.date === dateStr);
+                                const dayBitacora = bitacoraEntries.filter(b => b.fecha === dateStr);
+                                
+                                return (
+                                  <motion.div 
+                                    key={i}
+                                    whileHover={{ scale: 1.05 }}
+                                    onClick={() => {
+                                      setSelectedCalendarDateShifts(dayShifts);
+                                      setClickedDateStr(dateStr);
+                                      setIsCalendarDayModalOpen(true);
+                                    }}
+                                    className={`min-h-[250px] flex flex-col p-3 rounded-2xl text-xs transition-all border ${
+                                      isToday ? 'bg-primary/10 border-primary shadow-lg' : 'bg-accent/20 border-border/50'
+                                    } cursor-pointer`}
+                                  >
+                                    <div className="flex flex-col mb-4">
+                                      <span className="text-[10px] font-black uppercase opacity-60">{['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'][i]}</span>
+                                      <span className={`text-xl font-black ${isToday ? 'text-primary' : ''}`}>{d.getDate()}</span>
+                                    </div>
+                                    <div className="space-y-2 flex-grow">
+                                      {dayShifts.map((s, idx) => (
+                                        <div key={idx} className="p-2 rounded-lg text-[10px] font-black border border-white/10 flex items-center gap-2" style={{ backgroundColor: `${s.color}20`, color: s.color }}>
+                                          <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: s.color }} />
+                                          <span className="truncate">{s.title || s.type}</span>
+                                        </div>
+                                      ))}
+                                      {dayBitacora.length > 0 && (
+                                        <div className="p-2 rounded-lg bg-orange-500/10 border border-orange-500/20 text-[9px] font-black text-orange-600 flex items-center justify-center">
+                                          {dayBitacora.length} Registros
+                                        </div>
+                                      )}
+                                    </div>
+                                  </motion.div>
+                                );
+                              });
+                            })()}
+                          </div>
                         ) : (
-                          <div className="py-20 text-center bg-accent/20 rounded-3xl border border-dashed border-border text-muted-foreground italic">
-                            Visualización {calendarView} en desarrollo optimizado...
+                          <div className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                              <div className="md:col-span-1 border-r border-border/50 pr-6 space-y-4">
+                                <GlassCard className="p-4 bg-primary/5">
+                                  <p className="text-[10px] font-black uppercase text-primary mb-1">Turnos del Día</p>
+                                  <div className="space-y-2">
+                                    {shifts.filter(s => s.date === selectedDate.toISOString().split('T')[0]).map((s, i) => (
+                                      <div key={i} className="flex items-center gap-3 p-2 bg-background rounded-xl border border-border">
+                                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: s.color }} />
+                                        <div className="overflow-hidden">
+                                          <p className="text-[10px] font-black truncate">{s.title || s.type}</p>
+                                          <p className="text-[9px] text-muted-foreground">{s.startTime} - {s.endTime}</p>
+                                        </div>
+                                      </div>
+                                    ))}
+                                    {shifts.filter(s => s.date === selectedDate.toISOString().split('T')[0]).length === 0 && (
+                                      <p className="text-[10px] italic text-muted-foreground py-2 text-center">Sin turnos registrados</p>
+                                    )}
+                                  </div>
+                                </GlassCard>
+                                <GlassCard className="p-4 bg-orange-500/5">
+                                  <p className="text-[10px] font-black uppercase text-orange-600 mb-1">Actividades</p>
+                                  <div className="space-y-2">
+                                    {bitacoraEntries.filter(b => b.fecha === selectedDate.toISOString().split('T')[0]).map((b, i) => (
+                                      <div key={i} className="p-2 bg-background rounded-xl border border-border">
+                                        <p className="text-[10px] font-black line-clamp-2">{b.actividad}</p>
+                                        <p className="text-[8px] text-muted-foreground mt-1 uppercase font-bold">{b.tipo}</p>
+                                      </div>
+                                    ))}
+                                    {bitacoraEntries.filter(b => b.fecha === selectedDate.toISOString().split('T')[0]).length === 0 && (
+                                       <p className="text-[10px] italic text-muted-foreground py-2 text-center">Sin registros en bitácora</p>
+                                    )}
+                                  </div>
+                                </GlassCard>
+                              </div>
+                              <div className="md:col-span-3 space-y-2 overflow-y-auto max-h-[600px] pr-2 custom-scrollbar">
+                                {Array.from({ length: 24 }).map((_, hour) => {
+                                  const dateStr = selectedDate.toISOString().split('T')[0];
+                                  const prevDate = new Date(selectedDate);
+                                  prevDate.setDate(prevDate.getDate() - 1);
+                                  const prevDateStr = prevDate.toISOString().split('T')[0];
+
+                                  const activeShifts = shifts.filter(s => {
+                                    const hStart = parseInt(s.startTime.split(':')[0]);
+                                    const hEnd = parseInt(s.endTime.split(':')[0]);
+                                    const isCrossMidnight = hEnd < hStart && s.endTime !== '00:00';
+                                    
+                                    if (s.date === dateStr) {
+                                      if (isCrossMidnight) {
+                                        return hour >= hStart;
+                                      }
+                                      return hour >= hStart && hour < hEnd;
+                                    }
+                                    
+                                    if (s.date === prevDateStr && isCrossMidnight) {
+                                      return hour < hEnd;
+                                    }
+                                    
+                                    return false;
+                                  });
+                                  
+                                  return (
+                                    <div key={hour} className="flex gap-4 group">
+                                      <div className="w-12 text-right pt-1">
+                                        <span className="text-[10px] font-black text-muted-foreground/50 group-hover:text-primary transition-colors">{hour.toString().padStart(2, '0')}:00</span>
+                                      </div>
+                                      <div className="flex-grow min-h-[48px] border-l-2 border-border/30 group-hover:border-primary/30 transition-all pl-4 py-1 relative">
+                                        {activeShifts.map((s, i) => (
+                                          <motion.div 
+                                            key={i}
+                                            initial={{ opacity: 0, x: -10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            className="mb-1 p-2 rounded-xl text-[10px] font-black shadow-sm flex items-center justify-between"
+                                            style={{ backgroundColor: `${s.color}15`, color: s.color, border: `1px solid ${s.color}30` }}
+                                          >
+                                            <div className="flex items-center gap-2">
+                                              <Activity size={12} />
+                                              <span>{s.title || (s.type === 'H12D' ? 'Guardia Diurna' : s.type === 'H12N' ? 'Guardia Nocturna' : s.type)}</span>
+                                            </div>
+                                            <span className="opacity-60">{s.startTime} - {s.endTime}</span>
+                                          </motion.div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
                           </div>
                         )}
                       </div>
@@ -1279,7 +1605,7 @@ function App() {
                         <div className="p-5 bg-card border border-border rounded-[32px] shadow-sm">
                            <h5 className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground mb-6 flex items-center justify-between">
                              <div className="flex items-center gap-2">
-                               <Calculator size={14} className="text-primary" /> Resumen Mensual
+                               <Calculator size={12} className="text-primary" /> Resumen Mensual
                              </div>
                              <button 
                                onClick={handleClearAllShifts}
@@ -1314,10 +1640,11 @@ function App() {
                                     {shifts.reduce((acc, s) => {
                                       const d = new Date(s.date);
                                       if (d.getMonth() === selectedDate.getMonth() && d.getFullYear() === selectedDate.getFullYear()) {
-                                        if (s.type === 'H12D' || s.type === 'H12N') return acc + 12;
-                                        if (s.type === 'H6T') return acc + 6;
+                                        if (s.type === 'H12D' || s.type === 'H12N') return acc + 13;
+                                        if (s.type === 'H6M' || s.type === 'H6T') return acc + 7;
+                                        if (s.type === 'H8') return acc + 9;
                                         if (s.type === 'HEM') return acc + 8;
-                                        if (s.type === 'DA') return acc + 6;
+                                        if (s.type === 'DA' || s.type === 'D/A') return acc + 6;
                                       }
                                       return acc;
                                     }, 0)}
@@ -1330,10 +1657,11 @@ function App() {
                                     animate={{ width: `${Math.min(100, (shifts.reduce((acc, s) => {
                                       const d = new Date(s.date);
                                       if (d.getMonth() === selectedDate.getMonth() && d.getFullYear() === selectedDate.getFullYear()) {
-                                        if (s.type === 'H12D' || s.type === 'H12N') return acc + 12;
-                                        if (s.type === 'H6T') return acc + 6;
+                                        if (s.type === 'H12D' || s.type === 'H12N') return acc + 13;
+                                        if (s.type === 'H6M' || s.type === 'H6T') return acc + 7;
+                                        if (s.type === 'H8') return acc + 9;
                                         if (s.type === 'HEM') return acc + 8;
-                                        if (s.type === 'DA') return acc + 6;
+                                        if (s.type === 'DA' || s.type === 'D/A') return acc + 6;
                                       }
                                       return acc;
                                     }, 0) / 160) * 100)}%` }}
@@ -1378,7 +1706,7 @@ function App() {
 
                         <div className="p-5 bg-card/60 backdrop-blur-xl border border-orange-200/50 rounded-[32px] shadow-sm">
                            <h5 className="text-[10px] font-black uppercase tracking-[0.25em] text-orange-600 mb-4 flex items-center gap-2">
-                             <Zap size={14} /> Tips de Supervivencia
+                             <Zap size={12} /> Tips de Supervivencia
                            </h5>
                            <p className="text-xs text-muted-foreground leading-relaxed">
                              {shifts.some(s => s.date === new Date().toISOString().split('T')[0] && s.type === 'H12N') 
@@ -1402,7 +1730,7 @@ function App() {
                   <GlassCard className="p-0 overflow-hidden">
                     <div className="p-4 border-b border-border bg-accent/5 flex justify-between items-center">
                       <h3 className="font-black text-sm uppercase tracking-widest flex items-center">
-                        <History size={16} className="mr-2 text-primary" /> Historial Bitácora
+                        <History size={12} className="mr-2 text-primary" /> Historial Bitácora
                       </h3>
                       <button onClick={() => setActiveTab('bitacora')} className="text-[10px] font-black uppercase text-primary hover:underline">Ver todo</button>
                     </div>
@@ -1422,7 +1750,7 @@ function App() {
                   <GlassCard className="p-0 overflow-hidden">
                     <div className="p-4 border-b border-border bg-accent/5 flex justify-between items-center">
                       <h3 className="font-black text-sm uppercase tracking-widest flex items-center">
-                        <Clock size={16} className="mr-2 text-primary" /> Turnos Activos
+                        <Clock size={12} className="mr-2 text-primary" /> Turnos Activos
                       </h3>
                       <button onClick={() => {setActiveTab('bitacora'); setBitacoraSubTab('turnos');}} className="text-[10px] font-black uppercase text-primary hover:underline">Ver todo</button>
                     </div>
@@ -1443,11 +1771,39 @@ function App() {
               </div>
 
               <div className="space-y-8">
+                {/* Product Stats */}
+                <GlassCard className="p-5 border-blue-500/10 bg-gradient-to-br from-blue-500/5 to-transparent">
+                  <h3 className="text-xs font-black text-foreground uppercase tracking-[0.2em] flex items-center mb-4">
+                    <Activity size={12} className="mr-2 text-blue-500" />
+                    Procedimientos Realizados
+                  </h3>
+                  <div className="space-y-3">
+                    {procedureStats.length > 0 ? (
+                      procedureStats.map(([proc, count]) => (
+                        <div key={proc} className="flex items-center justify-between">
+                          <span className="text-[10px] font-bold text-muted-foreground truncate mr-2">{proc}</span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-24 bg-accent/30 h-1.5 rounded-full overflow-hidden">
+                              <div 
+                                className="bg-blue-500 h-full" 
+                                style={{ width: `${Math.min(100, (count / 10) * 100)}%` }} 
+                              />
+                            </div>
+                            <span className="text-[10px] font-black">{count}</span>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-[10px] text-muted-foreground italic text-center py-4">Registra procedimientos en tu bitácora para ver estadísticas</p>
+                    )}
+                  </div>
+                </GlassCard>
+
                 {/* To-Do List modern */}
                 <GlassCard className="p-0 overflow-hidden shadow-xl border-primary/5">
                   <div className="p-5 border-b border-border bg-primary/5 flex justify-between items-center">
                     <h3 className="font-black text-sm uppercase tracking-widest flex items-center">
-                      <ClipboardList size={18} className="mr-2 text-primary" /> Lista de Cotejo
+                      <ClipboardList size={12} className="mr-2 text-primary" /> Lista de Cotejo
                     </h3>
                     <div className="px-2 py-1 bg-primary text-white text-[10px] font-black rounded-full leading-none">
                       {tasks.filter(t => !t.completed).length} PEND
@@ -1466,7 +1822,7 @@ function App() {
                             onClick={() => toggleTask(task.id, task.completed)}
                             className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${task.completed ? 'bg-green-500 border-green-500 text-white' : 'border-border group-hover:border-primary'}`}
                           >
-                            {task.completed && <CheckCircle2 size={14} />}
+                            {task.completed && <CheckCircle2 size={12} />}
                           </button>
                           <div className="flex-grow min-w-0">
                             <div className="flex items-center gap-2">
@@ -1476,17 +1832,17 @@ function App() {
                             <div className="flex flex-wrap items-center gap-2 mt-1">
                               {task.source === 'Relevo' ? (
                                 <span className="text-[8px] font-black text-sky-500 bg-sky-500/10 px-1.5 py-0.5 rounded uppercase flex items-center gap-1 border border-sky-500/20">
-                                  <ClipboardList size={8} /> Relevo
+                                  <ClipboardList size={12} /> Relevo
                                 </span>
                               ) : (
                                 task.source && <span className="text-[8px] font-black text-primary/60 uppercase">{task.source}</span>
                               )}
-                              {task.isAcademico && <span className="text-[8px] font-black text-purple-500 bg-purple-500/10 px-1.5 py-0.5 rounded uppercase flex items-center gap-1 border border-purple-500/20"><BookOpen size={8} /> Académico</span>}
-                              {task.dueDate && <span className="text-[8px] font-black text-orange-500 bg-orange-500/10 px-1.5 py-0.5 rounded uppercase flex items-center gap-1 border border-orange-500/20"><Clock size={8} /> {new Date(task.dueDate).toLocaleDateString()}</span>}
+                              {task.isAcademico && <span className="text-[8px] font-black text-purple-500 bg-purple-500/10 px-1.5 py-0.5 rounded uppercase flex items-center gap-1 border border-purple-500/20"><BookOpen size={12} /> Académico</span>}
+                              {task.dueDate && <span className="text-[8px] font-black text-orange-500 bg-orange-500/10 px-1.5 py-0.5 rounded uppercase flex items-center gap-1 border border-orange-500/20"><Clock size={12} /> {new Date(task.dueDate).toLocaleDateString()}</span>}
                             </div>
                           </div>
                           <button onClick={() => deleteTask(task.id)} className="p-1 px-2 text-destructive/40 hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all opacity-0 group-hover:opacity-100">
-                            <Trash2 size={14} />
+                            <Trash2 size={12} />
                           </button>
                         </div>
                       </motion.div>
@@ -1512,7 +1868,7 @@ function App() {
                             }}
                             className="bg-purple-500/10 text-purple-700 text-[9px] font-black uppercase px-3 py-1.5 rounded-lg border border-purple-500/20 hover:bg-purple-500 hover:text-white transition-all flex items-center gap-1"
                           >
-                             <Plus size={10} /> Académica
+                             <Plus size={12} /> Académica
                           </button>
                           <button 
                             onClick={() => {
@@ -1521,7 +1877,7 @@ function App() {
                             }}
                             className="bg-red-500/10 text-red-600 text-[9px] font-black uppercase px-3 py-1.5 rounded-lg border border-red-500/20 hover:bg-red-500 hover:text-white transition-all flex items-center gap-1"
                           >
-                             <Plus size={10} /> Urgente
+                             <Plus size={12} /> Urgente
                           </button>
                        </div>
                     </div>
@@ -1530,7 +1886,7 @@ function App() {
 
                 {/* Feedback modern */}
                 <GlassCard className="p-6 bg-secondary text-secondary-foreground shadow-2xl relative overflow-hidden">
-                  <div className="absolute top-0 right-0 p-4 opacity-10 -rotate-12"><MessageSquare size={100} /></div>
+                  <div className="absolute top-0 right-0 p-4 opacity-10 -rotate-12"><MessageSquare size={60} /></div>
                   <h3 className="text-xl font-black mb-2 relative z-10">¿Algo falta?</h3>
                   <p className="text-xs text-secondary-foreground/70 mb-6 leading-relaxed relative z-10">Ayúdanos a mejorar VitaStudent compartiendo tu feedback o sugiriendo nuevas patologías.</p>
                   <button 
@@ -1551,171 +1907,236 @@ function App() {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
-                    className="relative w-full max-w-sm sm:max-w-md aspect-[3/4] perspective-1000"
+                    className="relative w-full max-w-[384px] sm:max-w-[448px] aspect-[3/4] perspective-1000"
                   >
                     <div 
                       className={`relative w-full h-full transition-all duration-500 preserve-3d cursor-pointer ${isFlipped ? 'rotate-y-180' : ''}`}
                       onClick={() => setIsFlipped(!isFlipped)}
                     >
-                      {/* Front */}
-                      <Card className="absolute inset-0 backface-hidden flex flex-col p-4 sm:p-6 border-2 border-primary/20 shadow-2xl overflow-hidden">
-                        <div className="flex flex-col items-center justify-center text-center mb-2 sm:mb-4 shrink-0">
-                          <div className="p-2 sm:p-3 bg-primary/10 rounded-full text-primary mb-1 sm:mb-2">
-                            {ICON_MAP[activeFlashcard.icon || 'Activity'] && React.createElement(ICON_MAP[activeFlashcard.icon || 'Activity'], { size: 32 })}
+                      {/* Front: Clinical Core */}
+                      <Card className="absolute inset-0 backface-hidden flex flex-col p-6 sm:p-10 border-4 border-primary/20 shadow-[0_0_50px_-12px_rgba(var(--primary-rgb),0.3)] overflow-hidden bg-card rounded-[2.5rem]">
+                        <div className="absolute -top-24 -right-24 w-[256px] h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+                        
+                        <div className="flex flex-col items-center justify-center text-center mb-8 shrink-0 relative z-10">
+                          <div className="p-4 bg-primary/10 rounded-3xl text-primary mb-4 shadow-inner ring-4 ring-primary/5">
+                            {ICON_MAP[activeFlashcard.icon || 'Activity'] && React.createElement(ICON_MAP[activeFlashcard.icon || 'Activity'], { size: 48 })}
                           </div>
                           <div>
-                            <h2 className="text-xl sm:text-2xl font-black text-primary leading-tight">{activeFlashcard.nombre}</h2>
-                            <p className="text-[9px] sm:text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{activeFlashcard.servicio}</p>
+                            <h2 className="text-3xl sm:text-4xl font-black text-foreground leading-tight tracking-tighter mb-1">{activeFlashcard.nombre}</h2>
+                            <div className="flex items-center justify-center gap-2">
+                              <span className="px-3 py-1 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-full">{activeFlashcard.servicio}</span>
+                              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{activeFlashcard.system || 'Medicina'}</span>
+                            </div>
                           </div>
                         </div>
 
-                        <div className="flex-grow overflow-y-auto space-y-3 sm:space-y-4 pr-1 text-left text-xs">
-                          <div>
-                            <p className="text-[9px] sm:text-[10px] font-black text-primary uppercase border-b border-primary/10 pb-1">Fisiopatología Integral</p>
-                            <p className="text-[11px] sm:text-xs mt-1 leading-relaxed font-medium text-muted-foreground">{activeFlashcard.definicionCaso}</p>
+                        <div className="flex-grow overflow-y-auto space-y-6 pr-2 custom-scrollbar relative z-10">
+                          {/* Definicion */}
+                          <div className="space-y-2">
+                            <p className="text-xs font-black text-primary uppercase tracking-widest flex items-center gap-2">
+                              <Info size={12} /> Definición Crítica
+                            </p>
+                            <div className="text-sm font-semibold text-foreground/90 bg-accent/20 p-4 rounded-2xl border-l-4 border-primary shadow-sm leading-relaxed">
+                              {activeFlashcard.definicionCaso}
+                            </div>
                           </div>
 
-                          {(activeFlashcard.etiologia || activeFlashcard.fisiopatologiaBasica) && (
-                            <div className="bg-accent/30 p-2 rounded-lg border border-accent">
-                              {activeFlashcard.etiologia && (
-                                <div className="mb-2">
-                                  <p className="text-[9px] font-black text-primary uppercase">¿Por qué sucede? (Etiología)</p>
-                                  <p className="text-[11px] mt-0.5 italic">{activeFlashcard.etiologia}</p>
-                                </div>
-                              )}
-                              {activeFlashcard.fisiopatologiaBasica && (
-                                <div>
-                                  <p className="text-[9px] font-black text-primary uppercase">Impacto en Paciente</p>
-                                  <p className="text-[11px] mt-0.5">{activeFlashcard.fisiopatologiaBasica}</p>
-                                </div>
-                              )}
-                            </div>
-                          )}
-
-                          {activeFlashcard.procedimientos && (
-                             <div className="bg-primary/5 p-2 rounded-lg border border-primary/10">
-                               <p className="text-[9px] font-black text-primary uppercase">Procedimientos Inmediatos</p>
-                               <ul className="text-[10px] mt-1 space-y-0.5">
-                                 {activeFlashcard.procedimientos.map((p, i) => (
-                                   <li key={i} className="flex gap-1">
-                                     <span className="text-primary">•</span>
-                                     <span className="font-bold">{p}</span>
-                                   </li>
-                                 ))}
-                               </ul>
-                             </div>
-                          )}
-
-                          <div className="grid grid-cols-2 gap-3">
-                            <div className="space-y-2">
-                              <p className="text-[9px] font-black text-primary uppercase flex items-center gap-1">
-                                <Activity size={10} /> Síntomas Clave
+                          {/* Clínica y Banderas Rojas */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-3">
+                              <p className="text-xs font-black text-primary uppercase flex items-center gap-2 tracking-widest">
+                                <Activity size={12} className="text-primary" /> Presentación Clínica
                               </p>
-                              <div className="flex flex-wrap gap-1">
-                                {(activeFlashcard.sintomasClave || activeFlashcard.clinica?.signosSintomas.slice(0, 3) || []).map((s, i) => (
-                                  <span key={i} className="text-[9px] font-bold px-1.5 py-0.5 bg-primary/5 border border-primary/10 rounded">{s}</span>
+                              <div className="flex flex-col gap-2">
+                                {(activeFlashcard.clinica?.signosSintomas || activeFlashcard.sintomasClave || []).map((s, i) => (
+                                  <div key={i} className="flex items-start gap-3 text-xs font-bold text-foreground/80 bg-accent/30 px-3 py-2.5 rounded-xl border border-accent hover:bg-accent/50 transition-colors">
+                                    <div className="w-1.5 h-1.5 bg-primary rounded-full mt-1.5 shrink-0" />
+                                    <span>{s}</span>
+                                  </div>
                                 ))}
                               </div>
                             </div>
-                            {(activeFlashcard.banderasRojas || activeFlashcard.clinica?.banderasRojas) && (
-                              <div className="space-y-2">
-                                <p className="text-[9px] font-black text-destructive uppercase flex items-center gap-1">
-                                  <AlertCircle size={10} /> Banderas Rojas
-                                </p>
-                                <div className="flex flex-wrap gap-1">
-                                  {(activeFlashcard.banderasRojas || activeFlashcard.clinica?.banderasRojas || []).slice(0, 3).map((br, i) => (
-                                    <span key={i} className="text-[9px] font-bold px-1.5 py-0.5 bg-destructive/5 text-destructive border border-destructive/10 rounded">{br}</span>
-                                  ))}
-                                </div>
+                            
+                            <div className="space-y-3">
+                              <p className="text-xs font-black text-destructive uppercase flex items-center gap-2 tracking-widest">
+                                <AlertTriangle size={12} className="text-destructive" /> Banderas Rojas
+                              </p>
+                              <div className="flex flex-col gap-2">
+                                {(activeFlashcard.clinica?.banderasRojas || activeFlashcard.banderasRojas || []).map((br, i) => (
+                                  <div key={i} className="flex items-start gap-3 text-xs font-black text-destructive bg-destructive/5 px-3 py-2.5 rounded-xl border border-destructive/20 hover:bg-destructive/10 transition-colors">
+                                    <AlertCircle size={12} className="shrink-0 mt-0.5" />
+                                    <span>{br}</span>
+                                  </div>
+                                ))}
                               </div>
-                            )}
+                            </div>
                           </div>
 
-                          {activeFlashcard.complicaciones && (
-                             <div>
-                               <p className="text-[9px] font-black text-primary uppercase">Posibles Complicaciones</p>
-                               <ul className="text-[10px] mt-1 space-y-0.5">
-                                 {activeFlashcard.complicaciones.map((c, i) => (
-                                   <li key={i} className="flex gap-1">
-                                     <span className="text-primary opacity-50">•</span>
-                                     <span>{c}</span>
-                                   </li>
-                                 ))}
-                               </ul>
-                             </div>
-                          )}
-
-                          {activeFlashcard.riesgosNoTratado && (
-                             <div className="bg-destructive/5 p-2 rounded-lg border border-destructive/10">
-                               <p className="text-[9px] font-black text-destructive uppercase">Riesgos (Si no se trata)</p>
-                               <ul className="text-[10px] mt-1 space-y-0.5">
-                                 {activeFlashcard.riesgosNoTratado.map((r, i) => (
-                                   <li key={i} className="flex gap-1">
-                                     <span className="text-destructive">•</span>
-                                     <span className="font-medium text-destructive/90">{r}</span>
-                                   </li>
-                                 ))}
-                               </ul>
-                             </div>
+                          {/* Maniobra de Exploracion */}
+                          {activeFlashcard.clinica?.maniobraExploracion && (
+                            <div className="bg-primary/5 rounded-2xl p-5 border border-primary/20 space-y-3">
+                              <p className="text-xs font-black text-primary uppercase tracking-widest flex items-center gap-2">
+                                <Search size={12} /> Maniobra de Exploración
+                              </p>
+                              <p className="text-sm font-bold text-primary/90 leading-relaxed italic">
+                                "{activeFlashcard.clinica.maniobraExploracion}"
+                              </p>
+                            </div>
                           )}
                         </div>
-                        <p className="text-center text-[9px] text-muted-foreground font-bold uppercase tracking-tighter animate-pulse shrink-0 pt-2 border-t border-border/50">Toca para invertir</p>
+                        
+                        <div className="pt-6 border-t border-border/50 flex flex-col items-center gap-3 shrink-0">
+                          <div className="flex items-center gap-2 text-primary font-black uppercase text-[10px] tracking-[0.3em] animate-bounce">
+                            <span>Descubrir Fisiopatología y Manejo</span>
+                            <RotateCw size={12} />
+                          </div>
+                          <p className="text-[9px] text-muted-foreground font-medium uppercase tracking-widest italic text-center">Referencia: {activeFlashcard.clinica?.cita || 'Protocolos MSP / Interno'}</p>
+                        </div>
                       </Card>
 
                       {/* Back */}
-                      <Card className="absolute inset-0 backface-hidden rotate-y-180 flex flex-col p-8 border-2 border-primary/20 shadow-2xl bg-primary text-primary-foreground">
-                        <div className="flex-grow space-y-6 overflow-y-auto pr-2 scrollbar-hide">
-                          <h3 className="text-2xl font-black border-b border-primary-foreground/20 pb-2">Manejo Clínico</h3>
-                          
+                      <Card className="absolute inset-0 backface-hidden rotate-y-180 flex flex-col p-6 sm:p-8 border-2 border-primary shadow-2xl bg-primary text-primary-foreground overflow-hidden">
+                        <div className="absolute top-0 right-0 p-12 opacity-[0.03] rotate-12 pointer-events-none">
+                          <Stethoscope size={120} />
+                        </div>
+                        <div className="absolute -bottom-32 -left-32 w-[320px] h-80 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+
+                        <div className="flex justify-between items-start mb-8 relative z-10">
+                          <div>
+                            <h3 className="text-3xl font-black tracking-tighter mb-1">Algoritmo de Acción</h3>
+                            <div className="h-1.5 w-16 bg-primary rounded-full mb-2" />
+                            <p className="text-[10px] font-black uppercase text-primary tracking-widest">{activeFlashcard.nombre}</p>
+                          </div>
+                          <div className="px-3 py-1 bg-white/10 rounded-lg backdrop-blur-md border border-white/10 flex items-center gap-2">
+                            <Clock size={12} className="text-primary" />
+                            <span className="text-[10px] font-black uppercase tracking-widest">Actualizado 2024</span>
+                          </div>
+                        </div>
+                        
+                        <div className="flex-grow space-y-8 overflow-y-auto pr-4 custom-scrollbar-white relative z-10 pb-4">
+                          {/* Fisiopatología Avanzada */}
                           <div className="space-y-4">
-                            <div>
-                              <p className="text-[10px] font-bold uppercase tracking-widest opacity-70">Diagnóstico (Gold Standard)</p>
-                              <p className="text-sm font-medium">{activeFlashcard.manejo?.diagnostico || 'Ver guía técnica.'}</p>
+                            <p className="text-xs font-black text-primary uppercase tracking-[0.2em] flex items-center gap-2">
+                              <Brain size={12} /> Fisiopatología por Niveles
+                            </p>
+                            <div className="prose prose-invert prose-sm max-w-none bg-white/5 p-6 rounded-3xl border border-white/10">
+                              <div className="markdown-body text-slate-200">
+                                <Markdown>{activeFlashcard.fisiopatologia?.textoTecnico || activeFlashcard.fisiopatologiaBasica || 'Información en proceso de actualización...'}</Markdown>
+                              </div>
                             </div>
-                            <div>
-                              <p className="text-[10px] font-bold uppercase tracking-widest opacity-70">Tratamiento / Dosis</p>
-                              <p className="text-sm font-medium whitespace-pre-line">{activeFlashcard.manejo?.tratamiento || 'Ver esquema MSP.'}</p>
-                            </div>
-                            <div>
-                              <p className="text-[10px] font-bold uppercase tracking-widest opacity-70">Criterio de Referencia</p>
-                              <p className="text-sm font-medium">{activeFlashcard.manejo?.criterioReferencia || 'Signos de alarma o falta de respuesta.'}</p>
-                            </div>
-                            {(activeFlashcard.manejo?.cuidadosEnfermeria || activeFlashcard.enfermeria) && (
-                              <div>
-                                <p className="text-[10px] font-bold uppercase tracking-widest opacity-70">Cuidados de Enfermería</p>
-                                <div className="text-sm font-medium bg-white/10 p-3 rounded-lg border border-white/10 mt-1 italic leading-relaxed space-y-2">
-                                  {activeFlashcard.manejo?.cuidadosEnfermeria && (
-                                    <p className="whitespace-pre-line">{activeFlashcard.manejo.cuidadosEnfermeria}</p>
-                                  )}
-                                  {activeFlashcard.enfermeria?.intervenciones && (
-                                    <div className="space-y-2">
-                                      {activeFlashcard.enfermeria.intervenciones.map((int: any, i: number) => (
-                                        <div key={i} className="flex gap-2">
-                                          <span className="text-primary-foreground">•</span>
-                                          <span><span className="font-black not-italic underline decoration-primary-foreground/30">{int.accion}</span> {int.razon}</span>
+                          </div>
+
+                          {/* Manejo Paso a Paso */}
+                          <div className="space-y-4">
+                            <p className="text-xs font-black text-primary uppercase tracking-[0.2em] flex items-center gap-2">
+                              <Zap size={12} /> Manejo Médico (Action Plan)
+                            </p>
+                            <div className="grid grid-cols-1 gap-4">
+                              <div className="bg-white/5 p-5 rounded-3xl border border-white/10 hover:bg-white/10 transition-colors">
+                                <div className="flex items-center gap-2 mb-3">
+                                  <Search size={12} className="text-primary" />
+                                  <p className="text-xs font-black uppercase tracking-widest text-primary/80">Abordaje Diagnóstico</p>
+                                </div>
+                                <p className="text-sm font-bold leading-relaxed">{activeFlashcard.manejo?.diagnostico || 'Evaluación clínica exhaustiva.'}</p>
+                              </div>
+
+                              <div className="bg-primary/20 p-6 rounded-3xl border border-primary/30 shadow-lg shadow-primary/10">
+                                <div className="flex items-center gap-2 mb-4">
+                                  <Plus size={12} className="text-primary" />
+                                  <p className="text-xs font-black uppercase tracking-widest text-primary">Esquema Terapéutico Maestro</p>
+                                </div>
+                                <div className="space-y-4">
+                                  <p className="text-sm font-bold leading-relaxed whitespace-pre-line text-slate-100 italic">
+                                    {activeFlashcard.manejo?.tratamiento}
+                                  </p>
+                                  {activeFlashcard.manejo?.tratamientoDetallado?.farmacos && (
+                                    <div className="grid grid-cols-1 gap-2 mt-4">
+                                      {activeFlashcard.manejo.tratamientoDetallado.farmacos.map((f: any, i: number) => (
+                                        <div key={i} className="flex justify-between items-center gap-3 bg-slate-900/50 p-3 rounded-2xl border border-white/5">
+                                          <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
+                                              <Pill size={12} />
+                                            </div>
+                                            <div>
+                                              <p className="text-[11px] font-black text-white">{f.nombre}</p>
+                                              <p className="text-[9px] text-slate-400 font-medium">{f.frecuencia || 'Ver obs.'}</p>
+                                            </div>
+                                          </div>
+                                          <div className="text-right">
+                                            <p className="text-xs font-black text-primary">{f.dosis}</p>
+                                          </div>
                                         </div>
                                       ))}
                                     </div>
                                   )}
                                 </div>
                               </div>
-                            )}
+
+                              {activeFlashcard.manejo?.criterioReferencia && (
+                                <div className="bg-red-500/10 p-5 rounded-3xl border border-red-500/20">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <Ambulance size={12} className="text-red-400" />
+                                    <p className="text-xs font-black uppercase tracking-widest text-red-400">Criterios de Referencia</p>
+                                  </div>
+                                  <p className="text-sm font-black text-red-200 italic">{activeFlashcard.manejo.criterioReferencia}</p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Nursing / Enfermería */}
+                          <div className="space-y-4">
+                            <p className="text-xs font-black text-primary uppercase tracking-[0.2em] flex items-center gap-2">
+                              <Heart size={12} /> Cuidados de Enfermería (NIC/NOC)
+                            </p>
+                            <div className="bg-slate-900/80 p-6 rounded-3xl border border-white/10 space-y-4">
+                                {activeFlashcard.enfermeria?.nanda && (
+                                    <div className="mb-2">
+                                        <p className="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-1">Diagnóstico NANDA</p>
+                                        <p className="text-xs font-bold text-slate-300">{activeFlashcard.enfermeria.nanda}</p>
+                                    </div>
+                                )}
+                                <div className="space-y-3">
+                                  {(activeFlashcard.enfermeria?.intervenciones || []).map((int: any, i: number) => (
+                                    <div key={i} className="flex gap-4 p-3 bg-white/5 rounded-2xl group hover:bg-white/10 transition-colors">
+                                      <div className="w-2 h-2 rounded-full bg-primary mt-2 shrink-0 group-hover:scale-125 transition-transform" />
+                                      <div className="space-y-1">
+                                        <p className="text-xs font-black text-white">{int.accion}</p>
+                                        <p className="text-[10px] text-slate-400 font-medium italic leading-relaxed">{int.razon}</p>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                            </div>
                           </div>
                         </div>
-                        <div className="mt-6 flex flex-col gap-2">
-                          <button 
-                            onClick={(e) => { 
-                              e.stopPropagation(); 
-                              handleAddTask(`Revisar protocolo: ${activeFlashcard.nombre}`, { source: 'Flashcard Study' });
-                              toast.success('Guardado en Tareas para revisión posterior');
-                            }}
-                            className="w-full py-2 bg-white text-primary font-black rounded-xl text-xs flex items-center justify-center gap-2"
-                          >
-                            <Bookmark size={14} /> Registrar para estudio
-                          </button>
+
+                        <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 shrink-0 relative z-10">
+                          <div className="flex items-center gap-3">
+                            <button 
+                              onClick={(e) => { 
+                                e.stopPropagation(); 
+                                handleAddTask(`Revisar protocolo: ${activeFlashcard.nombre}`, { source: 'Flashcard Study' });
+                                toast.success('Tarea agregada a mi guardía');
+                              }}
+                              className="p-3 bg-white/10 hover:bg-white/20 text-white rounded-2xl transition-all shadow-xl shadow-black/20"
+                            >
+                              <Bookmark size={12} />
+                            </button>
+                            <button 
+                              onClick={(e) => { 
+                                toggleFlashcardFavorite(activeFlashcard.id, e);
+                              }}
+                              className={`p-3 transition-all shadow-xl shadow-black/20 rounded-2xl ${favoriteFlashcardIds.includes(activeFlashcard.id) ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-white/10 hover:bg-white/20 text-white'}`}
+                              title={favoriteFlashcardIds.includes(activeFlashcard.id) ? 'Quitar de favoritos' : 'Añadir a favoritos'}
+                            >
+                              <Heart size={12} className={favoriteFlashcardIds.includes(activeFlashcard.id) ? 'fill-white' : ''} />
+                            </button>
+                          </div>
+                          
                           <button 
                             onClick={(e) => { e.stopPropagation(); setIsFlashcardOpen(false); }}
-                            className="w-full py-3 bg-primary-foreground/20 text-primary-foreground font-bold rounded-xl hover:bg-white/10 transition-all border border-white/20"
+                            className="w-full sm:w-auto px-4 sm:px-6 py-3.5 bg-primary text-white font-black text-xs uppercase tracking-[0.2em] rounded-2xl shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
                           >
                             Cerrar Flashcard
                           </button>
@@ -1735,16 +2156,16 @@ function App() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 20 }}
-                    className="w-full max-w-lg"
+                    className="w-full max-w-[512px]"
                   >
                     <Card className="space-y-6 shadow-2xl border-primary/20">
                       <div className="flex justify-between items-center">
                         <h3 className="text-2xl font-black flex items-center">
-                          <BookOpen size={24} className="mr-2 text-primary" />
+                          <BookOpen size={14} className="mr-2 text-primary" />
                           Nueva Actividad
                         </h3>
                         <button onClick={() => setIsBitacoraModalOpen(false)} className="p-2 hover:bg-accent rounded-full">
-                          <X size={20} />
+                          <X size={12} />
                         </button>
                       </div>
 
@@ -1811,7 +2232,7 @@ function App() {
                         <div className="flex flex-col gap-3 pt-2">
                           <label className="flex items-center justify-between p-3 rounded-xl border border-border bg-accent/5 cursor-pointer">
                             <div className="flex items-center">
-                              <Clipboard size={18} className="mr-2 text-primary" />
+                              <Clipboard size={12} className="mr-2 text-primary" />
                               <span className="text-sm font-medium">Crear tarea pendiente</span>
                             </div>
                             <input 
@@ -1845,16 +2266,16 @@ function App() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 20 }}
-                    className="w-full max-w-lg"
+                    className="w-full max-w-[512px]"
                   >
                     <Card className="space-y-6 shadow-2xl border-primary/20">
                       <div className="flex justify-between items-center">
                         <h3 className="text-2xl font-black flex items-center">
-                          <Clock size={24} className="mr-2 text-primary" />
+                          <Clock size={14} className="mr-2 text-primary" />
                           Registrar Turno
                         </h3>
                         <button onClick={() => setIsShiftModalOpen(false)} className="p-2 hover:bg-accent rounded-full">
-                          <X size={20} />
+                          <X size={12} />
                         </button>
                       </div>
 
@@ -1967,14 +2388,14 @@ function App() {
                                          type="time" 
                                          className="p-1 text-xs border border-border rounded bg-accent/20"
                                          value={newShift.horariosPorDia[dia]?.entrada || SHIFT_PRESETS[newShift.tipoTurno as keyof typeof SHIFT_PRESETS]?.start || '07:00'}
-                                         onChange={(e) => setNewShift({...newShift, horariosPorDia: {...newShift.horariosPorDia, [dia]: { ...(newShift.horariosPorDia[dia] || {}), entrada: e.target.value }}})} 
+                                         onChange={(e) => setNewShift({...newShift, horariosPorDia: {...newShift.horariosPorDia, [dia]: { ...(newShift.horariosPorDia[dia] || { entrada: '', salida: '' }), entrada: e.target.value }}})} 
                                        />
                                        <span className="text-xs text-muted-foreground">-</span>
                                        <input 
                                          type="time" 
                                          className="p-1 text-xs border border-border rounded bg-accent/20"
-                                         value={newShift.horariosPorDia[dia]?.salida || SHIFT_PRESETS[newShift.tipoTurno as keyof typeof SHIFT_PRESETS]?.end || '19:00'}
-                                         onChange={(e) => setNewShift({...newShift, horariosPorDia: {...newShift.horariosPorDia, [dia]: { ...(newShift.horariosPorDia[dia] || {}), salida: e.target.value }}})} 
+                                         value={newShift.horariosPorDia[dia]?.salida || SHIFT_PRESETS[newShift.tipoTurno as keyof typeof SHIFT_PRESETS]?.end || '20:00'}
+                                         onChange={(e) => setNewShift({...newShift, horariosPorDia: {...newShift.horariosPorDia, [dia]: { ...(newShift.horariosPorDia[dia] || { entrada: '', salida: '' }), salida: e.target.value }}})} 
                                        />
                                     </div>
                                   </div>
@@ -2101,7 +2522,7 @@ function App() {
             
             <div className="space-y-6 mb-8">
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={22} />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={13} />
                 <input 
                   type="text" 
                   placeholder="Buscar por nombre genérico, clase o indicación..." 
@@ -2149,7 +2570,7 @@ function App() {
                         </div>
                       </div>
                       <div className="p-3 rounded-2xl shadow-inner transition-transform group-hover:scale-110" style={{ backgroundColor: `${drug.color}40` }}>
-                        <DrugIcon className="text-primary" size={24} />
+                        <DrugIcon className="text-primary" size={14} />
                       </div>
                     </div>
                     
@@ -2183,7 +2604,7 @@ function App() {
                         className={`px-4 py-3 rounded-xl text-sm font-medium transition-all border ${isSelectedForCompare ? 'bg-primary text-primary-foreground border-primary shadow-inner' : 'border-border hover:bg-accent'}`}
                         title="Seleccionar para comparar"
                       >
-                        <CheckCircle2 size={20} className={isSelectedForCompare ? 'text-primary-foreground' : 'text-muted-foreground'} />
+                        <CheckCircle2 size={12} className={isSelectedForCompare ? 'text-primary-foreground' : 'text-muted-foreground'} />
                       </button>
                     </div>
                   </Card>
@@ -2192,7 +2613,7 @@ function App() {
               {filteredDrugs.length === 0 && (
                 <div className="col-span-full py-32 text-center">
                   <div className="w-20 h-20 bg-accent rounded-full flex items-center justify-center mx-auto mb-6">
-                    <Search size={40} className="text-muted-foreground opacity-20" />
+                    <Search size={24} className="text-muted-foreground opacity-20" />
                   </div>
                   <h3 className="text-xl font-bold text-muted-foreground">No se encontraron resultados</h3>
                   <p className="text-sm text-muted-foreground mt-2">Intenta con otro nombre genérico o categoría terapéutica.</p>
@@ -2231,7 +2652,7 @@ function App() {
                     onClick={() => setSelectedDrugsToCompare([])}
                     className="p-2 hover:bg-destructive/10 hover:text-destructive rounded-full text-muted-foreground transition-colors"
                   >
-                    <X size={20} />
+                    <X size={12} />
                   </button>
                 </motion.div>
               )}
@@ -2257,7 +2678,7 @@ function App() {
                   >
                     <div className="flex flex-col items-center text-center space-y-3">
                       <div className="p-3 bg-primary/10 rounded-xl text-primary group-hover:scale-110 transition-transform">
-                        <ServiceIcon size={24} />
+                        <ServiceIcon size={14} />
                       </div>
                       <h3 className="text-sm sm:text-base font-bold leading-tight">{servicio.name}</h3>
                     </div>
@@ -2270,7 +2691,7 @@ function App() {
                   onClick={() => setSelectedService(null)}
                   className="flex items-center text-primary font-bold hover:underline mb-2 text-sm"
                 >
-                  <ChevronRight size={16} className="rotate-180 mr-1" /> Volver a Servicios
+                  <ChevronRight size={12} className="rotate-180 mr-1" /> Volver a Servicios
                 </button>
                 <h3 className="text-xl sm:text-2xl font-bold border-l-4 border-primary pl-3">Medicina Interna</h3>
                 
@@ -2296,7 +2717,7 @@ function App() {
                     >
                       <div className="flex items-start space-x-4">
                         <div className="p-3 bg-primary/10 rounded-xl text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
-                          <block.icon size={24} />
+                          <block.icon size={14} />
                         </div>
                         <div>
                           <h4 className="font-bold text-lg">{block.title}</h4>
@@ -2313,7 +2734,7 @@ function App() {
                   onClick={() => setSelectedService(null)}
                   className="flex items-center text-primary font-bold hover:underline mb-2 text-sm"
                 >
-                  <ChevronRight size={16} className="rotate-180 mr-1" /> Volver a Servicios
+                  <ChevronRight size={12} className="rotate-180 mr-1" /> Volver a Servicios
                 </button>
                 <h3 className="text-xl sm:text-2xl font-bold border-l-4 border-primary pl-3">Salud Comunitaria</h3>
                 
@@ -2331,7 +2752,7 @@ function App() {
                     >
                       <div className="flex items-start space-x-4">
                         <div className="p-3 bg-primary/10 rounded-xl text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
-                          <block.icon size={24} />
+                          <block.icon size={14} />
                         </div>
                         <div>
                           <h4 className="font-bold text-lg">{block.title}</h4>
@@ -2348,7 +2769,7 @@ function App() {
                   onClick={() => setSelectedService(null)}
                   className="flex items-center text-primary font-bold hover:underline mb-2 text-sm"
                 >
-                  <ChevronRight size={16} className="rotate-180 mr-1" /> Volver a Servicios
+                  <ChevronRight size={12} className="rotate-180 mr-1" /> Volver a Servicios
                 </button>
                 <h3 className="text-xl sm:text-2xl font-bold border-l-4 border-primary pl-3">Gineco-Obstetricia</h3>
                 
@@ -2372,7 +2793,7 @@ function App() {
                     >
                       <div className="flex items-start space-x-4">
                         <div className="p-3 bg-primary/10 rounded-xl text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
-                          <block.icon size={24} />
+                          <block.icon size={14} />
                         </div>
                         <div>
                           <h4 className="font-bold text-lg">{block.title}</h4>
@@ -2389,10 +2810,10 @@ function App() {
                   onClick={() => setSelectedService(null)}
                   className="flex items-center text-primary font-bold hover:underline mb-2 text-sm"
                 >
-                  <ChevronRight size={16} className="rotate-180 mr-1" /> Volver a Servicios
+                  <ChevronRight size={12} className="rotate-180 mr-1" /> Volver a Servicios
                 </button>
                 <div className="flex items-center gap-3 border-l-4 border-red-500 pl-3">
-                   <AlertTriangle className="text-red-500" size={24} />
+                   <AlertTriangle className="text-red-500" size={14} />
                    <h3 className="text-xl sm:text-2xl font-bold">Servicio de Emergencias</h3>
                 </div>
                 
@@ -2411,7 +2832,7 @@ function App() {
                     >
                       <div className="flex items-start space-x-4">
                         <div className="p-3 bg-red-500/10 rounded-xl text-red-500 group-hover:bg-red-500 group-hover:text-white transition-all">
-                          <block.icon size={24} />
+                          <block.icon size={14} />
                         </div>
                         <div>
                           <h4 className="font-bold text-lg">{block.title}</h4>
@@ -2428,7 +2849,7 @@ function App() {
                   onClick={() => setSelectedService(null)}
                   className="flex items-center text-primary font-bold hover:underline mb-2 text-sm"
                 >
-                  <ChevronRight size={16} className="rotate-180 mr-1" /> Volver a Servicios
+                  <ChevronRight size={12} className="rotate-180 mr-1" /> Volver a Servicios
                 </button>
                 <h3 className="text-xl sm:text-2xl font-bold border-l-4 border-primary pl-3">Estructura del Servicio de Cirugía y Quirófano</h3>
                 
@@ -2457,7 +2878,7 @@ function App() {
                     >
                       <div className="flex items-start space-x-4">
                         <div className="p-3 bg-primary/10 rounded-xl text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
-                          <block.icon size={24} />
+                          <block.icon size={14} />
                         </div>
                         <div>
                           <h4 className="font-bold text-lg">{block.title}</h4>
@@ -2500,7 +2921,7 @@ function App() {
                   }}
                   className="flex items-center text-primary font-bold hover:underline mb-2 text-sm"
                 >
-                  <ChevronRight size={16} className="rotate-180 mr-1" /> Volver {communitySubTab ? 'a Salud Comunitaria' : cirugiaSubTab ? 'a Cirugía' : ginecoSubTab ? 'a Gineco-Obstetricia' : internaSubTab ? 'a Medicina Interna' : emergencySubTab ? 'a Emergencias' : 'a Servicios'}
+                  <ChevronRight size={12} className="rotate-180 mr-1" /> Volver {communitySubTab ? 'a Salud Comunitaria' : cirugiaSubTab ? 'a Cirugía' : ginecoSubTab ? 'a Gineco-Obstetricia' : internaSubTab ? 'a Medicina Interna' : emergencySubTab ? 'a Emergencias' : 'a Servicios'}
                 </button>
                 <h3 className="text-xl sm:text-2xl font-bold border-l-4 border-primary pl-3">
                   {communitySubTab ? (
@@ -2564,44 +2985,48 @@ function App() {
                           <>
                             <div className="mb-2 mt-2 text-xs font-bold text-muted-foreground uppercase px-2">Claves de Emergencia</div>
                             {[
-                              { id: 'roja', name: 'Clave Roja (Hemorragia)', desc: 'Choque Hipovolémico', icon: Droplet },
-                              { id: 'azul', name: 'Clave Azul (Hipertensión)', desc: 'Preeclampsia / Eclampsia', icon: Activity },
-                              { id: 'amarilla', name: 'Clave Amarilla (Sepsis)', desc: 'Sepsis y Choque Séptico', icon: ShieldAlert }
-                            ].map(topic => (
+                              { id: 'roja', name: 'Clave Roja (Hemorragia)', desc: 'Choque Hipovolémico', icon: Droplet as any },
+                              { id: 'azul', name: 'Clave Azul (Hipertensión)', desc: 'Preeclampsia / Eclampsia', icon: Activity as any },
+                              { id: 'amarilla', name: 'Clave Amarilla (Sepsis)', desc: 'Sepsis y Choque Séptico', icon: ShieldAlert as any }
+                            ].map(topic => {
+                              const Icon = topic.icon;
+                              return (
                               <button
                                 key={topic.id}
                                 onClick={() => setSelectedClaveTopic(topic.id)}
                                 className={`w-full text-left p-3 rounded-lg border transition-all text-sm flex items-center space-x-3 mb-2 ${selectedClaveTopic === topic.id ? 'bg-primary text-primary-foreground border-primary shadow-md' : 'bg-card border-border hover:bg-accent'}`}
                               >
-                                <topic.icon size={18} className={selectedClaveTopic === topic.id ? 'text-primary-foreground text-white' : 'text-primary'} />
+                                <Icon size={12} className={selectedClaveTopic === topic.id ? 'text-primary-foreground text-white' : 'text-primary'} />
                                 <div>
                                   <p className="font-bold truncate leading-tight">{topic.name}</p>
                                   <p className={`text-[10px] ${selectedClaveTopic === topic.id ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>{topic.desc}</p>
                                 </div>
                               </button>
-                            ))}
+                            )})}
                           </>
                         ) : ginecoSubTab === 'parto' ? (
                           <>
                             <div className="mb-2 mt-2 text-xs font-bold text-muted-foreground uppercase px-2">Temas Clínicos</div>
                             {[
-                              { id: 'parto', name: 'Trabajo de Parto y Parto', icon: Activity, desc: 'Mecanismos, Partograma, MATPE' },
-                              { id: 'puerperio', name: 'Puerperio', icon: History, desc: 'Las 4 Ts, Involución, Bristol' },
-                              { id: 'lactancia', name: 'Lactancia y RN', icon: Heart, desc: 'Técnicas, lactancia' },
-                              { id: 'escalas', name: 'Escalas Neonatales', icon: Clipboard, desc: 'APGAR, Silverman, Capurro, Usher' }
-                            ].map(topic => (
+                              { id: 'parto', name: 'Trabajo de Parto y Parto', icon: Activity as any, desc: 'Mecanismos, Partograma, MATPE' },
+                              { id: 'puerperio', name: 'Puerperio', icon: History as any, desc: 'Las 4 Ts, Involución, Bristol' },
+                              { id: 'lactancia', name: 'Lactancia y RN', icon: Heart as any, desc: 'Técnicas, lactancia' },
+                              { id: 'escalas', name: 'Escalas Neonatales', icon: Clipboard as any, desc: 'APGAR, Silverman, Capurro, Usher' }
+                            ].map(topic => {
+                              const Icon = topic.icon;
+                              return (
                               <button
                                 key={topic.id}
                                 onClick={() => { setSelectedPartoTopic(topic.id); setSelectedDisease(null); }}
                                 className={`w-full text-left p-3 rounded-lg border transition-all text-sm mb-2 ${selectedPartoTopic === topic.id ? 'bg-primary text-primary-foreground border-primary shadow-md' : 'bg-card border-border hover:bg-accent'}`}
                               >
                                 <div className="flex items-center gap-2">
-                                  <topic.icon size={16} className={selectedPartoTopic === topic.id ? 'text-white' : 'text-primary'} />
+                                  <Icon size={12} className={selectedPartoTopic === topic.id ? 'text-white' : 'text-primary'} />
                                   <p className="font-bold truncate">{topic.name}</p>
                                 </div>
                                 <p className="text-[10px] opacity-70 truncate ml-6">{topic.desc}</p>
                               </button>
-                            ))}
+                            )})}
 
                             <div className="mb-2 mt-4 text-xs font-bold text-muted-foreground uppercase px-2">Patologías</div>
                             {DISEASES.filter(d => ['go4','go7','go9','go10','go11'].includes(d.id)).map(disease => (
@@ -2628,7 +3053,7 @@ function App() {
                           >
                             <div className="flex items-center gap-2">
                               <span className={selectedScaleId === score.id ? 'text-white' : 'text-primary'}>
-                                {React.cloneElement(score.icon as React.ReactElement, { size: 14 })}
+                                {React.createElement(score.icon as any, { size: 14 })}
                               </span>
                               <p className="font-bold truncate">{score.name}</p>
                             </div>
@@ -2637,22 +3062,24 @@ function App() {
                         ))
                       ) : selectedService === 'Medicina Interna' && internaSubTab === 'visita' ? (
                         [
-                          { id: 'soap', name: 'SOAP (Evolución Diaria)', icon: FileText, desc: 'Estructura estándar de nota médica' },
-                          { id: 'saer', name: 'SAER / SBAR (Emergencia)', icon: AlertTriangle, desc: 'Comunicación crítica de crisis' },
-                          { id: 'fasthugs', name: 'FAST HUGS BID (Seguridad)', icon: ShieldCheck, desc: 'Checklist de seguridad del paciente' }
-                        ].map(tool => (
+                          { id: 'soap', name: 'SOAP (Evolución Diaria)', icon: FileText as any, desc: 'Estructura estándar de nota médica' },
+                          { id: 'saer', name: 'SAER / SBAR (Emergencia)', icon: AlertTriangle as any, desc: 'Comunicación crítica de crisis' },
+                          { id: 'fasthugs', name: 'FAST HUGS BID (Seguridad)', icon: ShieldCheck as any, desc: 'Checklist de seguridad del paciente' }
+                        ].map(tool => {
+                          const Icon = tool.icon;
+                          return (
                           <button
                             key={tool.id}
                             onClick={() => setSelectedVisitaTool(tool.id)}
                             className={`w-full text-left p-3 rounded-lg border transition-all text-sm ${selectedVisitaTool === tool.id ? 'bg-primary text-primary-foreground border-primary shadow-md' : 'bg-card border-border hover:bg-accent'}`}
                           >
                             <div className="flex items-center gap-2">
-                              <tool.icon size={16} className={selectedVisitaTool === tool.id ? 'text-white' : 'text-primary'} />
+                              <Icon size={12} className={selectedVisitaTool === tool.id ? 'text-white' : 'text-primary'} />
                               <p className="font-bold truncate">{tool.name}</p>
                             </div>
                             <p className="text-[10px] opacity-70 truncate ml-6">{tool.desc}</p>
                           </button>
-                        ))
+                        )})
 
                       ) : selectedService === 'Medicina Interna' && internaSubTab === 'diagnostico' ? (
                         [
@@ -2666,7 +3093,7 @@ function App() {
                             className={`w-full text-left p-3 rounded-lg border transition-all text-sm ${selectedDiagTool === tool.id ? 'bg-primary text-primary-foreground border-primary shadow-md' : 'bg-card border-border hover:bg-accent'}`}
                           >
                             <div className="flex items-center gap-2">
-                              <tool.icon size={16} className={selectedDiagTool === tool.id ? 'text-white' : 'text-primary'} />
+                              <tool.icon size={12} className={selectedDiagTool === tool.id ? 'text-white' : 'text-primary'} />
                               <p className="font-bold truncate">{tool.name}</p>
                             </div>
                             <p className="text-[10px] opacity-70 truncate ml-6">{tool.desc}</p>
@@ -2735,7 +3162,7 @@ function App() {
                                 className={`w-full text-left p-3 rounded-lg border transition-all text-sm ${selectedScaleId === score.id ? 'bg-red-500 text-white border-red-500 shadow-md' : 'bg-card border-border hover:bg-accent'}`}
                               >
                                 <div className="flex items-center gap-2">
-                                  <Calculator size={14} className={selectedScaleId === score.id ? 'text-white' : 'text-red-500'} />
+                                  <Calculator size={12} className={selectedScaleId === score.id ? 'text-white' : 'text-red-500'} />
                                   <p className="font-bold truncate">{score.name}</p>
                                 </div>
                                 <p className="text-[10px] opacity-70 truncate ml-5">{score.system}</p>
@@ -2772,7 +3199,7 @@ function App() {
                                onClick={() => setCirugiaSubTab(block.id)}
                                className={`w-full text-left p-3 rounded-lg border transition-all text-sm flex items-center space-x-2 ${cirugiaSubTab === block.id ? 'bg-primary text-primary-foreground border-primary shadow-md' : 'bg-card border-border hover:bg-accent'}`}
                              >
-                               <block.icon size={16} />
+                               <block.icon size={12} />
                                <p className="font-bold truncate">{block.title}</p>
                              </button>
                            ))
@@ -2801,7 +3228,7 @@ function App() {
                     {selectedService === 'Cirugía' && cirugiaSubTab === 'cir_entorno' && !selectedDisease && (
                       <Card className="space-y-6">
                         <div className="flex items-center space-x-3 text-primary border-b pb-4">
-                          <Scissors size={28} />
+                          <Scissors size={17} />
                           <h4 className="text-2xl font-bold">1. El Sistema de Contención Biológica (Profundización)</h4>
                         </div>
                         
@@ -2809,7 +3236,7 @@ function App() {
                           
                           {/* 1. Dinámica de Presiones y Filtrado de Aire */}
                           <div className="space-y-3">
-                            <h5 className="font-bold text-lg text-primary flex items-center gap-2"><Wind size={20}/> 1. Dinámica de Presiones y Filtrado de Aire</h5>
+                            <h5 className="font-bold text-lg text-primary flex items-center gap-2"><Wind size={12}/> 1. Dinámica de Presiones y Filtrado de Aire</h5>
                             <p className="text-muted-foreground">El quirófano no es una habitación común; es un entorno de presión controlada.</p>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                               <div className="p-3 bg-blue-50/50 border border-blue-100 rounded-lg shadow-sm">
@@ -2829,11 +3256,11 @@ function App() {
 
                           {/* 2. Protocolos de Flujo, Tráfico y Movimiento */}
                           <div className="space-y-3 mt-6">
-                            <h5 className="font-bold text-lg text-primary flex items-center gap-2"><RotateCw size={20}/> 2. Protocolos de Flujo, Tráfico y Movimiento</h5>
+                            <h5 className="font-bold text-lg text-primary flex items-center gap-2"><RotateCw size={12}/> 2. Protocolos de Flujo, Tráfico y Movimiento</h5>
                             <p className="text-muted-foreground">La bioseguridad depende de cómo se mueven las personas, el aire y los objetos en el espacio para mantener el aislamiento bacteriológico.</p>
                             <div className="bg-accent/30 p-4 border rounded-xl space-y-4">
                                <div className="flex items-start gap-4 pb-3 border-b border-border/50">
-                                 <div className="p-2 bg-background rounded-full border shadow-sm mt-1"><ArrowUpDown size={16} className="text-primary"/></div>
+                                 <div className="p-2 bg-background rounded-full border shadow-sm mt-1"><ArrowUpDown size={12} className="text-primary"/></div>
                                  <div className="w-full">
                                    <strong className="text-foreground text-sm">Flujo Unidireccional y Tráfico de Materiales:</strong>
                                    <p className="text-xs text-muted-foreground mt-1">El instrumental estéril entra por una vía y el material contaminado sale por otra (zona de transferencia de sucio) para prohibir el cruce de vías e impedir la contaminación cruzada.</p>
@@ -2841,7 +3268,7 @@ function App() {
                                </div>
 
                                <div className="flex items-start gap-4 pb-3 border-b border-border/50">
-                                 <div className="p-2 bg-background rounded-full border shadow-sm mt-1"><Users size={16} className="text-primary"/></div>
+                                 <div className="p-2 bg-background rounded-full border shadow-sm mt-1"><Users size={12} className="text-primary"/></div>
                                  <div className="w-full">
                                    <strong className="text-foreground text-sm">Tránsito del Personal (Comportamiento en Sala):</strong>
                                    <ul className="list-disc pl-5 text-xs text-muted-foreground mt-1 space-y-1">
@@ -2852,7 +3279,7 @@ function App() {
                                </div>
 
                                <div className="flex items-start gap-4 pb-3 border-b border-border/50">
-                                 <div className="p-2 bg-background rounded-full border shadow-sm mt-1"><Wind size={16} className="text-primary"/></div>
+                                 <div className="p-2 bg-background rounded-full border shadow-sm mt-1"><Wind size={12} className="text-primary"/></div>
                                  <div className="w-full">
                                    <strong className="text-foreground text-sm">Validación del Flujo de Aire (Laminar):</strong>
                                    <p className="text-xs text-muted-foreground mt-1 mb-2">El aire ultrafiltrado (HEPA) entra desde el techo (difusores de flujo laminar) directamente sobre la mesa quirúrgica, y el aire cargado de partículas se extrae por rejillas a nivel del suelo en las esquinas de la sala.</p>
@@ -2867,7 +3294,7 @@ function App() {
                                </div>
 
                                <div className="flex items-start gap-4">
-                                 <div className="p-2 bg-background rounded-full border shadow-sm mt-1"><Settings size={16} className="text-primary"/></div>
+                                 <div className="p-2 bg-background rounded-full border shadow-sm mt-1"><Settings size={12} className="text-primary"/></div>
                                  <div className="w-full">
                                    <strong className="text-foreground text-sm flex items-center gap-2">Gestión de Puertas <span className="text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full border border-red-200">Norma Crítica</span></strong>
                                    <p className="text-xs text-muted-foreground mt-1">Cada vez que una puerta se abre, la <strong>presión positiva colapsa transitoriamente</strong> y el aire del pasillo (Gris) puede ingresar. <strong>Regla de oro:</strong> El equipo completo ingresa y permanece hasta concluir. Si la puerta debe abrirse, debe ser lo mínimo y cerrarse rápidamente.</p>
@@ -2878,13 +3305,13 @@ function App() {
 
                           {/* 3. El Triángulo de Asepsia */}
                           <div className="space-y-3 mt-6">
-                            <h5 className="font-bold text-lg text-primary flex items-center gap-2"><ShieldCheck size={20}/> 3. El Triángulo de Asepsia (Mecánica de Barrera)</h5>
+                            <h5 className="font-bold text-lg text-primary flex items-center gap-2"><ShieldCheck size={12}/> 3. El Triángulo de Asepsia (Mecánica de Barrera)</h5>
                             <p className="text-muted-foreground">Define las defensas estructuradas para contener la microbiota del personal, esterilizar el sitio quirúrgico y proteger al paciente frente a patógenos externos.</p>
                             
                             <div className="bg-card border rounded-xl overflow-hidden">
                               {/* Barrera Primaria */}
                               <div className="p-4 border-b border-border/50 bg-indigo-50/30 dark:bg-indigo-900/10 dark:border-indigo-900/30">
-                                <strong className="text-indigo-800 dark:text-indigo-300 text-sm flex items-center gap-2 mb-1"><User size={16}/> Barrera Primaria (Hardware Personal)</strong>
+                                <strong className="text-indigo-800 dark:text-indigo-300 text-sm flex items-center gap-2 mb-1"><User size={12}/> Barrera Primaria (Hardware Personal)</strong>
                                 <p className="text-xs text-muted-foreground mb-2">Pijama quirúrgica, gorro envolvente, mascarilla (cubriendo nariz y boca herméticamente) y calzado de uso exclusivo.</p>
                                 <div className="bg-background/80 p-2 rounded text-[11px] text-foreground border border-border">
                                   <strong className="text-indigo-700 dark:text-indigo-400">Cuidado y Manejo:</strong> La pijama no debe salir bajo ninguna circunstancia de la zona gris/blanca. Si se humedece con fluidos corporales o sudor excesivo, debe cambiarse inmediatamente porque el líquido transporta bacterias de la piel a la superficie exterior.
@@ -2893,13 +3320,13 @@ function App() {
                               
                               {/* Barrera Secundaria */}
                               <div className="p-4 border-b border-border/50 bg-purple-50/30 dark:bg-purple-900/10 dark:border-purple-900/30">
-                                <strong className="text-purple-800 dark:text-purple-300 text-sm flex items-center gap-2 mb-1"><Box size={16}/> Barrera Secundaria (Perímetro Estéril)</strong>
+                                <strong className="text-purple-800 dark:text-purple-300 text-sm flex items-center gap-2 mb-1"><Box size={12}/> Barrera Secundaria (Perímetro Estéril)</strong>
                                 <p className="text-xs text-muted-foreground mb-2">Batas estériles de manga larga con puños ajustados y campos quirúrgicos (telas o polímeros impermeables de grado médico).</p>
                                 <div className="bg-background/80 p-2 rounded text-[11px] text-foreground border border-border mb-2">
                                   <strong className="text-purple-700 dark:text-purple-400">Cuidado y Manejo:</strong> Las batas se consideran estériles <em>sólo en la parte delantera (desde el pecho hasta el nivel del campo estéril), y las mangas (hasta 5 cm por encima del codo)</em>. La espalda, escote y axilas <strong>nunca se consideran estériles</strong> una vez puestas.
                                 </div>
                                 <div className="flex gap-2 items-start bg-red-50/50 dark:bg-red-900/10 p-2 border border-red-100 dark:border-red-900/20 rounded">
-                                  <AlertTriangle size={14} className="text-red-500 shrink-0 mt-0.5" />
+                                  <AlertTriangle size={12} className="text-red-500 shrink-0 mt-0.5" />
                                   <p className="text-[11px] text-red-900 dark:text-red-300">
                                     <strong>¿Cuándo sabemos que se rompió la barrera?</strong> 
                                     <br/>1) <strong>Strike-through (Capilaridad):</strong> Si la tela estéril (campo o bata) se moja y entra en contacto con una superficie no estéril, el líquido actúa como "puente" y los microorganismos suben por capilaridad a la superficie estéril.
@@ -2911,7 +3338,7 @@ function App() {
                               
                               {/* Barrera Química y Reprocesamiento */}
                               <div className="p-4 bg-pink-50/30 dark:bg-pink-900/10">
-                                <strong className="text-pink-800 dark:text-pink-300 text-sm flex items-center gap-2 mb-1"><Droplet size={16}/> Barrera Química y Limpieza de Instrumentos</strong>
+                                <strong className="text-pink-800 dark:text-pink-300 text-sm flex items-center gap-2 mb-1"><Droplet size={12}/> Barrera Química y Limpieza de Instrumentos</strong>
                                 <p className="text-xs text-muted-foreground mb-2">Uso de antisépticos de acción residual y gestión de la biocarga en los equipos antes de su uso.</p>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
                                   <div className="bg-background/80 p-2 rounded text-[11px] text-foreground border border-border">
@@ -2936,7 +3363,7 @@ function App() {
 {selectedService === 'Cirugía' && cirugiaSubTab === 'cir_zonificacion' && !selectedDisease && (
                       <Card className="space-y-6">
                         <div className="flex items-center space-x-3 text-primary border-b border-border/50 pb-4">
-                          <Shield size={28} />
+                          <Shield size={17} />
                           <h4 className="text-2xl font-bold">2. Zonificación Estándar (Arquitectura Quirúrgica)</h4>
                         </div>
                         <div className="text-sm text-foreground space-y-6 pt-2">
@@ -2953,7 +3380,7 @@ function App() {
                           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                             {/* Zona Negra */}
                             <div className="p-5 bg-gray-500/10 border-t-8 border-gray-500 rounded-b-2xl shadow-sm relative group flex flex-col h-full">
-                              <div className="absolute top-0 right-0 p-3 opacity-5"><MapPin size={64}/></div>
+                              <div className="absolute top-0 right-0 p-3 opacity-5"><MapPin size={38}/></div>
                               <div className="mb-4">
                                 <h5 className="font-black text-gray-800 dark:text-gray-200 text-xl tracking-tight">Zona Negra</h5>
                                 <span className="font-semibold text-xs uppercase tracking-wider text-gray-500 block mb-2">Área No Restringida</span>
@@ -2990,14 +3417,14 @@ function App() {
                               </div>
                           
                               <div className="bg-gray-200 dark:bg-gray-800 p-3 rounded-xl text-xs border border-gray-300 dark:border-gray-700 mt-4">
-                                <strong className="text-gray-900 dark:text-gray-100 flex items-center gap-1 mb-1"><AlertCircle size={14}/> Límite Crítico: Trampa de Botas</strong> 
+                                <strong className="text-gray-900 dark:text-gray-100 flex items-center gap-1 mb-1"><AlertCircle size={12}/> Límite Crítico: Trampa de Botas</strong> 
                                 Barrera física tipo banca donde el circulante se sienta, se retira el calzado de calle (lado negro), coloca cubrebotas y gira hacia el lado restringido (lado gris).
                               </div>
                             </div>
                             
                             {/* Zona Gris */}
                             <div className="p-5 bg-yellow-500/10 border-t-8 border-yellow-500 rounded-b-2xl shadow-sm relative group flex flex-col h-full">
-                              <div className="absolute top-0 right-0 p-3 opacity-5"><MapPin size={64}/></div>
+                              <div className="absolute top-0 right-0 p-3 opacity-5"><MapPin size={38}/></div>
                               <div className="mb-4">
                                 <h5 className="font-black text-yellow-800 dark:text-yellow-300 text-xl tracking-tight">Zona Gris</h5>
                                 <span className="font-semibold text-xs uppercase tracking-wider text-yellow-600 dark:text-yellow-500 block mb-2">Área Semirestringida</span>
@@ -3035,14 +3462,14 @@ function App() {
                               </div>
                           
                               <div className="bg-yellow-100 dark:bg-yellow-900/40 p-3 rounded-xl text-xs border border-yellow-200 dark:border-yellow-800 mt-4">
-                                <strong className="text-yellow-900 dark:text-yellow-200 flex items-center gap-1 mb-1"><AlertCircle size={14}/> Límite Crítico: Estación de Lavado</strong> 
+                                <strong className="text-yellow-900 dark:text-yellow-200 flex items-center gap-1 mb-1"><AlertCircle size={12}/> Límite Crítico: Estación de Lavado</strong> 
                                 En esta zona se realiza el <strong>Lavado Quirúrgico de Manos (fricción de 3-5 minutos)</strong> paso vital e inmediato previo a cruzar las puertas hacia la zona blanca.
                               </div>
                             </div>
                           
                             {/* Zona Blanca */}
                             <div className="p-5 bg-red-500/10 border-t-8 border-red-500 rounded-b-2xl shadow-sm relative group flex flex-col h-full">
-                              <div className="absolute top-0 right-0 p-3 opacity-5"><MapPin size={64}/></div>
+                              <div className="absolute top-0 right-0 p-3 opacity-5"><MapPin size={38}/></div>
                               <div className="mb-4">
                                 <h5 className="font-black text-red-800 dark:text-red-300 text-xl tracking-tight">Zona Blanca</h5>
                                 <span className="font-semibold text-xs uppercase tracking-wider text-red-600 dark:text-red-500 block mb-2">Área Máxima Restricción</span>
@@ -3080,7 +3507,7 @@ function App() {
                               </div>
                           
                               <div className="bg-red-100 dark:bg-red-900/40 p-3 rounded-xl text-xs border border-red-200 dark:border-red-800 mt-4">
-                                <strong className="text-red-900 dark:text-red-200 flex items-center gap-1 mb-1"><AlertCircle size={14}/> Límite Crítico: Campo Estéril</strong> 
+                                <strong className="text-red-900 dark:text-red-200 flex items-center gap-1 mb-1"><AlertCircle size={12}/> Límite Crítico: Campo Estéril</strong> 
                                 El mantenimiento absoluto de la asepsia en un radio estricto sobre y alrededor del paciente. Manos estériles siempre deben mantenerse empuñadas arriba de la cintura y bajo los hombros.
                               </div>
                             </div>
@@ -3088,7 +3515,7 @@ function App() {
 
                           {/* 5. El Sistema de Contención Biológica */}
                           <div className="mt-8 bg-blue-50/50 dark:bg-blue-900/10 p-5 rounded-xl border border-blue-200 dark:border-blue-800/50">
-                            <h5 className="font-bold text-lg text-blue-800 dark:text-blue-300 flex items-center gap-2 mb-3"><Activity size={20}/> 5. El Sistema de Contención Biológica (El "Desenlace")</h5>
+                            <h5 className="font-bold text-lg text-blue-800 dark:text-blue-300 flex items-center gap-2 mb-3"><Activity size={12}/> 5. El Sistema de Contención Biológica (El "Desenlace")</h5>
                             
                             <p className="text-sm text-blue-900/80 dark:text-blue-200/80 mb-4">
                               <strong className="text-blue-900 dark:text-blue-200">Introducción:</strong> El diseño de "pasillo limpio" y "pasillo sucio" evita que el instrumental utilizado se cruce con el material estéril, rompiendo la cadena de transmisión.
@@ -3115,7 +3542,7 @@ function App() {
                                     <p className="text-xs text-foreground">La presencia bacteriana activa una cascada de citocinas proinflamatorias localizadas, que pueden derivar en <strong className="text-red-500 dark:text-red-400">dehiscencia de suturas</strong> o, en el peor de los casos, <strong className="text-red-500 dark:text-red-400">sepsis sistémica por traslocación</strong>.</p>
                                   </div>
                                   <div className="bg-red-50 dark:bg-red-900/10 p-3 rounded shadow-sm border border-red-200 dark:border-red-900/30">
-                                    <strong className="text-xs text-red-800 dark:text-red-300 flex items-center gap-1 mb-1"><ShieldAlert size={14}/> Relación con Comorbilidades:</strong>
+                                    <strong className="text-xs text-red-800 dark:text-red-300 flex items-center gap-1 mb-1"><ShieldAlert size={12}/> Relación con Comorbilidades:</strong>
                                     <p className="text-[11px] text-red-900 dark:text-red-200">En pacientes con <strong className="text-red-950 dark:text-red-100">Diabetes</strong> (común en el HPAS), la falla en la zonificación es doblemente peligrosa, ya que la hiperglucemia de base dificulta la respuesta de los macrófagos para limpiar esa contaminación externa.</p>
                                   </div>
                                 </div>
@@ -3130,7 +3557,7 @@ function App() {
                     {selectedService === 'Cirugía' && cirugiaSubTab === 'cir_equipo' && !selectedDisease && (
                       <Card className="space-y-6">
                         <div className="flex items-center space-x-3 text-primary">
-                          <Zap size={24} />
+                          <Zap size={14} />
                           <h4 className="text-xl font-bold">3. Equipamiento y Mobiliario Clínico</h4>
                         </div>
                         <div className="space-y-6 text-sm text-foreground">
@@ -3163,7 +3590,7 @@ function App() {
                             </div>
                             
                             <div className="bg-orange-50 dark:bg-orange-900/10 border-l-4 border-orange-500 p-3 rounded-r-lg mt-2">
-                                <h5 className="font-bold text-orange-700 dark:text-orange-400 flex items-center gap-2"><Zap size={14}/> Unidad de Electrocirugía (Bisturí eléctrico)</h5>
+                                <h5 className="font-bold text-orange-700 dark:text-orange-400 flex items-center gap-2"><Zap size={12}/> Unidad de Electrocirugía (Bisturí eléctrico)</h5>
                                 <p className="text-orange-900/80 dark:text-orange-200/80 text-xs mt-1">Con opciones de corte y coagulación (monopolar y bipolar).</p>
                                 <ul className="list-disc pl-5 text-orange-900 dark:text-orange-200 text-xs mt-1 space-y-1">
                                   <li><strong>Punto clave circulante:</strong> Colocación de placa de retorno en zona muscular limpia y vascularizada.</li>
@@ -3219,20 +3646,20 @@ function App() {
                     {selectedService === 'Cirugía' && cirugiaSubTab === 'cir_instrumental' && !selectedDisease && (
                       <Card className="space-y-6">
                         <div className="flex items-center space-x-3 text-primary border-b pb-4">
-                          <Scissors size={28} />
+                          <Scissors size={17} />
                           <h4 className="text-2xl font-bold">4. Instrumental Quirúrgico y Organización</h4>
                         </div>
                         <div className="text-sm text-foreground space-y-8 pt-2">
                            
                           <div className="space-y-6">
                             <div className="flex items-center gap-2 mb-2">
-                                <LayoutDashboard className="text-primary" size={20} />
+                                <LayoutDashboard className="text-primary" size={12} />
                                 <h5 className="font-bold text-lg text-primary">Organización de la Mesa de Riñón</h5>
                             </div>
                             <p className="text-muted-foreground text-xs">La mesa rectangular (o de riñón) sirve para la preparación de bultos, ropa y organización inicial del material estéril auxiliar a la cirugía.</p>
                             
                             {/* Graphic representation of Mesa de Riñón */}
-                            <div className="bg-accent/10 border-2 border-border rounded-xl p-4 sm:p-6 shadow-inner mx-auto max-w-4xl">
+                            <div className="bg-accent/10 border-2 border-border rounded-xl p-4 sm:p-6 shadow-inner mx-auto max-w-[896px]">
                               <div className="w-full relative shadow-md flex bg-card rounded-t-[100px] rounded-b-xl border border-border h-[250px] sm:h-[300px] overflow-hidden">
                                 {/* Tercio Izquierdo: Instrumental */}
                                 <div className="w-1/3 border-r border-border border-dashed p-4 flex flex-col items-center justify-center relative group">
@@ -3308,13 +3735,13 @@ function App() {
 
                           <div className="space-y-6 pt-6 border-t border-border">
                             <div className="flex items-center gap-2 mb-2">
-                                <Columns className="text-primary" size={20} />
+                                <Columns className="text-primary" size={12} />
                                 <h5 className="font-bold text-lg text-primary">Organización de la Mesa de Mayo</h5>
                             </div>
                             <p className="text-muted-foreground text-xs">La mesa de Mayo (o mesa puente) se coloca por encima del paciente. Contiene el instrumental de uso constante e inmediato. <strong>Se acomoda según los tiempos quirúrgicos.</strong></p>
                             
                             {/* Graphic representation of Mesa de Mayo */}
-                            <div className="bg-accent/10 border-2 border-border rounded-xl p-4 sm:p-6 shadow-inner mx-auto max-w-3xl">
+                            <div className="bg-accent/10 border-2 border-border rounded-xl p-4 sm:p-6 shadow-inner mx-auto max-w-[768px]">
                               <div className="w-full bg-card rounded-md border-4 border-muted h-[200px] sm:h-[250px] shadow-lg relative p-2 flex flex-col gap-2">
                                 <div className="flex h-1/2 gap-2">
                                   {/* Diéresis */}
@@ -3397,7 +3824,7 @@ function App() {
                     {selectedService === 'Cirugía' && cirugiaSubTab === 'cir_humanos' && !selectedDisease && (
                       <Card className="space-y-6">
                         <div className="flex items-center space-x-3 text-primary">
-                          <Users size={24} />
+                          <Users size={14} />
                           <h4 className="text-xl font-bold">5. El Equipo Quirúrgico y el "Baile" de Roles</h4>
                         </div>
                         <div className="text-sm text-foreground space-y-4">
@@ -3406,7 +3833,7 @@ function App() {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                              <div className="p-6 bg-blue-500/10 border border-blue-200 rounded-xl space-y-4">
                                <div className="flex items-center justify-between border-b border-blue-200/50 pb-2">
-                                 <h5 className="font-black text-blue-700 text-lg tracking-wide flex items-center gap-2"><CheckCircle2 size={18}/> EQUIPO ESTÉRIL</h5>
+                                 <h5 className="font-black text-blue-700 text-lg tracking-wide flex items-center gap-2"><CheckCircle2 size={12}/> EQUIPO ESTÉRIL</h5>
                                </div>
                                <div className="space-y-4">
                                  <div>
@@ -3427,7 +3854,7 @@ function App() {
                              
                              <div className="p-6 bg-red-500/10 border border-red-200 rounded-xl space-y-4">
                                <div className="flex items-center justify-between border-b border-red-200/50 pb-2">
-                                 <h5 className="font-black text-red-700 text-lg tracking-wide flex items-center gap-2"><Info size={18}/> EQUIPO NO ESTÉRIL</h5>
+                                 <h5 className="font-black text-red-700 text-lg tracking-wide flex items-center gap-2"><Info size={12}/> EQUIPO NO ESTÉRIL</h5>
                                </div>
                                <div className="space-y-4">
                                  <div>
@@ -3454,7 +3881,7 @@ function App() {
                     {selectedService === 'Cirugía' && cirugiaSubTab === 'cir_fisiopato' && !selectedDisease && (
                       <Card className="space-y-6">
                         <div className="flex items-center space-x-3 text-primary">
-                          <Activity size={24} />
+                          <Activity size={14} />
                           <h4 className="text-xl font-bold">6. Respuesta Metabólica al Trauma Quirúrgico</h4>
                         </div>
                         <div className="text-sm text-foreground space-y-4">
@@ -3465,7 +3892,7 @@ function App() {
                           <h5 className="font-bold text-lg pt-2 border-t mt-4 flex items-center gap-2">Cascada de la Fisiopatología Quirúrgica:</h5>
                           <div className="space-y-4">
                             <div className="bg-orange-500/10 border-l-4 border-orange-500 p-4 rounded-r-xl shadow-sm">
-                               <h5 className="font-bold text-orange-700 flex items-center gap-2"><Brain size={16} /> Impacto Hormonal (Fase Ebb / Shock)</h5>
+                               <h5 className="font-bold text-orange-700 flex items-center gap-2"><Brain size={12} /> Impacto Hormonal (Fase Ebb / Shock)</h5>
                                <p className="text-sm mt-2 text-foreground">El hipotálamo detecta el dolor, la pérdida de volumen y el estrés, activando el sistema nervioso simpático:</p>
                                <ul className="text-xs mt-2 text-muted-foreground list-disc pl-5 space-y-1">
                                  <li>Se elevan masivamente las catecolaminas (<strong>Adrenalina</strong>), <strong>Cortisol</strong>, Glucagón y hormona antidiurética (<strong>ADH</strong>).</li>
@@ -3473,7 +3900,7 @@ function App() {
                                </ul>
                             </div>
                             <div className="bg-purple-500/10 border-l-4 border-purple-500 p-4 rounded-r-xl shadow-sm">
-                               <h5 className="font-bold text-purple-700 flex items-center gap-2"><TestTube size={16} /> Impacto Bioquímico</h5>
+                               <h5 className="font-bold text-purple-700 flex items-center gap-2"><TestTube size={12} /> Impacto Bioquímico</h5>
                                <p className="text-sm mt-2 text-foreground">La pérdida sanguínea y el daño celular alteran el pH:</p>
                                <ul className="text-xs mt-2 text-muted-foreground list-disc pl-5 space-y-1">
                                  <li>Riesgo primario de <strong>Acidosis Metabólica</strong> (lactacidemia) si existe hipoperfusión sostenida (estado de choque).</li>
@@ -3481,7 +3908,7 @@ function App() {
                                </ul>
                             </div>
                             <div className="bg-cyan-500/10 border-l-4 border-cyan-500 p-4 rounded-r-xl shadow-sm">
-                               <h5 className="font-bold text-cyan-700 flex items-center gap-2"><Thermometer size={16} /> Termorregulación (Riesgo Crítico)</h5>
+                               <h5 className="font-bold text-cyan-700 flex items-center gap-2"><Thermometer size={12} /> Termorregulación (Riesgo Crítico)</h5>
                                <p className="text-sm mt-2 text-foreground">La Triada Letal (Hiportermia + Acidosis + Coagulopatía) comienza con el frío:</p>
                                <ul className="text-xs mt-2 text-muted-foreground list-disc pl-5 space-y-1">
                                  <li>El uso de líquidos IV sin calentar, el aire frío de la Zona Blanca y la exposición de cavidades corporales causa <strong>Hipotermia Inadvertida</strong>.</li>
@@ -3496,12 +3923,12 @@ function App() {
 {selectedService === 'Salud Comunitaria' && communitySubTab === 'inmunizaciones' && !selectedDisease && (
                       <Card className="space-y-6">
                         <div className="flex items-center space-x-3 text-primary">
-                          <Syringe size={24} />
+                          <Syringe size={14} />
                           <h4 className="text-xl font-bold">Manual del Vacunador</h4>
                         </div>
                         <div className="space-y-4">
                           <div className="bg-accent/20 p-4 rounded-xl">
-                            <h5 className="font-bold mb-2 flex items-center"><Clock size={16} className="mr-2" /> Esquema Nacional de Vacunación</h5>
+                            <h5 className="font-bold mb-2 flex items-center"><Clock size={12} className="mr-2" /> Esquema Nacional de Vacunación</h5>
                             <p className="text-sm text-muted-foreground mb-4">Tabla por edades desde el recién nacido hasta el adulto mayor.</p>
                             <div className="overflow-x-auto">
                               <table className="w-full text-[10px] text-left border-collapse">
@@ -3531,7 +3958,7 @@ function App() {
                           
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="border border-border p-4 rounded-xl">
-                              <h5 className="font-bold mb-2 flex items-center"><Droplet size={16} className="mr-2 text-blue-500" /> Cadena de Frío</h5>
+                              <h5 className="font-bold mb-2 flex items-center"><Droplet size={12} className="mr-2 text-blue-500" /> Cadena de Frío</h5>
                               <p className="text-xs text-muted-foreground">Protocolo de manejo de termos y temperaturas (<strong>+2°C a +8°C</strong>).</p>
                               <ul className="mt-2 text-xs space-y-1 list-disc list-inside">
                                 <li>Paquetes fríos: No deben tener escarcha.</li>
@@ -3540,7 +3967,7 @@ function App() {
                               </ul>
                             </div>
                             <div className="border border-border p-4 rounded-xl">
-                              <h5 className="font-bold mb-2 flex items-center"><Syringe size={16} className="mr-2 text-primary" /> Técnica de Aplicación</h5>
+                              <h5 className="font-bold mb-2 flex items-center"><Syringe size={12} className="mr-2 text-primary" /> Técnica de Aplicación</h5>
                               <ul className="text-xs space-y-1 list-disc list-inside">
                                 <li><strong>ID:</strong> BCG (Deltoides derecho).</li>
                                 <li><strong>SC:</strong> SRP, FA, Varicela (Deltoides izquierdo).</li>
@@ -3552,7 +3979,7 @@ function App() {
 
                           <div className="p-4 bg-yellow-500/5 border border-yellow-500/20 rounded-xl">
                             <h5 className="text-xs font-black text-yellow-600 uppercase tracking-widest mb-2 flex items-center">
-                              <AlertTriangle size={14} className="mr-1" /> Notas Técnicas Esquema 2025
+                              <AlertTriangle size={12} className="mr-1" /> Notas Técnicas Esquema 2025
                             </h5>
                             <ul className="text-[10px] space-y-1 text-muted-foreground">
                               <li>• <strong>Hexavalente:</strong> Reemplaza a Pentavalente y fIPV (6 antígenos en 1 sola aplicación).</li>
@@ -3569,7 +3996,7 @@ function App() {
                     {selectedService === 'Salud Comunitaria' && communitySubTab === 'territorio' && !selectedDisease && (
                       <Card className="space-y-6">
                         <div className="flex items-center space-x-3 text-primary">
-                          <MapPin size={24} />
+                          <MapPin size={14} />
                           <h4 className="text-xl font-bold">Herramientas de Territorio</h4>
                         </div>
                         
@@ -3577,7 +4004,7 @@ function App() {
                           {/* Ficha Familiar */}
                           <div className="border-l-4 border-blue-500 p-4 bg-blue-500/5 rounded-r-xl space-y-3">
                             <h5 className="font-bold text-blue-600 flex items-center">
-                              <FileText size={18} className="mr-2" /> Ficha Familiar
+                              <FileText size={12} className="mr-2" /> Ficha Familiar
                             </h5>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div className="space-y-2">
@@ -3611,7 +4038,7 @@ function App() {
                           {/* Familiograma / Genograma */}
                           <div className="border-l-4 border-purple-500 p-4 bg-purple-500/5 rounded-r-xl space-y-3">
                             <h5 className="font-bold text-purple-600 flex items-center">
-                              <Users size={18} className="mr-2" /> Familiograma (Genograma) y APGAR Familiar
+                              <Users size={12} className="mr-2" /> Familiograma (Genograma) y APGAR Familiar
                             </h5>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div className="space-y-2">
@@ -3640,7 +4067,7 @@ function App() {
                           {/* Visita Domiciliaria */}
                           <div className="border-l-4 border-green-500 p-4 bg-green-500/5 rounded-r-xl space-y-3">
                             <h5 className="font-bold text-green-600 flex items-center">
-                              <Home size={18} className="mr-2" /> Visita Domiciliaria Integral
+                              <Home size={12} className="mr-2" /> Visita Domiciliaria Integral
                             </h5>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div className="space-y-2">
@@ -3663,7 +4090,7 @@ function App() {
                           {/* Mapa Parlante */}
                           <div className="border-l-4 border-orange-500 p-4 bg-orange-500/5 rounded-r-xl space-y-3">
                             <h5 className="font-bold text-orange-600 flex items-center">
-                              <Map size={18} className="mr-2" /> Mapa Parlante y Sala Situacional
+                              <Map size={12} className="mr-2" /> Mapa Parlante y Sala Situacional
                             </h5>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div className="space-y-2">
@@ -3689,12 +4116,12 @@ function App() {
                     {selectedService === 'Salud Comunitaria' && communitySubTab === 'ciclo_vida' && !selectedDisease && (
                       <Card className="space-y-6">
                         <div className="flex items-center space-x-3 text-primary">
-                          <Baby size={24} />
+                          <Baby size={14} />
                           <h4 className="text-xl font-bold">Programas de Ciclo de Vida</h4>
                         </div>
                         <div className="space-y-4">
                           <div className="border-l-4 border-primary p-4 bg-primary/5 rounded-r-xl space-y-3">
-                            <h5 className="font-bold flex items-center"><Activity size={18} className="mr-2" /> Control del Niño Sano</h5>
+                            <h5 className="font-bold flex items-center"><Activity size={12} className="mr-2" /> Control del Niño Sano</h5>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div className="space-y-2">
                                 <p className="text-xs font-bold uppercase text-primary">Frecuencia de Controles (MSP):</p>
@@ -3722,7 +4149,7 @@ function App() {
                           
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="border-l-4 border-pink-500 p-4 bg-pink-500/5 rounded-r-xl">
-                              <h5 className="font-bold flex items-center"><Heart size={16} className="mr-2 text-pink-500" /> Salud Materna</h5>
+                              <h5 className="font-bold flex items-center"><Heart size={12} className="mr-2 text-pink-500" /> Salud Materna</h5>
                               <p className="text-[11px] text-muted-foreground mt-1">
                                 <strong>Control Prenatal:</strong> Mínimo 5 controles (OMS recomienda 8).
                                 <br />• Llenado de Carné Perinatal y Score Mamá.
@@ -3731,7 +4158,7 @@ function App() {
                               </p>
                             </div>
                             <div className="border-l-4 border-orange-500 p-4 bg-orange-500/5 rounded-r-xl">
-                              <h5 className="font-bold flex items-center"><Activity size={16} className="mr-2 text-orange-500" /> ECNT (Crónicos)</h5>
+                              <h5 className="font-bold flex items-center"><Activity size={12} className="mr-2 text-orange-500" /> ECNT (Crónicos)</h5>
                               <p className="text-[11px] text-muted-foreground mt-1">
                                 <strong>Tamizaje y Seguimiento:</strong>
                                 <br />• HTA: Toma de PA en cada consulta {'>'}18 años.
@@ -3747,7 +4174,7 @@ function App() {
                     {selectedService === 'Gineco-Obstetricia' && ginecoSubTab === 'control_prenatal' && !selectedDisease && (
                       <Card className="space-y-6">
                         <div className="flex items-center space-x-3 text-primary">
-                          <Activity size={24} />
+                          <Activity size={14} />
                           <h4 className="text-xl font-bold">Control Prenatal y Evaluación</h4>
                         </div>
                         
@@ -3755,7 +4182,7 @@ function App() {
                           {/* Control Prenatal Section */}
                           <div className="space-y-4">
                             <h5 className="font-bold text-lg flex items-center border-b border-border pb-2">
-                              <Baby size={20} className="mr-2 text-primary" /> 
+                              <Baby size={12} className="mr-2 text-primary" /> 
                               El Control Prenatal
                             </h5>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -3786,7 +4213,7 @@ function App() {
                           {/* Score MAMA Section */}
                           <div className="space-y-4">
                             <h5 className="font-bold text-lg flex items-center border-b border-border pb-2">
-                              <Calculator size={20} className="mr-2 text-pink-500" /> 
+                              <Calculator size={12} className="mr-2 text-pink-500" /> 
                               Score MAMÁ
                             </h5>
                             <p className="text-sm text-muted-foreground">
@@ -3957,7 +4384,7 @@ function App() {
                           {/* ESAMyN Section */}
                           <div className="space-y-4">
                             <h5 className="font-bold text-lg flex items-center border-b border-border pb-2">
-                              <Heart size={20} className="mr-2 text-pink-500" /> 
+                              <Heart size={12} className="mr-2 text-pink-500" /> 
                               Normativa ESAMyN
                             </h5>
                             <p className="text-sm text-muted-foreground">
@@ -4040,24 +4467,24 @@ function App() {
 
                     {selectedService === 'Gineco-Obstetricia' && ginecoSubTab === 'emergencias' && !selectedDisease && (
                       <div className="flex items-center justify-center p-12 text-muted-foreground flex-col bg-accent/5 rounded-xl border border-border border-dashed h-96">
-                        <AlertTriangle size={64} className="mb-4 opacity-20" />
+                        <AlertTriangle size={38} className="mb-4 opacity-20" />
                         <h4 className="text-xl font-bold text-foreground">Emergencias Obstétricas</h4>
-                        <p className="text-sm mt-2 text-center max-w-sm">Selecciona una <strong>patología</strong> desde el panel de contenidos a la izquierda para ver su manejo detallado.</p>
+                        <p className="text-sm mt-2 text-center max-w-[384px]">Selecciona una <strong>patología</strong> desde el panel de contenidos a la izquierda para ver su manejo detallado.</p>
                       </div>
                     )}
 
                     {selectedService === 'Gineco-Obstetricia' && ginecoSubTab === 'claves' && !selectedClaveTopic && (
                       <div className="flex items-center justify-center p-12 text-muted-foreground flex-col bg-accent/5 rounded-xl border border-border border-dashed h-96">
-                        <ShieldAlert size={64} className="mb-4 opacity-20" />
+                        <ShieldAlert size={38} className="mb-4 opacity-20" />
                         <h4 className="text-xl font-bold text-foreground">Protocolos de Claves Obstétricas</h4>
-                        <p className="text-sm mt-2 text-center max-w-sm">Selecciona una <strong>clave</strong> (Roja, Azul, Amarilla) desde el panel de contenidos a la izquierda.</p>
+                        <p className="text-sm mt-2 text-center max-w-[384px]">Selecciona una <strong>clave</strong> (Roja, Azul, Amarilla) desde el panel de contenidos a la izquierda.</p>
                       </div>
                     )}
 
                     {selectedService === 'Gineco-Obstetricia' && ginecoSubTab === 'claves' && selectedClaveTopic === 'roja' && (
                       <Card className="space-y-4">
                         <div className="flex items-center space-x-3 text-red-600 dark:text-red-400">
-                          <Droplet size={24} />
+                          <Droplet size={14} />
                           <h4 className="text-xl font-bold">Clave Roja: Hemorragia Postparto</h4>
                         </div>
                         
@@ -4194,7 +4621,7 @@ function App() {
                         {/* 4. Intervenciones Críticas */}
                         <div className="p-3 bg-red-50/50 dark:bg-red-900/5 rounded-xl border border-red-100 dark:border-red-900/20">
                           <h6 className="font-bold text-sm text-red-800 dark:text-red-400 flex items-center mb-2 border-b border-red-200 dark:border-red-900/30 pb-1">
-                            <AlertTriangle size={16} className="mr-1" /> 4. Intervenciones Críticas (La "Hora de Oro")
+                            <AlertTriangle size={12} className="mr-1" /> 4. Intervenciones Críticas (La "Hora de Oro")
                           </h6>
                           <div className="grid grid-cols-1 gap-3 text-[11px] text-muted-foreground">
                             
@@ -4247,7 +4674,7 @@ function App() {
                     {selectedService === 'Gineco-Obstetricia' && ginecoSubTab === 'claves' && selectedClaveTopic === 'azul' && (
                       <Card className="space-y-4">
                         <div className="flex items-center space-x-3 text-blue-600 dark:text-blue-400">
-                          <Activity size={24} />
+                          <Activity size={14} />
                           <h4 className="text-xl font-bold">Clave Azul: Preeclampsia Grave y Eclampsia</h4>
                         </div>
                         
@@ -4356,7 +4783,7 @@ function App() {
                             
                           <div className="bg-orange-50 dark:bg-orange-900/10 p-3 rounded-xl border border-orange-200">
                             <h6 className="font-bold text-sm text-orange-800 dark:text-orange-400 flex items-center mb-2 border-b border-orange-200 dark:border-orange-800 pb-1">
-                              <AlertTriangle size={16} className="mr-1" /> 4. Vigilancia de Toxicidad de Sulfato
+                              <AlertTriangle size={12} className="mr-1" /> 4. Vigilancia de Toxicidad de Sulfato
                             </h6>
                             <p className="text-[10px] text-muted-foreground mb-2 leading-tight">Como profesional de enfermería, debes realizar el control de parámetros <strong className="text-orange-600">cada hora</strong> mientras dure la infusión. El riñón elimina el magnesio; la falla renal (diuresis baja) lo acumula causando toxicidad sistémica y muerte.</p>
                             
@@ -4392,7 +4819,7 @@ function App() {
                     {selectedService === 'Gineco-Obstetricia' && ginecoSubTab === 'claves' && selectedClaveTopic === 'amarilla' && (
                       <Card className="space-y-4">
                         <div className="flex items-center space-x-3 text-yellow-600 dark:text-yellow-500">
-                          <ShieldAlert size={24} />
+                          <ShieldAlert size={14} />
                           <h4 className="text-xl font-bold">Clave Amarilla: Choque Séptico y Sepsis Obstétrica</h4>
                         </div>
                         <div className="bg-yellow-50 dark:bg-yellow-900/10 p-4 border border-yellow-200 dark:border-yellow-900/30 rounded-xl space-y-4">
@@ -4453,22 +4880,22 @@ function App() {
 
                     {selectedService === 'Gineco-Obstetricia' && ginecoSubTab === 'parto' && !selectedDisease && !selectedPartoTopic && (
                       <div className="flex items-center justify-center p-12 text-muted-foreground flex-col bg-accent/5 rounded-xl border border-border border-dashed h-96">
-                        <Baby size={64} className="mb-4 opacity-20" />
+                        <Baby size={38} className="mb-4 opacity-20" />
                         <h4 className="text-xl font-bold text-foreground">Parto, Puerperio y Lactancia</h4>
-                        <p className="text-sm mt-2 text-center max-w-sm">Selecciona un <strong>tema clínico</strong> o una <strong>patología</strong> desde el panel de contenidos a la izquierda.</p>
+                        <p className="text-sm mt-2 text-center max-w-[384px]">Selecciona un <strong>tema clínico</strong> o una <strong>patología</strong> desde el panel de contenidos a la izquierda.</p>
                       </div>
                     )}
 
                     {selectedService === 'Gineco-Obstetricia' && ginecoSubTab === 'parto' && selectedPartoTopic === 'parto' && !selectedDisease && (
                       <Card className="space-y-6">
                         <div className="flex items-center space-x-3 text-primary">
-                          <Activity size={24} />
+                          <Activity size={14} />
                           <h4 className="text-xl font-bold">Trabajo de Parto y Parto</h4>
                         </div>
                         <div className="space-y-6">
                           {/* Fases del Parto */}
                           <div className="bg-accent/10 p-4 rounded-xl border border-border/50">
-                            <h6 className="font-bold text-sm mb-3 flex items-center text-primary"><Clock size={16} className="mr-2" /> Fases Clínicas y Cuidados de Enfermería</h6>
+                            <h6 className="font-bold text-sm mb-3 flex items-center text-primary"><Clock size={12} className="mr-2" /> Fases Clínicas y Cuidados de Enfermería</h6>
                             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                               <div className="bg-background p-3 rounded-lg border border-border">
                                 <p className="text-xs font-bold text-primary mb-1">1. Periodo de Dilatación (1ra Etapa)</p>
@@ -4509,7 +4936,7 @@ function App() {
                           {/* Monitoreo y Mecanismos */}
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="bg-blue-50 dark:bg-blue-900/10 p-4 rounded-xl border border-blue-100 dark:border-blue-900/20">
-                              <h6 className="font-bold text-sm mb-2 flex items-center text-blue-700 dark:text-blue-400"><Stethoscope size={16} className="mr-2" /> Monitorización Fetal</h6>
+                              <h6 className="font-bold text-sm mb-2 flex items-center text-blue-700 dark:text-blue-400"><Stethoscope size={12} className="mr-2" /> Monitorización Fetal</h6>
                               <p className="text-[11px] font-bold text-muted-foreground uppercase mb-1">Auscultación Intermitente (Bajo Riesgo):</p>
                               <ul className="text-xs text-muted-foreground list-disc list-inside mb-3 space-y-0.5">
                                 <li><strong>Fase Latente:</strong> Cada 30-60 minutos.</li>
@@ -4526,7 +4953,7 @@ function App() {
                             </div>
                             
                             <div className="bg-accent/10 p-4 rounded-xl">
-                              <h6 className="font-bold text-sm mb-2 flex items-center"><RotateCw size={16} className="text-primary mr-1" /> Mecanismos (7 Cardinales)</h6>
+                              <h6 className="font-bold text-sm mb-2 flex items-center"><RotateCw size={12} className="text-primary mr-1" /> Mecanismos (7 Cardinales)</h6>
                               <ul className="text-[11px] space-y-1 text-muted-foreground">
                                 <li><span className="font-bold text-primary">1. Encajamiento:</span> Diámetro biparietal ingresa a pelvis.</li>
                                 <li><span className="font-bold text-primary">2. Descenso:</span> Inducido por líquido, fondo uterino y pujo.</li>
@@ -4541,7 +4968,7 @@ function App() {
 
                           {/* Desgarros y Cuidado Perineal */}
                           <div className="bg-orange-500/5 border border-orange-500/10 p-4 rounded-xl md:col-span-2">
-                            <h6 className="font-bold text-sm mb-3 flex items-center text-orange-600"><AlertTriangle size={16} className="mr-2" /> Clasificación y Manejo de Desgarros Perineales</h6>
+                            <h6 className="font-bold text-sm mb-3 flex items-center text-orange-600"><AlertTriangle size={12} className="mr-2" /> Clasificación y Manejo de Desgarros Perineales</h6>
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-3 text-left mb-3">
                               <div className="p-3 bg-background rounded-lg border border-orange-200">
                                 <p className="text-xs font-bold text-orange-700 mb-1 border-b border-orange-100 pb-1">Grado I</p>
@@ -4585,7 +5012,7 @@ function App() {
                     {selectedService === 'Gineco-Obstetricia' && ginecoSubTab === 'parto' && selectedPartoTopic === 'puerperio' && !selectedDisease && (
                       <Card className="space-y-6">
                         <div className="flex items-center space-x-3 text-primary">
-                          <History size={24} />
+                          <History size={14} />
                           <h4 className="text-xl font-bold">Puerperio (Inmediato, Mediato y Alejado)</h4>
                         </div>
                         <div className="space-y-6">
@@ -4610,7 +5037,7 @@ function App() {
                             
                             <div className="p-3 bg-accent/10 rounded-xl space-y-4">
                               <div>
-                                <h6 className="font-bold text-sm mb-1 flex items-center text-primary"><Clock size={16} className="mr-1" /> Etapas del Puerperio</h6>
+                                <h6 className="font-bold text-sm mb-1 flex items-center text-primary"><Clock size={12} className="mr-1" /> Etapas del Puerperio</h6>
                                 <p className="text-[11px] text-muted-foreground mb-1"><strong>Inmediato (0 - 24 horas):</strong> Máximo riesgo de hemorragia. Monitorizar SV, sangrado vaginal y correcta retracción uterina (Globo de seguridad de Pinard).</p>
                                 <p className="text-[11px] text-muted-foreground mb-1"><strong>Mediato (2 - 7 días):</strong> Riesgo de mastitis o infecciones. Favorecer lactancia y vigilar involución uterina y loquios.</p>
                                 <p className="text-[11px] text-muted-foreground"><strong>Tardío (8 - 42 días):</strong> Retorno progresivo al estado pre-gravídico, fin de los loquios y posibles síntomas de depresión posparto.</p>
@@ -4619,7 +5046,7 @@ function App() {
 
                             <div className="p-3 bg-accent/10 rounded-xl space-y-4">
                               <div>
-                                <h6 className="font-bold text-sm mb-1 flex items-center text-primary"><ClipboardList size={16} className="mr-1" /> Valoración Sistemática (BUBBLE-HE)</h6>
+                                <h6 className="font-bold text-sm mb-1 flex items-center text-primary"><ClipboardList size={12} className="mr-1" /> Valoración Sistemática (BUBBLE-HE)</h6>
                                 <ul className="text-[10px] text-muted-foreground space-y-0.5 mt-1 leading-tight list-disc list-inside">
                                   <li><strong>B (Breasts):</strong> Mamas (simetría, ingurgitación, pezones agrietados).</li>
                                   <li><strong>U (Uterus):</strong> Útero (firmeza, altura respecto al ombligo).</li>
@@ -4635,7 +5062,7 @@ function App() {
                             
                             <div className="p-4 bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-900/20 rounded-xl md:col-span-2">
                               <h6 className="font-bold text-sm mb-3 text-green-700 dark:text-green-400 flex items-center border-b border-green-200 dark:border-green-800 pb-2">
-                                <Activity size={18} className="mr-2" /> Monitorización Exhaustiva y Manejo de Complicaciones
+                                <Activity size={12} className="mr-2" /> Monitorización Exhaustiva y Manejo de Complicaciones
                               </h6>
                               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 
@@ -4715,7 +5142,7 @@ function App() {
                         {selectedPartoTopic === 'lactancia' ? (
                           <div className="space-y-6">
                             <div className="flex items-center space-x-3 text-pink-500">
-                              <Heart size={24} />
+                              <Heart size={14} />
                               <h4 className="text-xl font-bold">Lactancia Materna y Recién Nacido (RN)</h4>
                             </div>
                             
@@ -4723,7 +5150,7 @@ function App() {
                               {/* Educación para Madre Primeriza */}
                               <div className="p-4 bg-primary/5 rounded-xl border border-primary/20 space-y-4">
                                 <h6 className="font-bold text-sm text-primary flex items-center">
-                                  <BookOpen size={16} className="mr-2" />
+                                  <BookOpen size={12} className="mr-2" />
                                   Educación Nutricional y Asesoría a la Madre Primeriza
                                 </h6>
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 text-[11px] text-muted-foreground">
@@ -4781,7 +5208,7 @@ function App() {
                               {/* Extracción y Conservación */}
                               <div className="p-4 bg-orange-50 dark:bg-orange-900/10 border border-orange-100 dark:border-orange-900/20 rounded-xl">
                                 <h6 className="font-bold text-sm mb-4 text-orange-700 dark:text-orange-400 flex items-center">
-                                  <Droplet size={18} className="mr-2" /> 
+                                  <Droplet size={12} className="mr-2" /> 
                                   Extracción, Conservación y Bancos de Leche
                                 </h6>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -4803,7 +5230,7 @@ function App() {
                         ) : (
                           <div className="space-y-6">
                             <div className="flex items-center space-x-3 text-primary">
-                              <Clipboard size={24} />
+                              <Clipboard size={14} />
                               <h4 className="text-xl font-bold">Escalas de Valoración Neonatal</h4>
                             </div>
 
@@ -4811,7 +5238,7 @@ function App() {
                               {/* Detailed Scale Tables */}
                               <div className="p-4 bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/20 rounded-xl">
                                 <h6 className="font-bold text-sm mb-4 text-blue-700 dark:text-blue-400 flex items-center">
-                                  <Calculator size={18} className="mr-2" /> 
+                                  <Calculator size={12} className="mr-2" /> 
                                   Escalas de Evaluación (Inmediata y Dificultad)
                                 </h6>
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -4854,7 +5281,7 @@ function App() {
                               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                 <div className="p-4 bg-accent/5 rounded-2xl border border-border/50 space-y-4">
                                   <h6 className="font-bold text-sm text-primary flex items-center border-b border-border/50 pb-2">
-                                    <Calculator size={16} className="mr-2" />
+                                    <Calculator size={12} className="mr-2" />
                                     Cálculo de Edad Gestacional (Capurro B)
                                   </h6>
                                   <div className="overflow-x-auto">
@@ -4914,7 +5341,7 @@ function App() {
 
                                 <div className="p-4 bg-accent/5 rounded-2xl border border-border/50 space-y-4">
                                   <h6 className="font-bold text-sm text-primary flex items-center border-b border-border/50 pb-2">
-                                    <Calculator size={16} className="mr-2" />
+                                    <Calculator size={12} className="mr-2" />
                                     Criterios de Usher (Evaluación Somática)
                                   </h6>
                                   <div className="space-y-2 text-[10px] text-muted-foreground">
@@ -4971,7 +5398,7 @@ function App() {
                       <Card className="space-y-6">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                           <div className="flex items-center space-x-3 text-primary">
-                            <HeartPulse size={24} />
+                            <HeartPulse size={14} />
                             <h4 className="text-xl font-bold">Salud Sexual y Reproductiva</h4>
                           </div>
                           <div className="flex bg-muted/50 p-1 rounded-lg overflow-x-auto no-scrollbar">
@@ -4990,7 +5417,7 @@ function App() {
                                     : 'text-muted-foreground hover:text-foreground'
                                 }`}
                               >
-                                <tab.icon size={14} className="mr-1.5" />
+                                <tab.icon size={12} className="mr-1.5" />
                                 {tab.label}
                               </button>
                             ))}
@@ -5002,13 +5429,13 @@ function App() {
                           {(selectedSaludSexualTopic === 'anticoncepcion' || !selectedSaludSexualTopic) && (
                             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
                               <h5 className="font-bold text-lg flex items-center border-b border-border pb-2">
-                                <Shield size={20} className="mr-2 text-primary" /> 
+                                <Shield size={12} className="mr-2 text-primary" /> 
                                 Anticoncepción y Planificación Familiar
                               </h5>
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="bg-accent/20 p-5 rounded-2xl space-y-4">
                                   <h6 className="font-bold text-sm text-primary flex items-center">
-                                    <Calculator size={16} className="mr-2" /> Criterios Médicos de Elegibilidad (OMS)
+                                    <Calculator size={12} className="mr-2" /> Criterios Médicos de Elegibilidad (OMS)
                                   </h6>
                                   <div className="space-y-2">
                                     <div className="flex gap-3 p-2 bg-green-500/5 rounded-lg border border-green-500/10">
@@ -5070,7 +5497,7 @@ function App() {
                           {selectedSaludSexualTopic === 'its' && (
                             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
                               <h5 className="font-bold text-lg flex items-center border-b border-border pb-2">
-                                <TestTube size={20} className="mr-2 text-blue-500" /> 
+                                <TestTube size={12} className="mr-2 text-blue-500" /> 
                                 ITS y Prevención de Transmisión Vertical
                               </h5>
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -5113,7 +5540,7 @@ function App() {
                           {selectedSaludSexualTopic === 'citologia' && (
                             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
                               <h5 className="font-bold text-lg flex items-center border-b border-border pb-2">
-                                <ClipboardList size={20} className="mr-2 text-orange-500" /> 
+                                <ClipboardList size={12} className="mr-2 text-orange-500" /> 
                                 Citología Cervical y Tamizaje de CaCu
                               </h5>
                               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -5122,14 +5549,14 @@ function App() {
                                     <h6 className="font-bold text-xs text-primary mb-3 uppercase tracking-tighter">Esquema de Tamizaje (MSP)</h6>
                                     <div className="space-y-3">
                                       <div className="flex gap-2 text-[11px]">
-                                        <div className="bg-primary/20 p-1.5 rounded-lg text-primary h-fit"><Search size={14} /></div>
+                                        <div className="bg-primary/20 p-1.5 rounded-lg text-primary h-fit"><Search size={12} /></div>
                                         <div>
                                           <p className="font-bold">Inicio:</p>
                                           <p className="text-muted-foreground">A partir de los 21 años o 3 años tras inicio de vida sexual.</p>
                                         </div>
                                       </div>
                                       <div className="flex gap-2 text-[11px]">
-                                        <div className="bg-primary/20 p-1.5 rounded-lg text-primary h-fit"><Clock size={14} /></div>
+                                        <div className="bg-primary/20 p-1.5 rounded-lg text-primary h-fit"><Clock size={12} /></div>
                                         <div>
                                           <p className="font-bold">Frecuencia:</p>
                                           <p className="text-muted-foreground">Anual por 2 años. Si negativos, cada 3 años (Pap) o cada 5 años (VPH).</p>
@@ -5170,12 +5597,12 @@ function App() {
                           {selectedSaludSexualTopic === 'pep' && (
                             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
                               <h5 className="font-bold text-lg flex items-center border-b border-border pb-2">
-                                <ShieldAlert size={20} className="mr-2 text-purple-500" /> 
+                                <ShieldAlert size={12} className="mr-2 text-purple-500" /> 
                                 Profilaxis Post-Exposición (PPE) - Kit Púrpura
                               </h5>
                               <div className="p-5 bg-purple-500/5 border border-purple-500/20 rounded-2xl space-y-5">
                                 <div className="flex items-center gap-4 p-3 bg-purple-500/10 rounded-xl border-l-4 border-purple-500">
-                                  <Clock size={28} className="text-purple-600 shrink-0" />
+                                  <Clock size={17} className="text-purple-600 shrink-0" />
                                   <div>
                                     <p className="font-bold text-purple-700">Ventana Crítica de Inicio</p>
                                     <p className="text-sm text-muted-foreground font-medium">Ideal: {"<"} 2h. Máximo: 72h. Después de las 72h no hay beneficio profiláctico.</p>
@@ -5227,7 +5654,7 @@ function App() {
                       <div className="space-y-6">
                         <Card className="p-6">
                           <div className="flex items-center space-x-3 text-primary mb-6">
-                            <Calculator size={28} className="animate-pulse" />
+                            <Calculator size={17} className="animate-pulse" />
                             <h4 className="text-2xl font-black tracking-tight tracking-tighter">
                               {selectedScaleId 
                                 ? `Escala: ${MEDICAL_SCORES.find(s => s.id === selectedScaleId)?.name}` 
@@ -5251,7 +5678,7 @@ function App() {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                    <div className="space-y-4">
                                       <h5 className="font-bold text-lg flex items-center gap-2">
-                                         <Brain size={20} className="text-primary" />
+                                         <Brain size={12} className="text-primary" />
                                          Importancia de las Escalas
                                       </h5>
                                       <p className="text-sm text-muted-foreground leading-relaxed">
@@ -5292,7 +5719,7 @@ function App() {
                           <div className="space-y-6">
                             <Card className="p-6">
                               <div className="flex items-center space-x-3 text-primary mb-6">
-                                <FileText size={28} />
+                                <FileText size={17} />
                                 <h4 className="text-2xl font-black tracking-tight tracking-tighter">
                                   {selectedVisitaTool === 'soap' ? 'Estructura SOAP (Evolución Diaria)' : 
                                    selectedVisitaTool === 'saer' ? 'Herramienta SAER (SBAR)' : 
@@ -5308,7 +5735,7 @@ function App() {
                                      className="group cursor-pointer border-2 border-dashed border-blue-500/30 p-6 bg-blue-500/5 rounded-3xl hover:bg-blue-500/10 hover:border-blue-500 transition-all text-center"
                                    >
                                      <div className="w-12 h-12 bg-blue-500 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                                        <FileText size={24} />
+                                        <FileText size={14} />
                                      </div>
                                      <h5 className="font-bold text-blue-700 mb-2 underline decoration-blue-500/30 underline-offset-4">Nota SOAP</h5>
                                      <p className="text-[10px] text-muted-foreground leading-relaxed font-medium">Evolución clínica diaria estandarizada y lógica.</p>
@@ -5319,7 +5746,7 @@ function App() {
                                      className="group cursor-pointer border-2 border-dashed border-red-500/30 p-6 bg-red-500/5 rounded-3xl hover:bg-red-500/10 hover:border-red-500 transition-all text-center"
                                    >
                                       <div className="w-12 h-12 bg-red-500 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                                        <AlertTriangle size={24} />
+                                        <AlertTriangle size={14} />
                                      </div>
                                      <h5 className="font-bold text-red-700 mb-2 underline decoration-red-500/30 underline-offset-4">SAER / SBAR</h5>
                                      <p className="text-[10px] text-muted-foreground leading-relaxed font-medium">Comunicación crítica y entrega de turno segura.</p>
@@ -5330,7 +5757,7 @@ function App() {
                                      className="group cursor-pointer border-2 border-dashed border-green-500/30 p-6 bg-green-500/5 rounded-3xl hover:bg-green-500/10 hover:border-green-500 transition-all text-center"
                                    >
                                       <div className="w-12 h-12 bg-green-500 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                                        <ShieldCheck size={24} />
+                                        <ShieldCheck size={14} />
                                      </div>
                                      <h5 className="font-bold text-green-700 mb-2 underline decoration-green-500/30 underline-offset-4">FAST HUGS BID</h5>
                                      <p className="text-[10px] text-muted-foreground leading-relaxed font-medium">Checklist de seguridad para el paciente crítico.</p>
@@ -5375,7 +5802,7 @@ function App() {
                                      </div>
                                    </div>
                                    <button onClick={() => setSelectedVisitaTool(null)} className="text-xs text-primary font-black uppercase tracking-widest hover:underline flex items-center gap-2">
-                                     <ChevronLeft size={14} /> Volver a Modelos
+                                     <ChevronLeft size={12} /> Volver a Modelos
                                    </button>
                                 </div>
                               ) : selectedVisitaTool === 'saer' ? (
@@ -5383,7 +5810,7 @@ function App() {
                                    <div className="bg-red-500/5 border border-red-200/50 p-8 rounded-[2.5rem]">
                                      <div className="flex items-center gap-4 mb-8">
                                         <div className="p-3 bg-red-600 text-white rounded-2xl shadow-xl shadow-red-600/20">
-                                           <AlertTriangle size={24} />
+                                           <AlertTriangle size={14} />
                                         </div>
                                         <div>
                                            <h5 className="font-black text-xl text-red-700">Protocolo SAER (SBAR)</h5>
@@ -5411,7 +5838,7 @@ function App() {
                                      </div>
                                    </div>
                                    <button onClick={() => setSelectedVisitaTool(null)} className="text-xs text-primary font-black uppercase tracking-widest hover:underline flex items-center gap-2">
-                                     <ChevronLeft size={14} /> Volver a Modelos
+                                     <ChevronLeft size={12} /> Volver a Modelos
                                    </button>
                                 </div>
                               ) : (
@@ -5420,7 +5847,7 @@ function App() {
                                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                                          <div className="flex items-center gap-4">
                                             <div className="p-3 bg-green-600 text-white rounded-2xl shadow-xl shadow-green-600/20">
-                                               <ShieldCheck size={24} />
+                                               <ShieldCheck size={14} />
                                             </div>
                                             <div>
                                                <h5 className="font-black text-xl text-green-800">FAST HUGS BID</h5>
@@ -5503,7 +5930,7 @@ function App() {
                                       </div>
                                    </div>
                                    <button onClick={() => setSelectedVisitaTool(null)} className="text-xs text-primary font-black uppercase tracking-widest hover:underline flex items-center gap-2">
-                                     <ChevronLeft size={14} /> Volver a Modelos
+                                     <ChevronLeft size={12} /> Volver a Modelos
                                    </button>
                                 </div>
                               )}
@@ -5514,18 +5941,18 @@ function App() {
                         {selectedService === 'Medicina Interna' && internaSubTab === 'diagnostico' && !selectedDisease && (
                         <Card className="space-y-6">
                           <div className="flex items-center space-x-3 text-primary">
-                            <Search size={24} />
+                            <Search size={14} />
                             <h4 className="text-xl font-bold">Diagnóstico Avanzado</h4>
                           </div>
                           
                           <div className="space-y-6">
                             {(!selectedDiagTool || selectedDiagTool === 'acido-base') && (
                               <div className="border border-border p-6 rounded-3xl bg-card relative overflow-hidden">
-                                <div className="absolute top-0 right-0 p-6 opacity-5 -rotate-12"><Wind size={140} /></div>
+                                <div className="absolute top-0 right-0 p-6 opacity-5 -rotate-12"><Wind size={84} /></div>
                                 
                                 <h5 className="font-black text-xl text-primary mb-6 flex items-center gap-3 relative z-10">
                                   <div className="p-2 bg-primary/10 rounded-xl">
-                                    <Wind size={24} className="text-primary"/>
+                                    <Wind size={14} className="text-primary"/>
                                   </div>
                                   Algoritmo Ácido-Base: Guía de Medicina Interna
                                 </h5>
@@ -5579,7 +6006,7 @@ function App() {
                                 <div className="mb-8 relative z-10 overflow-hidden border border-border rounded-3xl shadow-lg bg-card">
                                    <div className="bg-muted px-6 py-3 border-b border-border flex items-center justify-between">
                                       <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Fisiopatología y Compensación</span>
-                                      <Activity size={16} className="text-primary opacity-50"/>
+                                      <Activity size={12} className="text-primary opacity-50"/>
                                    </div>
                                    <table className="w-full text-left text-xs">
                                       <thead>
@@ -5609,7 +6036,7 @@ function App() {
                                 {/* 4. Herramientas Avanzadas (Calculadoras) */}
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 relative z-10 mt-8">
                                    <div className="border border-primary/20 bg-primary/5 p-6 rounded-3xl shadow-xl shadow-primary/5 relative overflow-hidden">
-                                      <div className="absolute top-0 right-0 p-4 opacity-5"><Activity size={80}/></div>
+                                      <div className="absolute top-0 right-0 p-4 opacity-5"><Activity size={48}/></div>
                                       <div className="flex items-center gap-2 mb-4">
                                          <h6 className="font-black text-xs uppercase tracking-widest text-primary">Calculadora de Gaps</h6>
                                          <span className="text-[10px] bg-primary text-white px-2 py-0.5 rounded-full font-black">INTERNO PLUS</span>
@@ -5694,7 +6121,7 @@ function App() {
                                       {/* 5. Interpretación de la Oxigenación */}
                                       <div className="border border-red-200 bg-red-50/20 p-6 rounded-3xl shadow-xl shadow-red-500/5">
                                          <h6 className="font-black text-xs uppercase tracking-widest text-red-700 mb-4 flex items-center gap-2">
-                                            <Wind size={16}/> Oxigenación (Índice de Kirby)
+                                            <Wind size={12}/> Oxigenación (Índice de Kirby)
                                          </h6>
                                          
                                          <div className="grid grid-cols-2 gap-4 mb-4">
@@ -5799,11 +6226,11 @@ function App() {
 
                             {(!selectedDiagTool || selectedDiagTool === 'hepatico') && (
                               <div className="border border-border p-6 rounded-3xl bg-card relative overflow-hidden">
-                                <div className="absolute top-0 right-0 p-6 opacity-5 -rotate-12"><Activity size={140} /></div>
+                                <div className="absolute top-0 right-0 p-6 opacity-5 -rotate-12"><Activity size={84} /></div>
                                 
                                 <h5 className="font-black text-xl text-yellow-600 mb-6 flex items-center gap-3 relative z-10">
                                   <div className="p-2 bg-yellow-500/10 rounded-xl">
-                                    <Activity size={24} className="text-yellow-600"/>
+                                    <Activity size={14} className="text-yellow-600"/>
                                   </div>
                                   Perfil Hepático: Guía de Interpretación
                                 </h5>
@@ -5855,7 +6282,7 @@ function App() {
                                 <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
                                    <div className="lg:col-span-2 overflow-hidden border border-border rounded-2xl shadow-sm">
                                       <div className="bg-muted px-4 py-2 border-b border-border flex items-center gap-2">
-                                         <Search size={14} className="text-primary"/>
+                                         <Search size={12} className="text-primary"/>
                                          <span className="text-[10px] font-black uppercase tracking-widest">3. Bilirrubinas (Excreción) y Referencias</span>
                                       </div>
                                       <table className="w-full text-[10px] text-left">
@@ -5912,7 +6339,7 @@ function App() {
 
                                 <div className="mt-8 bg-muted/20 p-4 rounded-3xl border border-border/40">
                                    <div className="flex items-center gap-3 mb-4 px-2">
-                                      <AlertTriangle size={14} className="text-primary"/>
+                                      <AlertTriangle size={12} className="text-primary"/>
                                       <p className="text-[10px] font-black uppercase tracking-widest text-primary">Resumen de Patrones</p>
                                    </div>
                                    <div className="flex flex-col md:flex-row gap-6">
@@ -5933,7 +6360,7 @@ function App() {
 
                             {(!selectedDiagTool || selectedDiagTool === 'anemias') && (
                               <div className="border border-border p-4 rounded-xl space-y-6">
-                                <h5 className="font-bold mb-3 flex items-center text-lg"><Droplet size={18} className="mr-2 text-red-500"/>Perfil de Anemias: Interpretación por VCM</h5>
+                                <h5 className="font-bold mb-3 flex items-center text-lg"><Droplet size={12} className="mr-2 text-red-500"/>Perfil de Anemias: Interpretación por VCM</h5>
                                 <p className="text-xs text-muted-foreground">El Volumen Corpuscular Medio (VCM) es el primer paso para clasificar las anemias.</p>
                                 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -6009,7 +6436,7 @@ function App() {
 
                           {selectedDiagTool && (
                             <button onClick={() => setSelectedDiagTool(null)} className="text-xs text-primary font-black uppercase tracking-widest hover:underline flex items-center gap-2 mt-6">
-                              <ChevronLeft size={14} /> Volver a Todos los Contenidos
+                              <ChevronLeft size={12} /> Volver a Todos los Contenidos
                             </button>
                           )}
                         </Card>
@@ -6018,7 +6445,7 @@ function App() {
                     {selectedService === 'Emergencias' && emergencySubTab === 'patologias' && !selectedDisease && (
                       <div className="space-y-6">
                         <div className="flex items-center space-x-3 text-red-500 bg-card p-4 rounded-xl border border-border shadow-sm">
-                          <Activity size={24} />
+                          <Activity size={14} />
                           <h4 className="text-xl font-bold">Patologías de Emergencia (Enfoque por Sistemas)</h4>
                         </div>
                         <div className="space-y-6">
@@ -6030,7 +6457,7 @@ function App() {
                             return (
                               <Card key={system} className={`border-l-4 ${colorClass.split(' ')[1]} p-4 ${bgClass}`}>
                                 <h5 className={`font-bold flex items-center mb-4 ${colorClass.split(' ')[0]}`}>
-                                  <IconCmp size={18} className="mr-2" /> {system}
+                                  <IconCmp size={12} className="mr-2" /> {system}
                                 </h5>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                                   {DISEASES.filter(d => d.servicio === 'Emergencias' && d.system === system).map(disease => (
@@ -6042,7 +6469,7 @@ function App() {
                                       <div className="space-y-2 w-full">
                                         <div className="flex items-start justify-between">
                                           <p className="font-bold text-sm text-foreground group-hover:text-red-500 transition-colors leading-tight">{disease.nombre}</p>
-                                          <ChevronRight size={16} className="text-muted-foreground opacity-50 group-hover:opacity-100 group-hover:text-red-500 shrink-0 ml-2" />
+                                          <ChevronRight size={12} className="text-muted-foreground opacity-50 group-hover:opacity-100 group-hover:text-red-500 shrink-0 ml-2" />
                                         </div>
                                         {disease.clinica?.signosSintomas && (
                                           <p className="text-[10px] text-muted-foreground line-clamp-2">
@@ -6063,7 +6490,7 @@ function App() {
                     {selectedService === 'Emergencias' && emergencySubTab === 'codigos' && (
                       <Card className="space-y-6">
                         <div className="flex items-center space-x-3 text-red-500">
-                          <Bell size={24} />
+                          <Bell size={14} />
                           <h4 className="text-xl font-bold">Códigos de Emergencia e Intervenciones</h4>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -6087,7 +6514,7 @@ function App() {
                         </div>
                         <div className="p-4 bg-red-500/10 rounded-xl border border-red-500/20">
                            <h5 className="font-bold text-red-600 text-sm mb-2 flex items-center px-1">
-                             <AlertCircle size={16} className="mr-2" /> Checklist Universal de Activación
+                             <AlertCircle size={12} className="mr-2" /> Checklist Universal de Activación
                            </h5>
                            <p className="text-[11px] text-muted-foreground italic px-1">
                              1. Identificar evento - 2. Activar timbre/altavoz indicando código y ubicación - 3. Iniciar maniobras básicas - 4. Llegada de carro de paro - 5. Registro de tiempos y fármacos.
@@ -6099,7 +6526,7 @@ function App() {
                     {selectedService === 'Emergencias' && emergencySubTab === 'medicamentos' && (
                       <Card className="space-y-6">
                         <div className="flex items-center space-x-3 text-red-500">
-                          <Pill size={24} />
+                          <Pill size={14} />
                           <h4 className="text-xl font-bold">Medicamentos de Emergencia (Carro de Paro)</h4>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -6146,13 +6573,13 @@ function App() {
                     {selectedService === 'Emergencias' && emergencySubTab === 'procedimientos' && (
                       <Card className="space-y-6">
                         <div className="flex items-center space-x-3 text-red-500">
-                          <Stethoscope size={24} />
+                          <Stethoscope size={14} />
                           <h4 className="text-xl font-bold">Intervenciones y Procedimientos Críticos</h4>
                         </div>
                         <div className="space-y-4">
                           <div className="border border-border p-4 rounded-xl bg-accent/5">
                             <h5 className="font-bold text-primary flex items-center gap-2 mb-3">
-                              <Wind size={18} /> Secuencia de Intubación Rápida (SIR)
+                              <Wind size={12} /> Secuencia de Intubación Rápida (SIR)
                             </h5>
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                               {[
@@ -6197,7 +6624,7 @@ function App() {
                       <div className="space-y-6">
                         <Card className="p-6">
                           <div className="flex items-center space-x-3 text-red-500 mb-6">
-                            <Calculator size={28} className="animate-pulse" />
+                            <Calculator size={17} className="animate-pulse" />
                             <h4 className="text-2xl font-black tracking-tight">
                               {selectedScaleId 
                                 ? `Escala: ${MEDICAL_SCORES.find(s => s.id === selectedScaleId)?.name}` 
@@ -6222,7 +6649,7 @@ function App() {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                    <div className="space-y-4">
                                       <h5 className="font-bold text-lg flex items-center gap-2">
-                                         <Brain size={20} className="text-red-500" />
+                                         <Brain size={12} className="text-red-500" />
                                          Triaje y Pronóstico Rápido
                                       </h5>
                                       <p className="text-sm text-muted-foreground leading-relaxed">
@@ -6265,7 +6692,7 @@ function App() {
                                 <p className="text-primary font-bold text-sm mt-1">{selectedDisease.servicio}</p>
                               </div>
                               <div className="p-2 bg-primary/10 rounded-full text-primary shrink-0">
-                                <Info size={20} />
+                                <Info size={12} />
                               </div>
                             </div>
 
@@ -6286,7 +6713,7 @@ function App() {
                                       : 'text-muted-foreground hover:text-foreground'
                                   }`}
                                 >
-                                  <tab.icon size={14} />
+                                  <tab.icon size={12} />
                                   <span>{tab.label}</span>
                                 </button>
                               ))}
@@ -6316,7 +6743,7 @@ function App() {
                                   </div>
                                   <div className="p-3 bg-destructive/5 rounded-lg border border-destructive/20 mt-4">
                                     <h5 className="text-[10px] sm:text-xs font-black text-destructive uppercase tracking-widest mb-2 flex items-center">
-                                      <AlertCircle size={14} className="mr-1" /> {selectedDisease.isLogistica ? 'Puntos Críticos / Precauciones' : 'Banderas Rojas'}
+                                      <AlertCircle size={12} className="mr-1" /> {selectedDisease.isLogistica ? 'Puntos Críticos / Precauciones' : 'Banderas Rojas'}
                                     </h5>
                                     <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                       {selectedDisease.clinica?.banderasRojas.map((b, i) => (
@@ -6384,7 +6811,7 @@ function App() {
                                           <div className="space-y-2">
                                             {selectedDisease.manejo.tratamientoDetallado.farmacos.map((f, i) => (
                                               <div key={i} className="bg-background/80 border border-border p-3 rounded-lg shadow-sm">
-                                                <p className="font-bold text-sm text-foreground flex items-center"><Pill size={14} className="mr-1.5 text-green-600"/> {f.nombre}</p>
+                                                <p className="font-bold text-sm text-foreground flex items-center"><Pill size={12} className="mr-1.5 text-green-600"/> {f.nombre}</p>
                                                 <div className="grid grid-cols-2 gap-2 mt-2">
                                                   <div className="bg-muted/30 p-1.5 rounded">
                                                     <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Dosis</p>
@@ -6401,7 +6828,7 @@ function App() {
                                           </div>
                                           {selectedDisease.manejo.tratamientoDetallado.medidasGenerales && selectedDisease.manejo.tratamientoDetallado.medidasGenerales.length > 0 && (
                                             <div className="mt-4 pt-3 border-t border-green-500/20">
-                                              <h6 className="text-xs font-bold text-green-700 mb-2 flex items-center"><Clipboard size={14} className="mr-1.5"/> Medidas de Soporte Generales:</h6>
+                                              <h6 className="text-xs font-bold text-green-700 mb-2 flex items-center"><Clipboard size={12} className="mr-1.5"/> Medidas de Soporte Generales:</h6>
                                               <ul className="list-disc pl-5 text-xs text-muted-foreground space-y-1">
                                                 {selectedDisease.manejo.tratamientoDetallado.medidasGenerales.map((m, i) => <li key={i}>{m}</li>)}
                                               </ul>
@@ -6411,16 +6838,16 @@ function App() {
 
                                         {selectedDisease.manejo.monitoreo && (
                                           <div className="p-4 bg-blue-500/5 rounded-xl border-l-4 border-blue-500">
-                                            <h5 className="text-[10px] sm:text-xs font-black text-blue-600 uppercase tracking-widest mb-3 flex items-center"><Activity size={16} className="mr-1.5"/> Monitoreo y Señales de Alerta</h5>
+                                            <h5 className="text-[10px] sm:text-xs font-black text-blue-600 uppercase tracking-widest mb-3 flex items-center"><Activity size={12} className="mr-1.5"/> Monitoreo y Señales de Alerta</h5>
                                             <div className="space-y-3">
                                               <div className="bg-background/80 p-3 rounded-lg border border-border shadow-sm">
-                                                <p className="text-xs font-bold text-foreground mb-2 flex items-center"><Activity size={14} className="mr-1.5 text-blue-500"/> Parámetros a vigilar estrictamente:</p>
+                                                <p className="text-xs font-bold text-foreground mb-2 flex items-center"><Activity size={12} className="mr-1.5 text-blue-500"/> Parámetros a vigilar estrictamente:</p>
                                                 <ul className="list-disc pl-5 text-xs text-muted-foreground space-y-1">
                                                   {selectedDisease.manejo.monitoreo.parametros.map((p, i) => <li key={i}>{p}</li>)}
                                                 </ul>
                                               </div>
                                               <div className="bg-red-500/10 p-3 rounded-lg border border-red-500/20 shadow-sm">
-                                                <p className="text-xs font-bold text-red-600 mb-2 flex items-center"><AlertTriangle size={14} className="mr-1.5"/> Signos de Alerta Roja (Suspender o Intervenir):</p>
+                                                <p className="text-xs font-bold text-red-600 mb-2 flex items-center"><AlertTriangle size={12} className="mr-1.5"/> Signos de Alerta Roja (Suspender o Intervenir):</p>
                                                 <ul className="list-disc pl-5 text-xs text-red-600/90 space-y-1">
                                                   {selectedDisease.manejo.monitoreo.signosAlerta.map((s, i) => <li key={i} className="font-medium">{s}</li>)}
                                                 </ul>
@@ -6431,7 +6858,7 @@ function App() {
 
                                         {selectedDisease.manejo.evaluacion && (
                                           <div className="p-4 bg-purple-500/5 rounded-xl border-l-4 border-purple-500">
-                                            <h5 className="text-[10px] sm:text-xs font-black text-purple-600 uppercase tracking-widest mb-3 flex items-center"><ShieldCheck size={16} className="mr-1.5"/> Evaluación de la Terapia</h5>
+                                            <h5 className="text-[10px] sm:text-xs font-black text-purple-600 uppercase tracking-widest mb-3 flex items-center"><ShieldCheck size={12} className="mr-1.5"/> Evaluación de la Terapia</h5>
                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                               <div className="bg-background/80 p-3 rounded-lg border border-border shadow-sm">
                                                 <p className="text-[11px] font-bold text-green-600 mb-2">✅ Criterios de Éxito Funcional:</p>
@@ -6496,10 +6923,10 @@ function App() {
                               </p>
                               <div className="flex space-x-2">
                                 <button className="p-2 hover:bg-accent rounded-full text-muted-foreground transition-colors">
-                                  <Plus size={16} />
+                                  <Plus size={12} />
                                 </button>
                                 <button className="p-2 hover:bg-accent rounded-full text-muted-foreground transition-colors">
-                                  <Settings size={16} />
+                                  <Settings size={12} />
                                 </button>
                               </div>
                             </div>
@@ -6507,7 +6934,7 @@ function App() {
                         </motion.div>
                       ) : selectedService !== 'Salud Comunitaria' && selectedService !== 'Gineco-Obstetricia' ? (
                         <div className="h-full flex flex-col items-center justify-center text-center p-6 sm:p-10 border border-dashed border-border rounded-xl text-muted-foreground">
-                          <Activity size={32} className="mb-3 opacity-20" />
+                          <Activity size={19} className="mb-3 opacity-20" />
                           <p className="text-sm sm:text-base font-medium">Selecciona una patología para ver sus detalles.</p>
                         </div>
                       ) : null}
@@ -6536,7 +6963,7 @@ function App() {
                     >
                       <div className="flex flex-col items-center text-center space-y-3">
                         <div className="p-3 bg-primary/10 rounded-xl text-primary group-hover:scale-110 transition-transform">
-                          <CategoryIcon size={24} />
+                          <CategoryIcon size={14} />
                         </div>
                         <h3 className="text-sm sm:text-base font-bold leading-tight">{category.name}</h3>
                       </div>
@@ -6550,7 +6977,7 @@ function App() {
                   onClick={() => { setSelectedProcedureCategory(null); setSelectedProcedure(null); }}
                   className="flex items-center text-primary font-bold hover:underline mb-2 text-sm"
                 >
-                  <ChevronRight size={16} className="rotate-180 mr-1" /> Volver a Categorías
+                  <ChevronRight size={12} className="rotate-180 mr-1" /> Volver a Categorías
                 </button>
                 <h3 className="text-xl sm:text-2xl font-bold border-l-4 border-primary pl-3">{selectedProcedureCategory}</h3>
                 
@@ -6603,7 +7030,7 @@ function App() {
                             <div className="p-4 sm:p-5 space-y-6">
                               <div>
                                 <h5 className="text-[10px] sm:text-xs font-black text-muted-foreground uppercase tracking-widest mb-1.5 flex items-center">
-                                  <Info size={14} className="mr-1.5 text-primary" /> Uso
+                                  <Info size={12} className="mr-1.5 text-primary" /> Uso
                                 </h5>
                                 <p className="text-xs sm:text-sm">{selectedProcedure.uso}</p>
                               </div>
@@ -6611,7 +7038,7 @@ function App() {
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                   <h5 className="text-[10px] sm:text-xs font-black text-muted-foreground uppercase tracking-widest mb-1.5 flex items-center">
-                                    <CheckCircle2 size={14} className="mr-1.5 text-green-500" /> Indicaciones
+                                    <CheckCircle2 size={12} className="mr-1.5 text-green-500" /> Indicaciones
                                   </h5>
                                   <ul className="list-disc list-inside text-xs sm:text-sm space-y-1 text-muted-foreground">
                                     {selectedProcedure.indicaciones.map((ind, i) => <li key={i}>{ind}</li>)}
@@ -6619,7 +7046,7 @@ function App() {
                                 </div>
                                 <div>
                                   <h5 className="text-[10px] sm:text-xs font-black text-muted-foreground uppercase tracking-widest mb-1.5 flex items-center">
-                                    <AlertCircle size={14} className="mr-1.5 text-red-500" /> Contraindicaciones
+                                    <AlertCircle size={12} className="mr-1.5 text-red-500" /> Contraindicaciones
                                   </h5>
                                   <ul className="list-disc list-inside text-xs sm:text-sm space-y-1 text-muted-foreground">
                                     {selectedProcedure.contraindicaciones.map((contra, i) => <li key={i}>{contra}</li>)}
@@ -6629,7 +7056,7 @@ function App() {
 
                               <div>
                                 <h5 className="text-[10px] sm:text-xs font-black text-muted-foreground uppercase tracking-widest mb-2 flex items-center">
-                                  <Clipboard size={14} className="mr-1.5 text-primary" /> Material Necesario
+                                  <Clipboard size={12} className="mr-1.5 text-primary" /> Material Necesario
                                 </h5>
                                 <div className="flex flex-wrap gap-1.5">
                                   {selectedProcedure.materialNecesario.map((mat, i) => (
@@ -6642,7 +7069,7 @@ function App() {
 
                               <div>
                                 <h5 className="text-[10px] sm:text-xs font-black text-muted-foreground uppercase tracking-widest mb-2 flex items-center">
-                                  <Activity size={14} className="mr-1.5 text-primary" /> Manera de realizarlo
+                                  <Activity size={12} className="mr-1.5 text-primary" /> Manera de realizarlo
                                 </h5>
                                 <div className="space-y-2">
                                   {selectedProcedure.maneraRealizarlo.map((paso, i) => {
@@ -6670,7 +7097,7 @@ function App() {
 
                               <div className="bg-blue-50 dark:bg-blue-900/10 p-3 sm:p-4 rounded-lg border-l-4 border-blue-500">
                                 <h5 className="text-[10px] sm:text-xs font-black text-blue-700 dark:text-blue-400 uppercase tracking-widest mb-1.5 flex items-center">
-                                  <Shield size={14} className="mr-1.5" /> Cuidados de Enfermería
+                                  <Shield size={12} className="mr-1.5" /> Cuidados de Enfermería
                                 </h5>
                                 <ul className="list-disc list-inside text-xs sm:text-sm space-y-1 text-blue-900/80 dark:text-blue-200/80">
                                   {selectedProcedure.cuidadosEnfermeria.map((cuidado, i) => (
@@ -6693,7 +7120,7 @@ function App() {
                         </motion.div>
                       ) : (
                         <div className="h-full flex flex-col items-center justify-center text-center p-6 sm:p-10 border border-dashed border-border rounded-xl text-muted-foreground">
-                          <Activity size={32} className="mb-3 opacity-20" />
+                          <Activity size={19} className="mb-3 opacity-20" />
                           <p className="text-sm sm:text-base font-medium">Selecciona un procedimiento para ver sus detalles.</p>
                         </div>
                       )}
@@ -6716,7 +7143,7 @@ function App() {
                   {user?.photoURL ? (
                     <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                   ) : (
-                    <User size={64} className="text-primary" />
+                    <User size={38} className="text-primary" />
                   )}
                 </div>
                 <h3 className="text-2xl font-bold">{userProfile.nombre}</h3>
@@ -6760,7 +7187,7 @@ function App() {
                       }}
                       className="w-full py-3 bg-rose-500/10 text-rose-600 rounded-xl font-black text-xs uppercase hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center gap-2"
                     >
-                      <Trash2 size={14} /> Reiniciar Cuenta
+                      <Trash2 size={12} /> Reiniciar Cuenta
                     </button>
                   </div>
                 </div>
@@ -6769,27 +7196,27 @@ function App() {
               <div className="lg:col-span-2 space-y-6">
                 <Card className="space-y-6">
                   <h4 className="font-black text-lg flex items-center uppercase tracking-widest text-primary">
-                    <Info size={20} className="mr-2" /> Información Personal
+                    <Info size={12} className="mr-2" /> Información Personal
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-1">
                       <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">Email</p>
                       <div className="flex items-center gap-2 text-sm font-bold">
-                        <Mail size={16} className="text-primary" />
+                        <Mail size={12} className="text-primary" />
                         {userProfile.email}
                       </div>
                     </div>
                     <div className="space-y-1">
                       <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">Teléfono</p>
                       <div className="flex items-center gap-2 text-sm font-bold">
-                        <Phone size={16} className="text-primary" />
+                        <Phone size={12} className="text-primary" />
                         {userProfile.telefono || 'No registrado'}
                       </div>
                     </div>
                     <div className="space-y-1 md:col-span-2">
                       <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">Dirección</p>
                       <div className="flex items-center gap-2 text-sm font-bold">
-                        <MapPin size={16} className="text-primary" />
+                        <MapPin size={12} className="text-primary" />
                         {userProfile.direccion || 'No registrada'}
                       </div>
                     </div>
@@ -6798,7 +7225,7 @@ function App() {
 
                 <Card className="space-y-6">
                   <h4 className="font-black text-lg flex items-center uppercase tracking-widest text-primary">
-                    <MapPin size={20} className="mr-2" /> Hospital y Rotación
+                    <MapPin size={12} className="mr-2" /> Hospital y Rotación
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-1">
@@ -6829,7 +7256,7 @@ function App() {
                     initial={{ scale: 0.9, opacity: 0, y: 20 }}
                     animate={{ scale: 1, opacity: 1, y: 0 }}
                     exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                    className="relative bg-card border border-border w-full max-w-2xl rounded-3xl p-8 shadow-2xl max-h-[90vh] overflow-y-auto"
+                    className="relative bg-card border border-border w-full max-w-[672px] rounded-3xl p-8 shadow-2xl max-h-[90vh] overflow-y-auto"
                   >
                     <h3 className="text-2xl font-black mb-6">Editar Perfil</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -6932,22 +7359,22 @@ function App() {
               <WasteManagementBlock />
               
               <div className="bg-card border border-border rounded-[32px] p-6 shadow-sm">
-                <h3 className="text-xl font-bold mb-4 flex items-center"><Accessibility size={20} className="mr-2 text-primary" /> Movilización y Manejo del Paciente</h3>
+                <h3 className="text-xl font-bold mb-4 flex items-center"><Accessibility size={12} className="mr-2 text-primary" /> Movilización y Manejo del Paciente</h3>
                 <PatientMobilizationBlock />
               </div>
 
               <div className="bg-card border border-border rounded-[32px] p-6 shadow-sm">
-                <h3 className="text-xl font-bold mb-4 flex items-center"><ShieldCheck size={20} className="mr-2 text-primary" /> Seguridad del Paciente (MSP Ecuador)</h3>
+                <h3 className="text-xl font-bold mb-4 flex items-center"><ShieldCheck size={12} className="mr-2 text-primary" /> Seguridad del Paciente (MSP Ecuador)</h3>
                 <PatientSafetyBlock />
               </div>
 
               <div className="bg-card border border-border rounded-[32px] p-6 shadow-sm">
-                <h3 className="text-xl font-bold mb-4 flex items-center"><Hand size={20} className="mr-2 text-sky-500" /> Higiene de Manos (Técnica Correcta)</h3>
+                <h3 className="text-xl font-bold mb-4 flex items-center"><Hand size={12} className="mr-2 text-sky-500" /> Higiene de Manos (Técnica Correcta)</h3>
                 <HandHygieneBlock />
               </div>
 
               <div className="bg-card border border-border rounded-[32px] p-6 shadow-sm">
-                <h3 className="text-xl font-bold mb-4 flex items-center"><Activity size={20} className="mr-2 text-primary" /> Signos Vitales por Etapa de Vida</h3>
+                <h3 className="text-xl font-bold mb-4 flex items-center"><Activity size={12} className="mr-2 text-primary" /> Signos Vitales por Etapa de Vida</h3>
                 <VitalSignsByAgeBlock />
               </div>
 
@@ -6974,24 +7401,24 @@ function App() {
       case 'laboratorio':
         return (
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
-            <SectionHeader title="Laboratorio y Catéteres" subtitle="Guía rápida de tubos, catéteres y valores de referencia." />
+            <SectionHeader title="Laboratorio y Diagnóstico" subtitle="Guía rápida de tubos, catéteres y valores de referencia avanzados." />
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
-                <h3 className="text-xl font-bold mb-4 flex items-center"><TestTube size={20} className="mr-2 text-primary" /> Guía de Tubos</h3>
+                <h3 className="text-xl font-bold mb-4 flex items-center"><TestTube size={12} className="mr-2 text-primary" /> Guía de Tubos</h3>
                 <div className="space-y-3">
                   {[
-                    { color: 'bg-purple-500', name: 'Tapa Morada', use: 'Hematología (BHC), hemoglobina glicosilada.' },
-                    { color: 'bg-red-500', name: 'Tapa Roja', use: 'Química sanguínea, serología, inmunología.' },
-                    { color: 'bg-yellow-500', name: 'Tapa Amarilla', use: 'Química sanguínea, pruebas de función hepática (PFH).' },
-                    { color: 'bg-blue-500', name: 'Tapa Azul', use: 'Pruebas de coagulación (TP, TTP).' },
-                    { color: 'bg-orange-500', name: 'Tapa Naranja', use: 'Química urgente, suero.' },
+                    { color: 'bg-purple-500', name: 'Tapa Morada (EDTA)', use: 'Hematología (BHC), HbA1c, BNP, Amonio (en hielo).' },
+                    { color: 'bg-red-500', name: 'Tapa Roja (Seco)', use: 'Química sanguínea, serología, inmunología, hormonas.' },
+                    { color: 'bg-yellow-500', name: 'Tapa Amarilla (Gel)', use: 'Química sanguínea, PFH, perfil lipídico, electrolitos.' },
+                    { color: 'bg-blue-500', name: 'Tapa Azul (Citrato)', use: 'Pruebas de coagulación (TP, TTP). Proporción 9:1.' },
+                    { color: 'bg-green-500', name: 'Tapa Verde (Heparina)', use: 'Química en plasma, gasometría venosa, troponina.' },
                   ].map((tube, i) => (
                     <div key={i} className="flex items-start p-3 bg-accent/50 rounded-xl">
-                      <div className={`w-4 h-8 rounded-full ${tube.color} mr-4 flex-shrink-0`} />
+                      <div className={`w-4 h-8 rounded-full ${tube.color} mr-4 flex-shrink-0 shadow-sm`} />
                       <div>
                         <p className="font-bold text-sm">{tube.name}</p>
-                        <p className="text-xs text-muted-foreground">{tube.use}</p>
+                        <p className="text-[11px] text-muted-foreground">{tube.use}</p>
                       </div>
                     </div>
                   ))}
@@ -6999,22 +7426,22 @@ function App() {
               </Card>
 
               <Card>
-                <h3 className="text-xl font-bold mb-4 flex items-center"><Syringe size={20} className="mr-2 text-primary" /> Calibre de Catéteres</h3>
+                <h3 className="text-xl font-bold mb-4 flex items-center"><Syringe size={12} className="mr-2 text-primary" /> Calibre de Catéteres</h3>
                 <div className="space-y-3">
                   {[
-                    { gauge: '14G', color: 'bg-orange-500', use: 'Cirugías mayores, trauma, reanimación (alto flujo).' },
-                    { gauge: '16G', color: 'bg-gray-400', use: 'Cirugía, trauma, transfusiones rápidas.' },
-                    { gauge: '18G', color: 'bg-green-500', use: 'Transfusiones, cirugía, administración de fluidos rápidos.' },
+                    { gauge: '14G', color: 'bg-orange-500', use: 'Cirugías mayores, trauma, reanimación masiva (alto flujo).' },
+                    { gauge: '16G', color: 'bg-gray-400', use: 'Trauma grave, transfusiones rápidas, quirófano.' },
+                    { gauge: '18G', color: 'bg-green-500', use: 'Transfusiones, cirugía, administración de fluidos.' },
                     { gauge: '20G', color: 'bg-pink-400', use: 'Uso general, medicamentos, hidratación estándar.' },
-                    { gauge: '22G', color: 'bg-blue-500', use: 'Pacientes pediátricos, geriátricos, venas frágiles.' },
-                    { gauge: '24G', color: 'bg-yellow-500', use: 'Neonatos, venas muy frágiles.' },
+                    { gauge: '22G', color: 'bg-blue-500', use: 'Venas frágiles, pediatría, geriatría.' },
+                    { gauge: '24G', color: 'bg-yellow-500', use: 'Neonatos, venas extremadamente frágiles.' },
                   ].map((catheter, i) => (
                     <div key={i} className="flex items-center justify-between p-3 bg-accent/50 rounded-xl">
                       <div className="flex items-center space-x-3">
-                        <div className={`w-6 h-6 rounded-full ${catheter.color} flex items-center justify-center text-[10px] font-bold text-white`}>
+                        <div className={`w-8 h-8 rounded-xl ${catheter.color} flex items-center justify-center text-xs font-black text-white shadow-sm shrink-0`}>
                           {catheter.gauge}
                         </div>
-                        <span className="text-xs text-muted-foreground">{catheter.use}</span>
+                        <span className="text-[11px] text-muted-foreground leading-tight font-medium">{catheter.use}</span>
                       </div>
                     </div>
                   ))}
@@ -7022,81 +7449,7 @@ function App() {
               </Card>
             </div>
 
-            <Card>
-              <h3 className="text-xl font-bold mb-4 flex items-center"><Activity size={20} className="mr-2 text-primary" /> Valores de Referencia</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-bold text-sm mb-2 text-primary">Biometría Hemática (BHC)</h4>
-                  <ul className="space-y-1 text-xs">
-                    <li className="flex justify-between border-b border-border py-1"><span>Hemoglobina (Hgb)</span> <span className="font-medium">12-16 (M) | 14-18 (H) g/dL</span></li>
-                    <li className="flex justify-between border-b border-border py-1"><span>Hematocrito (Hct)</span> <span className="font-medium">37-47% (M) | 42-52% (H)</span></li>
-                    <li className="flex justify-between border-b border-border py-1"><span>Leucocitos (WBC)</span> <span className="font-medium">4,500 - 11,000 /mm³</span></li>
-                    <li className="flex justify-between border-b border-border py-1"><span>Plaquetas (PLT)</span> <span className="font-medium">150,000 - 450,000 /mm³</span></li>
-                  </ul>
-                </div>
-                <div className="border-l-4 border-purple-500 pl-2">
-                  <h4 className="font-bold text-sm mb-2 text-purple-700">Biometría Hemática (BHC)</h4>
-                  <ul className="space-y-1 text-xs">
-                    <li className="flex justify-between border-b border-border py-1"><span>Hb (M/H)</span> <span className="font-medium">12-16 / 14-18 g/dL</span></li>
-                    <li className="flex justify-between border-b border-border py-1"><span>Hct (M/H)</span> <span className="font-medium">37-47% / 42-52%</span></li>
-                    <li className="flex justify-between border-b border-border py-1"><span>Leucocitos</span> <span className="font-medium">4,000 - 12,000 /mm³</span></li>
-                    <li className="flex justify-between border-b border-border py-1"><span>Plaquetas</span> <span className="font-medium">150k - 450k /mm³</span></li>
-                  </ul>
-                </div>
-                <div className="border-l-4 border-red-500 pl-2">
-                  <h4 className="font-bold text-sm mb-2 text-red-700">Bioquímica</h4>
-                  <ul className="space-y-1 text-xs">
-                    <li className="flex justify-between border-b border-border py-1"><span>Glucosa</span> <span className="font-medium">70 - 110 mg/dL</span></li>
-                    <li className="flex justify-between border-b border-border py-1"><span>Creatinina</span> <span className="font-medium">0.7 - 1.3 mg/dL</span></li>
-                    <li className="flex justify-between border-b border-border py-1"><span>Urea</span> <span className="font-medium">20 - 40 mg/dL</span></li>
-                    <li className="flex justify-between border-b border-border py-1"><span>Ácido Úrico</span> <span className="font-medium">2-8 mg/dl</span></li>
-                  </ul>
-                </div>
-                <div className="border-l-4 border-amber-500 pl-2">
-                    <h4 className="font-bold text-sm mb-2 text-amber-700">Perfil Hepático</h4>
-                    <ul className="space-y-1 text-xs">
-                        <li className="flex justify-between border-b border-border py-1"><span>TGO/AST</span> <span className="font-medium">12 - 38 U/L</span></li>
-                        <li className="flex justify-between border-b border-border py-1"><span>TGP/ALT</span> <span className="font-medium">10 - 40 U/L</span></li>
-                        <li className="flex justify-between border-b border-border py-1"><span>Bilirrubina T</span> <span className="font-medium">0.3 - 1 mg/dl</span></li>
-                        <li className="flex justify-between border-b border-border py-1"><span>Fosfatasa Alc</span> <span className="font-medium">25 - 100 U/L</span></li>
-                    </ul>
-                </div>
-                <div className="border-l-4 border-yellow-500 pl-2">
-                    <h4 className="font-bold text-sm mb-2 text-yellow-700">Perfil Tiroideo</h4>
-                    <ul className="space-y-1 text-xs">
-                        <li className="flex justify-between border-b border-border py-1"><span>TSH</span> <span className="font-medium">0.4 - 4.0 mCU/ml</span></li>
-                        <li className="flex justify-between border-b border-border py-1"><span>T4 Libre</span> <span className="font-medium">0.8 - 1.8 ng/dl</span></li>
-                        <li className="flex justify-between border-b border-border py-1"><span>T3 Libre</span> <span className="font-medium">2.1 - 4.7 pg/ml</span></li>
-                    </ul>
-                </div>
-                <div className="border-l-4 border-blue-500 pl-2">
-                    <h4 className="font-bold text-sm mb-2 text-blue-700">Coagulación</h4>
-                    <ul className="space-y-1 text-xs">
-                        <li className="flex justify-between border-b border-border py-1"><span>INR</span> <span className="font-medium">0.8 - 1.2</span></li>
-                        <li className="flex justify-between border-b border-border py-1"><span>TP</span> <span className="font-medium">12 - 14 s</span></li>
-                        <li className="flex justify-between border-b border-border py-1"><span>TTP</span> <span className="font-medium">25 - 35 s</span></li>
-                    </ul>
-                </div>
-                <div className="border-l-4 border-emerald-500 pl-2">
-                    <h4 className="font-bold text-sm mb-2 text-emerald-700">Electrolitos</h4>
-                    <ul className="space-y-1 text-xs">
-                        <li className="flex justify-between border-b border-border py-1"><span>Sodio</span> <span className="font-medium">135 - 145 mEq/L</span></li>
-                        <li className="flex justify-between border-b border-border py-1"><span>Potasio</span> <span className="font-medium">3.5 - 5 mEq/L</span></li>
-                        <li className="flex justify-between border-b border-border py-1"><span>Cloro</span> <span className="font-medium">95 - 110 mEq/L</span></li>
-                    </ul>
-                </div>
-                <div className="border-l-4 border-cyan-500 pl-2">
-                    <h4 className="font-bold text-sm mb-2 text-cyan-700">Gasometría (Normal)</h4>
-                    <ul className="space-y-1 text-xs">
-                        <li className="flex justify-between border-b border-border py-1"><span>pH</span> <span className="font-medium">7.35 - 7.45</span></li>
-                        <li className="flex justify-between border-b border-border py-1"><span>pO2</span> <span className="font-medium">80 - 100 mmHg</span></li>
-                        <li className="flex justify-between border-b border-border py-1"><span>pCO2</span> <span className="font-medium">35 - 45 mmHg</span></li>
-                        <li className="flex justify-between border-b border-border py-1"><span>HCO3</span> <span className="font-medium">22 - 26 mEq/L</span></li>
-                    </ul>
-                </div>
-              </div>
-              <p className="text-[10px] text-muted-foreground mt-4 italic">Nota: Valores según guía clínica proporcionada. Consultar valores de referencia específicos del laboratorio local.</p>
-            </Card>
+            <LaboratoriesBlock />
           </motion.div>
         );
 
@@ -7118,13 +7471,13 @@ function App() {
                 onClick={() => setBitacoraSubTab('actividades')}
                 className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center ${bitacoraSubTab === 'actividades' ? 'bg-card shadow-sm text-primary' : 'text-muted-foreground hover:text-foreground'}`}
               >
-                <BookOpen size={18} className="mr-2" /> Actividades
+                <BookOpen size={12} className="mr-2" /> Actividades
               </button>
               <button 
                 onClick={() => setBitacoraSubTab('turnos')}
                 className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center ${bitacoraSubTab === 'turnos' ? 'bg-card shadow-sm text-primary' : 'text-muted-foreground hover:text-foreground'}`}
               >
-                <Clock size={18} className="mr-2" /> Turnos y Servicios
+                <Clock size={12} className="mr-2" /> Turnos y Servicios
               </button>
             </div>
 
@@ -7133,7 +7486,7 @@ function App() {
                 {bitacoraSubTab === 'actividades' ? (
                   <Card className="sticky top-24">
                     <h3 className="text-xl font-bold mb-6 flex items-center">
-                      <Plus size={20} className="mr-2 text-primary" />
+                      <Plus size={12} className="mr-2 text-primary" />
                       Nueva Actividad
                     </h3>
                     <div className="space-y-4">
@@ -7158,7 +7511,7 @@ function App() {
                             title="Crear Tarea Rápida"
                             className="px-4 bg-orange-100 text-orange-600 dark:bg-orange-900/40 dark:text-orange-400 font-bold rounded-xl hover:bg-orange-200 dark:hover:bg-orange-900/60 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shrink-0"
                           >
-                            <Clipboard size={20} className="mr-1" /> <span className="text-sm hidden sm:inline">+ Tarea</span>
+                            <Clipboard size={12} className="mr-1" /> <span className="text-sm hidden sm:inline">+ Tarea</span>
                           </button>
                         </div>
                       </div>
@@ -7208,7 +7561,7 @@ function App() {
                       <div className="space-y-3 pt-2">
                         <label className="flex items-center justify-between p-3 rounded-xl border border-border bg-accent/5 cursor-pointer">
                           <div className="flex items-center">
-                            <Clipboard size={18} className="mr-2 text-orange-500" />
+                            <Clipboard size={12} className="mr-2 text-orange-500" />
                             <span className="text-sm font-medium">Añadir a Pendientes</span>
                           </div>
                           <input 
@@ -7231,7 +7584,7 @@ function App() {
                 ) : (
                   <Card className="sticky top-24">
                     <h3 className="text-xl font-bold mb-6 flex items-center">
-                      <Clock size={20} className="mr-2 text-primary" />
+                      <Clock size={12} className="mr-2 text-primary" />
                       Registrar Turno
                     </h3>
                     
@@ -7334,14 +7687,14 @@ function App() {
                                        type="time" 
                                        className="p-1 text-xs border border-border rounded bg-accent/20"
                                        value={newShift.horariosPorDia[dia]?.entrada || '07:00'}
-                                       onChange={(e) => setNewShift({...newShift, horariosPorDia: {...newShift.horariosPorDia, [dia]: { ...(newShift.horariosPorDia[dia] || {}), entrada: e.target.value }}})} 
+                                       onChange={(e) => setNewShift({...newShift, horariosPorDia: {...newShift.horariosPorDia, [dia]: { ...(newShift.horariosPorDia[dia] || { entrada: '', salida: '' }), entrada: e.target.value }}})} 
                                      />
                                      <span className="text-xs text-muted-foreground">-</span>
                                      <input 
                                        type="time" 
                                        className="p-1 text-xs border border-border rounded bg-accent/20"
                                        value={newShift.horariosPorDia[dia]?.salida || '19:00'}
-                                       onChange={(e) => setNewShift({...newShift, horariosPorDia: {...newShift.horariosPorDia, [dia]: { ...(newShift.horariosPorDia[dia] || {}), salida: e.target.value }}})} 
+                                       onChange={(e) => setNewShift({...newShift, horariosPorDia: {...newShift.horariosPorDia, [dia]: { ...(newShift.horariosPorDia[dia] || { entrada: '', salida: '' }), salida: e.target.value }}})} 
                                      />
                                   </div>
                                   <label className="flex items-center text-xs ml-auto cursor-pointer font-medium p-1 bg-teal-500/10 text-teal-600 rounded">
@@ -7387,7 +7740,7 @@ function App() {
                       <div className="space-y-3 pt-2">
                         <label className="flex items-center justify-between p-3 rounded-xl border border-border bg-accent/5 cursor-pointer">
                           <div className="flex items-center">
-                            <Calendar size={18} className="mr-2 text-primary" />
+                            <Calendar size={12} className="mr-2 text-primary" />
                             <span className="text-sm font-medium">Sincronizar Calendario</span>
                           </div>
                           <input 
@@ -7453,7 +7806,7 @@ function App() {
                                     }}
                                     className="p-2 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-all"
                                   >
-                                    <Trash2 size={18} />
+                                    <Trash2 size={12} />
                                   </button>
                                 </div>
                                 <div className="space-y-3">
@@ -7479,7 +7832,7 @@ function App() {
                                 onClick={() => setBitacoraPage(p => p - 1)}
                                 className="p-2 rounded-lg bg-accent disabled:opacity-30"
                               >
-                                <ChevronRight size={20} className="rotate-180" />
+                                <ChevronRight size={12} className="rotate-180" />
                               </button>
                               <span className="text-sm font-bold">Página {bitacoraPage} de {Math.ceil(bitacoraEntries.length / itemsPerPage)}</span>
                               <button 
@@ -7487,14 +7840,14 @@ function App() {
                                 onClick={() => setBitacoraPage(p => p + 1)}
                                 className="p-2 rounded-lg bg-accent disabled:opacity-30"
                               >
-                                <ChevronRight size={20} />
+                                <ChevronRight size={12} />
                               </button>
                             </div>
                           )}
                         </>
                       ) : (
                         <div className="py-20 text-center border-2 border-dashed border-border rounded-3xl">
-                          <BookOpen size={48} className="mx-auto mb-4 text-muted-foreground opacity-20" />
+                          <BookOpen size={29} className="mx-auto mb-4 text-muted-foreground opacity-20" />
                           <p className="text-muted-foreground font-medium">No hay actividades registradas.</p>
                         </div>
                       )}
@@ -7520,7 +7873,7 @@ function App() {
                                 <div className="flex justify-between items-start mb-4">
                                   <div className="flex items-center space-x-3">
                                     <div className="p-2 bg-primary/10 rounded-xl text-primary">
-                                      <Clock size={20} />
+                                      <Clock size={12} />
                                     </div>
                                     <div>
                                       <h4 className="font-bold text-lg">{log.servicioActual}</h4>
@@ -7550,7 +7903,7 @@ function App() {
                                     }}
                                     className="p-2 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-all"
                                   >
-                                    <Trash2 size={18} />
+                                    <Trash2 size={12} />
                                   </button>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
@@ -7578,7 +7931,7 @@ function App() {
                                 onClick={() => setShiftsPage(p => p - 1)}
                                 className="p-2 rounded-lg bg-accent disabled:opacity-30"
                               >
-                                <ChevronRight size={20} className="rotate-180" />
+                                <ChevronRight size={12} className="rotate-180" />
                               </button>
                               <span className="text-sm font-bold">Página {shiftsPage} de {Math.ceil(shiftLogs.length / itemsPerPage)}</span>
                               <button 
@@ -7586,14 +7939,14 @@ function App() {
                                 onClick={() => setShiftsPage(p => p + 1)}
                                 className="p-2 rounded-lg bg-accent disabled:opacity-30"
                               >
-                                <ChevronRight size={20} />
+                                <ChevronRight size={12} />
                               </button>
                             </div>
                           )}
                         </>
                       ) : (
                         <div className="py-20 text-center border-2 border-dashed border-border rounded-3xl">
-                          <Clock size={48} className="mx-auto mb-4 text-muted-foreground opacity-20" />
+                          <Clock size={29} className="mx-auto mb-4 text-muted-foreground opacity-20" />
                           <p className="text-muted-foreground font-medium">No hay turnos registrados.</p>
                         </div>
                       )}
@@ -7619,14 +7972,14 @@ function App() {
             transition={{ repeat: Infinity, duration: 2 }}
             className="w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-xl shadow-primary/40"
           >
-            <HeartPulse className="text-white" size={32} />
+            <HeartPulse className="text-white" size={19} />
           </motion.div>
         </div>
-      ) : !user || !userProfile ? (
+      ) : !user ? (
         <div className="min-h-screen bg-background medical-gradient flex items-center justify-center p-6">
-          <GlassCard className="max-w-md w-full p-10 text-center space-y-8">
+          <GlassCard className="max-w-[448px] w-full p-10 text-center space-y-8">
             <div className="w-20 h-20 bg-primary rounded-3xl mx-auto flex items-center justify-center shadow-2xl shadow-primary/30 -rotate-6">
-              <HeartPulse className="text-white" size={40} />
+              <HeartPulse className="text-white" size={24} />
             </div>
             <div className="space-y-2">
               <h1 className="text-4xl font-black tracking-tighter">Vita<span className="text-primary">Student</span></h1>
@@ -7637,7 +7990,7 @@ function App() {
               disabled={isLoginLoading}
               className="w-full py-4 bg-primary text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center space-x-3"
             >
-              {isLoginLoading ? <RotateCw className="animate-spin" size={20} /> : <div className="p-1 bg-white/20 rounded-lg"><Home size={16}/> </div>}
+              {isLoginLoading ? <RotateCw className="animate-spin" size={12} /> : <div className="p-1 bg-white/20 rounded-lg"><Home size={12}/> </div>}
               <span>Entrar con Google</span>
             </button>
             <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">Exclusivo para Internos y Residentes</p>
@@ -7658,7 +8011,7 @@ function App() {
           <aside className={`hidden lg:flex flex-col border-r border-border bg-card transition-all duration-500 ease-in-out relative z-50 ${isSidebarOpen ? 'w-72' : 'w-24'}`}>
             <div className={`p-6 flex items-center ${isSidebarOpen ? 'justify-start space-x-4' : 'justify-center'} mb-8`}>
               <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center shadow-xl shadow-primary/20 shrink-0">
-                <HeartPulse className="text-white" size={28} />
+                <HeartPulse className="text-white" size={17} />
               </div>
               {isSidebarOpen && (
                 <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
@@ -7686,7 +8039,7 @@ function App() {
                 className="w-full flex items-center justify-center py-3 text-muted-foreground hover:bg-accent/50 rounded-xl transition-all"
               >
                 <div className={`transition-transform duration-500 ${isSidebarOpen ? 'rotate-180' : 'rotate-0'}`}>
-                  <ChevronRight size={20} />
+                  <ChevronRight size={12} />
                 </div>
               </button>
             </div>
@@ -7705,16 +8058,16 @@ function App() {
                 }
               }} 
               items={[
-                { id: 'dashboard', label: 'Dashboard' },
-                { id: 'servicios', label: 'Servicios' },
-                { id: 'practica', label: 'Práctica Clínica' },
-                { id: 'farmacologia', label: 'Farmacología' },
-                { id: 'laboratorio', label: 'Laboratorio' },
-                { id: 'calculadoras', label: 'Cálculos' },
-                { id: 'bitacora', label: 'Bitácora' },
-                { id: 'fundamentos', label: 'Fundamentos' },
-                { id: 'notifications', label: 'Notificaciones' },
-                { id: 'perfil', label: 'Mi Perfil' }
+                { id: 'dashboard', label: 'Dashboard', icon: Home },
+                { id: 'servicios', label: 'Servicios', icon: LayoutGrid },
+                { id: 'practica', label: 'Práctica Clínica', icon: Stethoscope },
+                { id: 'farmacologia', label: 'Farmacología', icon: Pill },
+                { id: 'laboratorio', label: 'Laboratorio', icon: TestTube },
+                { id: 'calculadoras', label: 'Cálculos', icon: Calculator },
+                { id: 'bitacora', label: 'Bitácora', icon: ClipboardList },
+                { id: 'fundamentos', label: 'Fundamentos', icon: FileText },
+                { id: 'notifications', label: 'Notificaciones', icon: Bell },
+                { id: 'perfil', label: 'Mi Perfil', icon: User }
               ]}
             />
             {/* Upper Toolbar */}
@@ -7729,12 +8082,12 @@ function App() {
 
               <div className="flex items-center space-x-5">
                 <div className="relative group hidden md:block" onClick={() => setIsSearchOpen(true)}>
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" size={18} />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" size={12} />
                   <input 
                     type="text" 
                     readOnly
                     placeholder="Búsqueda Global..." 
-                    className="w-80 bg-accent/30 border border-border/50 pl-11 pr-4 py-2.5 rounded-2xl text-sm font-medium focus:ring-4 focus:ring-primary/10 focus:bg-card focus:border-primary outline-none transition-all shadow-sm cursor-pointer"
+                    className="w-[320px] bg-accent/30 border border-border/50 pl-11 pr-4 py-2.5 rounded-2xl text-sm font-medium focus:ring-4 focus:ring-primary/10 focus:bg-card focus:border-primary outline-none transition-all shadow-sm cursor-pointer"
                   />
                 </div>
 
@@ -7743,7 +8096,7 @@ function App() {
                     onClick={() => setIsNotificationsOpen(true)}
                     className="p-2.5 bg-accent/30 text-muted-foreground hover:text-foreground hover:bg-accent rounded-xl transition-all relative"
                   >
-                    <Bell size={20} />
+                    <Bell size={12} />
                     {tasks.filter(t => !t.completed && (t.isUrgent || t.isAcademico)).length > 0 && (
                       <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-destructive rounded-full border-2 border-card animate-pulse" />
                     )}
@@ -7752,7 +8105,7 @@ function App() {
                     onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                     className="p-2.5 bg-accent/30 text-muted-foreground hover:text-foreground hover:bg-accent rounded-xl transition-all"
                   >
-                    {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+                    {theme === 'dark' ? <Sun size={12} /> : <Moon size={12} />}
                   </button>
                 </div>
 
@@ -7768,7 +8121,7 @@ function App() {
                        {user?.photoURL ? (
                          <img src={user.photoURL} alt="Avatar" className="w-full h-full object-cover" />
                        ) : (
-                         <User size={20} className="text-primary" />
+                         <User size={12} className="text-primary" />
                        )}
                     </div>
                   </div>
@@ -7778,7 +8131,7 @@ function App() {
 
             {/* Scrollable Content */}
             <main className="flex-grow overflow-y-auto scrollbar-hide p-8 medical-gradient relative z-10">
-               <div className="max-w-7xl mx-auto h-full pb-20">
+               <div className="max-w-[1280px] mx-auto h-full pb-20">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={activeTab}
@@ -7825,7 +8178,7 @@ function App() {
                   initial={{ scale: 0.9, opacity: 0, y: 20 }}
                   animate={{ scale: 1, opacity: 1, y: 0 }}
                   exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                  className="relative bg-card border border-border w-full max-w-md rounded-3xl p-8 shadow-2xl"
+                  className="relative bg-card border border-border w-full max-w-[448px] rounded-3xl p-8 shadow-2xl"
                 >
                   <h3 className="text-2xl font-black mb-2">Enviar Feedback</h3>
                   <p className="text-muted-foreground text-sm mb-6">Tu opinión nos ayuda a mejorar la herramienta.</p>
@@ -7859,7 +8212,7 @@ function App() {
                   initial={{ scale: 0.9, opacity: 0, y: 20 }}
                   animate={{ scale: 1, opacity: 1, y: 0 }}
                   exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                  className="relative bg-card border border-border w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-[40px] shadow-2xl flex flex-col"
+                  className="relative bg-card border border-border w-full max-w-[896px] max-h-[90vh] overflow-hidden rounded-[40px] shadow-2xl flex flex-col"
                 >
                   <div className="h-3 w-full" style={{ backgroundColor: selectedDrug.color }} />
                   <div className="p-8 flex items-center justify-between border-b border-border">
@@ -7872,14 +8225,14 @@ function App() {
                         <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">{selectedDrug.familia}</p>
                       </div>
                     </div>
-                    <button onClick={() => setSelectedDrug(null)} className="p-3 bg-accent/50 hover:bg-accent rounded-full transition-all"><X size={24} /></button>
+                    <button onClick={() => setSelectedDrug(null)} className="p-3 bg-accent/50 hover:bg-accent rounded-full transition-all"><X size={14} /></button>
                   </div>
                   <div className="flex-grow overflow-y-auto p-8 space-y-8 scrollbar-hide">
                     {/* Content sections same as before but styled with the command center aesthetic */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                        <section className="space-y-4">
                          <h4 className="text-xs font-black uppercase tracking-widest text-primary flex items-center space-x-2">
-                           <Activity size={14} /> <span>Mecanismo de Acción</span>
+                           <Activity size={12} /> <span>Mecanismo de Acción</span>
                          </h4>
                          <GlassCard className="p-6 space-y-4">
                             <div>
@@ -7896,7 +8249,7 @@ function App() {
 
                        <section className="space-y-4">
                          <h4 className="text-xs font-black uppercase tracking-widest text-primary flex items-center space-x-2">
-                           <Clock size={14} /> <span>Farmacocinética</span>
+                           <Clock size={12} /> <span>Farmacocinética</span>
                          </h4>
                          <div className="grid grid-cols-2 gap-4">
                             <GlassCard className="p-4 text-center">
@@ -7917,7 +8270,7 @@ function App() {
 
                     <section className="space-y-4">
                        <h4 className="text-xs font-black uppercase tracking-widest text-primary flex items-center space-x-2">
-                         <Stethoscope size={14} /> <span>Perfil Clínico y Seguridad</span>
+                         <Stethoscope size={12} /> <span>Perfil Clínico y Seguridad</span>
                        </h4>
                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                           <div className="bg-destructive/10 border border-destructive/20 p-6 rounded-3xl">
@@ -7945,7 +8298,7 @@ function App() {
             {isCompareModalOpen && (
                <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsCompareModalOpen(false)} className="absolute inset-0 bg-black/80 backdrop-blur-md" />
-                 <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }} className="relative bg-card border border-border w-full max-w-6xl max-h-[85vh] rounded-[40px] shadow-2xl flex flex-col overflow-hidden">
+                 <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }} className="relative bg-card border border-border w-full max-w-[1152px] max-h-[85vh] rounded-[40px] shadow-2xl flex flex-col overflow-hidden">
                     <div className="p-8 border-b border-border flex justify-between items-center">
                        <h3 className="text-3xl font-black flex items-center space-x-3">
                          <ArrowUpDown className="text-primary" />
@@ -8024,7 +8377,7 @@ function App() {
                       className="flex items-center space-x-3 bg-card border border-border p-3 rounded-2xl shadow-xl hover:scale-105 transition-all text-sm font-black text-primary"
                     >
                     <span>Turno Nuevo</span>
-                    <div className="p-2 bg-primary/10 rounded-xl"><Clock size={20} /></div>
+                    <div className="p-2 bg-primary/10 rounded-xl"><Clock size={12} /></div>
                   </motion.button>
                   <motion.button 
                     initial={{ opacity: 0, y: 20, scale: 0.8 }}
@@ -8034,7 +8387,7 @@ function App() {
                     className="flex items-center space-x-3 bg-card border border-border p-3 rounded-2xl shadow-xl hover:scale-105 transition-all text-sm font-black text-orange-500"
                   >
                     <span>Actividad Bitácora</span>
-                    <div className="p-2 bg-orange-500/10 rounded-xl"><BookOpen size={20} /></div>
+                    <div className="p-2 bg-orange-500/10 rounded-xl"><BookOpen size={12} /></div>
                   </motion.button>
                   <motion.button 
                     initial={{ opacity: 0, y: 20, scale: 0.8 }}
@@ -8044,7 +8397,7 @@ function App() {
                     className="flex items-center space-x-3 bg-card border border-border p-3 rounded-2xl shadow-xl hover:scale-105 transition-all text-sm font-black text-blue-500"
                   >
                     <span>Fármaco Rápido</span>
-                    <div className="p-2 bg-blue-500/10 rounded-xl"><Pill size={20} /></div>
+                    <div className="p-2 bg-blue-500/10 rounded-xl"><Pill size={12} /></div>
                   </motion.button>
                 </div>
               )}
@@ -8062,13 +8415,13 @@ function App() {
             {isCalendarDayModalOpen && (
               <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsCalendarDayModalOpen(false)} className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-                <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }} className="relative bg-card border border-border w-full max-w-sm rounded-[32px] overflow-hidden shadow-2xl">
+                <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }} className="relative bg-card border border-border w-full max-w-[384px] rounded-[32px] overflow-hidden shadow-2xl">
                   <div className="p-6 border-b border-border bg-accent/5 flex justify-between items-center text-center">
                     <div className="flex-grow">
                       <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{new Date(clickedDateStr + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long' })}</p>
                       <h3 className="text-xl font-black">{new Date(clickedDateStr + 'T12:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })}</h3>
                     </div>
-                    <button onClick={() => setIsCalendarDayModalOpen(false)} className="p-2 hover:bg-accent rounded-full absolute right-4 top-4"><X size={20}/></button>
+                    <button onClick={() => setIsCalendarDayModalOpen(false)} className="p-2 hover:bg-accent rounded-full absolute right-4 top-4"><X size={12}/></button>
                   </div>
                   
                   <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto scrollbar-hide">
@@ -8121,7 +8474,7 @@ function App() {
                                      }}
                                      className="p-2.5 bg-rose-500/10 hover:bg-rose-500 text-rose-600 hover:text-white rounded-xl transition-all shadow-sm active:scale-95"
                                    >
-                                     <Trash2 size={16} />
+                                     <Trash2 size={12} />
                                    </button>
                                  )}
                                </div>
@@ -8132,7 +8485,7 @@ function App() {
                         ))
                       ) : (
                         <div className="text-center py-10">
-                          <Activity className="mx-auto mb-4 text-muted-foreground/30" size={48} />
+                          <Activity className="mx-auto mb-4 text-muted-foreground/30" size={29} />
                           <p className="text-sm font-bold text-muted-foreground">No hay turnos registrados</p>
                         </div>
                       );
@@ -8154,7 +8507,7 @@ function App() {
                       }}
                       className="w-full py-4 bg-primary/10 text-primary rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-primary hover:text-white transition-all flex items-center justify-center"
                     >
-                      <Plus size={16} className="mr-2" /> Programar Turno
+                      <Plus size={12} className="mr-2" /> Programar Turno
                     </button>
                   </div>
                 </motion.div>
@@ -8163,6 +8516,7 @@ function App() {
           </AnimatePresence>
         </div>
       )}
+      <AIAssistant />
     </ThemeProviderAny>
   );
 }
